@@ -1,12 +1,15 @@
+Here is the full, professional `README.md` file for **MhobFinder**, incorporating all the details from your report and the specific terminal setup instructions you requested.
+
+You can copy the code block below directly into your project's `README.md` file.
+
 ---
 
 ```markdown
 # 🍲 MhobFinder
 
-> **Capstone Project 1** - Institute of Digital Technology, CADT  
-> *Smart Ingredient-Based Recipe Discovery Platform*
+**Capstone Project 1 | Institute of Digital Technology** *A Smart Ingredient-Based Recipe Discovery Platform*
 
-**MhobFinder** is a web-based application designed to help users find recipes based on the ingredients they already have at home. By simplifying the decision of "what to cook," this system aims to reduce food waste, minimize unnecessary grocery trips, and promote healthier meal planning.
+[cite_start]**MhobFinder** is a web-based system designed to help users discover recipes based on the ingredients they already have at home[cite: 14]. [cite_start]By solving the common problem of "what to cook," this platform aims to simplify meal planning, encourage healthier cooking habits, and reduce food waste[cite: 16, 20].
 
 ---
 
@@ -16,110 +19,91 @@
 - [Tech Stack](#-tech-stack)
 - [System Architecture](#-system-architecture)
 - [Getting Started](#-getting-started)
-- [Usage](#-usage)
-- [Contributors](#-contributors)
+- [Team](#-team)
 - [Acknowledgements](#-acknowledgements)
 
 ---
 
 ## 🧐 About the Project
-Many people face difficulty deciding what to cook, often limited by the ingredients available in their fridge. This leads to food waste and poor meal planning. 
+[cite_start]Home cooking often faces challenges such as difficulty deciding what to cook and wasting food due to unused ingredients[cite: 70, 71, 72]. [cite_start]**MhobFinder** addresses this by allowing users to input available ingredients and immediately receiving recipe suggestions complete with cooking instructions[cite: 17].
 
-**MhobFinder** solves this by:
-1. allowing users to input ingredients (e.g., "egg", "tomato").
-2. generating instant recipe suggestions.
-3. providing step-by-step cooking instructions.
-
-The project was developed over 12 weeks using the **Waterfall methodology** and adheres to modern web development standards.
+[cite_start]The project was developed over a 12-week period using the **Waterfall methodology**, moving from requirement analysis to a fully functional prototype[cite: 19, 86].
 
 ---
 
 ## ✨ Key Features
 
-### User Portal
-* **Ingredient-Based Search:** Input available ingredients to find matching recipes.
-* **Recipe Suggestions:** View detailed recipes with images, ingredients, and step-by-step instructions.
-* **Smart Filtering:** Filter results by **Cuisine**, **Dietary Preferences**, and **Cooking Time**.
-* **Favorites:** Save recipes to a personal "Favorites" list for quick access.
-* **Alternative Ingredients:** Get suggestions for substitutes if you are missing an item.
+### User Functionalities
+* [cite_start]**Ingredient-Based Search:** Users can input ingredients (e.g., "egg", "tomato") to generate meal ideas[cite: 51].
+* [cite_start]**Recipe Suggestions:** Provides a list of relevant dishes based on ingredient compatibility[cite: 17].
+* [cite_start]**Detailed Instructions:** Includes step-by-step cooking guides with optional images[cite: 57].
+* [cite_start]**Smart Filtering:** Filter recipes by cuisine type, dietary preferences, and cooking time[cite: 60].
+* [cite_start]**Favorites System:** Logged-in users can save recipes for future reference[cite: 41].
+* [cite_start]**Alternative Ingredients:** Suggests substitutes when specific items are missing[cite: 59].
 
-### Admin Panel
-* **Recipe Management:** Create, update, and delete recipes.
-* **Ingredient Management:** Manage the database of ingredients and categories.
-* **User Monitoring:** View user activity and system usage.
+### Admin Functionalities
+* [cite_start]**Recipe Management:** Add, edit, and delete recipe data[cite: 140].
+* [cite_start]**Ingredient & Category Management:** Organize ingredients and categories for accurate searching[cite: 144, 147].
+* [cite_start]**User Monitoring:** View user activities and system usage statistics[cite: 149].
 
 ---
 
 ## 🛠 Tech Stack
 
-### Frontend
-* **JavaScript (ES6+)** - Core logic.
-* **React.js** - Component-based UI library.
-* **HTML5 & CSS3** - Layout and styling.
+[cite_start]**MhobFinder** is built using modern web technologies to ensure a responsive and efficient user experience[cite: 18].
 
-### Backend
-* **Node.js** - Runtime environment.
-* **Express.js** - Web framework for handling API requests.
-
-### Database & Services
-* **MySQL** - Relational database for storing recipes and user data.
-* **Firebase** - Used for User Authentication and Hosting.
-
-### Tools
-* **Figma** - UI/UX Design and Prototyping.
-* **VS Code** - Development environment.
-* **GitHub** - Version control.
+| Component | Technology | Description |
+| :--- | :--- | :--- |
+| **Frontend** | React.js / JavaScript | [cite_start]Used for dynamic UI components and interactivity[cite: 184, 189]. |
+| **Backend** | Node.js / Express | [cite_start]Handles server-side logic and API requests[cite: 194]. |
+| **Database** | MySQL | [cite_start]Relational database for storing recipes and user data[cite: 198]. |
+| **Auth/Hosting** | Firebase | [cite_start]Provides user authentication and backend services[cite: 18]. |
+| **Design** | Figma | [cite_start]Used for wireframing and UI/UX prototyping[cite: 211]. |
 
 ---
 
 ## 💻 Getting Started
 
-Follow these instructions to set up the project locally. You will need to run the **Backend** and **Frontend** in separate terminals.
+To run this project locally, you will need to set up the **Backend** and **Frontend** servers in two separate terminal windows.
 
 ### Prerequisites
-* Node.js installed (v14 or higher)
+* Node.js installed
 * MySQL installed and running
 
 ### Installation & Run Guide
 
 #### 1. Clone the Repository
 ```bash
-git clone [https://github.com/username/MhobFinder.git](https://github.com/username/MhobFinder.git)
+git clone [https://github.com/your-username/MhobFinder.git](https://github.com/your-username/MhobFinder.git)
 cd MhobFinder
 
 ```
 
-#### 2. Setup Backend (Terminal 1)
+#### 2. Terminal 1: Setup Backend
 
-Open your first terminal window to start the server.
+Open your **first terminal** to start the backend server.
 
 ```bash
-# Navigate to backend folder
+# Navigate to the backend directory
 cd backend
 
-# Install server dependencies
+# Install dependencies
 npm install
-
-# Create a .env file (if required) and add your DB/Firebase credentials
-# echo "DB_HOST=localhost" > .env
 
 # Start the Backend Server
 npm run dev
 
 ```
 
-*The server should now be running (e.g., on port 5000).*
+#### 3. Terminal 2: Setup Frontend
 
-#### 3. Setup Frontend (Terminal 2)
-
-Open a **new** terminal window to start the client application.
+Open a **second terminal** to start the client application.
 
 ```bash
-# Navigate to the project root, then frontend
-cd MhobFinder
+# Navigate to the frontend directory
 cd frontend
 
-# Install client dependencies
+# Install dependencies
 npm install
 
 # Start the React Application
@@ -127,47 +111,45 @@ npm run dev
 
 ```
 
-*The application should now be accessible in your browser (usually at `http://localhost:3000` or `http://localhost:5173`).*
+*Once both terminals are running, the application should be accessible via your browser (typically at `http://localhost:3000` or `http://localhost:5173`).*
 
 ---
 
 ## 🏗 System Architecture
 
-The system utilizes a **Client-Server Architecture**:
-
-1. **Client:** Web browser (Chrome/Firefox) running the React Frontend.
-2. **Server:** Node.js/Express API handling business logic.
-3. **Database:** MySQL storing structured data (Recipes, Ingredients, Users).
+The system follows a **Physical and Logical Architecture** where users access the application via web browsers. The frontend communicates with the Node.js/Firebase backend, which processes requests and retrieves data from the MySQL database.
 
 ---
 
-## 👥 Contributors
+## 👥 Team
 
-This project was submitted by the following students from the **Faculty of Digital Engineering**:
+This Capstone Project was submitted by:
 
-* **Mr. Sao Sethavathanak**
-* **Mrs. Kimhong Chhour**
-* **Mr. Pov Davin**
-* **Mr. Mok Chytasenasak**
-* **Mr. Khorn Vannda**
-* **Mr. Luy Virak**
+* Mr. Sao Sethavathanak 
+
+
+* Mrs. Kimhong Chhour 
+
+
+* Mr. Pov Davin 
+
+
+* Mr. Mok Chytasenasak 
+
+
+* Mr. Khorn Vannda 
+
+
+* Mr. Luy Virak 
+
+
 
 ---
 
 ## 🙏 Acknowledgements
 
-We would like to express our sincere gratitude to our advisor, **Mr. Thear Sophal**, for his continuous guidance and valuable feedback throughout the development of **MhobFinder**.
-
-We also thank the **Department of Computer Science** at the **Cambodia Academy of Digital Technology (CADT)** for equipping us with the necessary skills to complete this Capstone project.
+We would like to express our sincere gratitude to our advisor, Mr. Thear Sophal, for his continuous guidance and encouragement. We also thank the **Department of Computer Science** at the **Cambodia Academy of Digital Technology (CADT)** for their support.
 
 ```
-
-### Sources Used:
-* [cite_start]**Project Title & Type:** M’hobFinder is a web-based system designed to help users find recipes based on ingredients[cite: 14].
-* [cite_start]**Objective:** Simplify cooking, reduce food waste, and help users prepare balanced meals[cite: 53].
-* [cite_start]**Features:** Ingredient input, step-by-step instructions, alternative ingredients, filtering options, favorites[cite: 17, 154].
-* [cite_start]**Tech Stack:** Node.js, Firebase, HTML/CSS/JavaScript, React (optional), MySQL[cite: 18, 198, 199].
-* **Contributors & Advisor:** Sao Sethavathanak, Kimhong Chhour, Pov Davin, Mok Chytasenasak, Khorn Vannda, Luy Virak; [cite_start]Advisor: Mr. Thear Sophal[cite: 1].
-* [cite_start]**University:** Cambodia Academy of Digital Technology (CADT)[cite: 4].
 
 ```
