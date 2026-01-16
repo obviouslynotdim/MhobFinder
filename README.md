@@ -73,3 +73,67 @@ To run this project locally, you need to start the **Backend** and **Frontend** 
 ```bash
 git clone https://github.com/your-username/MhobFinder.git
 cd MhobFinder
+
+````
+
+---
+
+#### 2. Terminal 1: Setup Backend
+
+Open your **first terminal window** and run:
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+---
+
+#### 3. Terminal 2: Setup Frontend
+
+Open a **second terminal window** and run:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Once both terminals are running, open your browser and visit:
+
+* `http://localhost:3000`
+  or
+* `http://localhost:5173`
+
+(depending on your frontend configuration)
+
+---
+
+## 🏗 System Architecture
+
+The system follows a **logical and physical architecture** model:
+
+* Users interact with the application via a web browser
+* The **React frontend** communicates with the **Node.js / Express backend**
+* The backend processes requests, handles authentication via **Firebase**, and retrieves data from the **MySQL database**
+
+---
+
+## 👥 Team
+
+This Capstone Project was developed and submitted by:
+
+* Mr. Sao Sethavathanak
+* Mrs. Kimhong Chhour
+* Mr. Pov Davin
+* Mr. Mok Chytasenasak
+* Mr. Khorn Vannda
+* Mr. Luy Virak
+
+---
+
+```
+
+```
+
