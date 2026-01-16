@@ -1,6 +1,6 @@
 # 🍲 MhobFinder
 
-**Capstone Project 1 | Institute of Digital Technology** *A Smart Ingredient-Based Recipe Discovery Platform*
+**Capstone Project 2 | Institute of Digital Technology** *A Smart Ingredient-Based Recipe Discovery Platform*
 
 **MhobFinder** is a web-based system designed to help users discover recipes based on the ingredients they already have at home. By solving the common problem of *“what to cook”*, this platform simplifies meal planning, encourages healthier cooking habits, and helps reduce food waste.
 
@@ -13,7 +13,6 @@
 - [System Architecture](#-system-architecture)
 - [Getting Started](#-getting-started)
 - [Team](#-team)
-- [Acknowledgements](#-acknowledgements)
 
 ---
 
