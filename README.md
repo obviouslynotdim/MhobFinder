@@ -11,6 +11,7 @@
 - [Key Features](#-key-features)
 - [Tech Stack](#-tech-stack)
 - [Getting Started](#-getting-started)
+  - [Installation & Run Guide](#-installation--run-guide)
 - [System Architecture](#-system-architecture)
 - [Team](#-team)
 
