@@ -10,8 +10,8 @@
 - [About the Project](#-about-the-project)
 - [Key Features](#-key-features)
 - [Tech Stack](#-tech-stack)
-- [System Architecture](#-system-architecture)
 - [Getting Started](#-getting-started)
+- [System Architecture](#-system-architecture)
 - [Team](#-team)
 
 ---
