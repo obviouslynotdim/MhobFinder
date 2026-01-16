@@ -130,6 +130,3 @@ This Capstone Project was developed and submitted by:
 * Mr. Mok Chytasenasak
 * Mr. Khorn Vannda
 * Mr. Luy Virak
-
-```
-
