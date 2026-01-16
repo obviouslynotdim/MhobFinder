@@ -131,9 +131,5 @@ This Capstone Project was developed and submitted by:
 * Mr. Khorn Vannda
 * Mr. Luy Virak
 
----
-
-```
-
 ```
 
