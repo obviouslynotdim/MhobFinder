@@ -1,11 +1,12 @@
 ---
 
-```markdown
+````markdown
 # 🍲 MhobFinder
 
-**Capstone Project 1 | Institute of Digital Technology** *A Smart Ingredient-Based Recipe Discovery Platform*
+**Capstone Project 1 | Institute of Digital Technology**  
+*A Smart Ingredient-Based Recipe Discovery Platform*
 
-[cite_start]**MhobFinder** is a web-based system designed to help users discover recipes based on the ingredients they already have at home[cite: 14]. [cite_start]By solving the common problem of "what to cook," this platform aims to simplify meal planning, encourage healthier cooking habits, and reduce food waste[cite: 16, 20].
+**MhobFinder** is a web-based system designed to help users discover recipes based on the ingredients they already have at home. By solving the common problem of *“what to cook”*, this platform simplifies meal planning, encourages healthier cooking habits, and helps reduce food waste.
 
 ---
 
@@ -21,131 +22,127 @@
 ---
 
 ## 🧐 About the Project
-[cite_start]Home cooking often faces challenges such as difficulty deciding what to cook and wasting food due to unused ingredients[cite: 70, 71, 72]. [cite_start]**MhobFinder** addresses this by allowing users to input available ingredients and immediately receiving recipe suggestions complete with cooking instructions[cite: 17].
 
-[cite_start]The project was developed over a 12-week period using the **Waterfall methodology**, moving from requirement analysis to a fully functional prototype[cite: 19, 86].
+Home cooking often faces challenges such as difficulty deciding what to cook and wasting food due to unused ingredients. **MhobFinder** addresses this problem by allowing users to input available ingredients and instantly receive suitable recipe suggestions complete with cooking instructions.
+
+The project was developed over a **12-week period** using the **Waterfall methodology**, progressing from requirement analysis to system design, implementation, testing, and a fully functional prototype.
 
 ---
 
 ## ✨ Key Features
 
 ### User Functionalities
-* [cite_start]**Ingredient-Based Search:** Users can input ingredients (e.g., "egg", "tomato") to generate meal ideas[cite: 51].
-* [cite_start]**Recipe Suggestions:** Provides a list of relevant dishes based on ingredient compatibility[cite: 17].
-* [cite_start]**Detailed Instructions:** Includes step-by-step cooking guides with optional images[cite: 57].
-* [cite_start]**Smart Filtering:** Filter recipes by cuisine type, dietary preferences, and cooking time[cite: 60].
-* [cite_start]**Favorites System:** Logged-in users can save recipes for future reference[cite: 41].
-* [cite_start]**Alternative Ingredients:** Suggests substitutes when specific items are missing[cite: 59].
+- **Ingredient-Based Search:** Users can input ingredients (e.g., egg, tomato) to generate meal ideas.
+- **Recipe Suggestions:** Displays relevant dishes based on ingredient compatibility.
+- **Detailed Instructions:** Step-by-step cooking guides with optional images.
+- **Smart Filtering:** Filter recipes by cuisine type, dietary preferences, and cooking time.
+- **Favorites System:** Logged-in users can save favorite recipes for later use.
+- **Alternative Ingredients:** Suggests substitutes when certain ingredients are unavailable.
 
 ### Admin Functionalities
-* [cite_start]**Recipe Management:** Add, edit, and delete recipe data[cite: 140].
-* [cite_start]**Ingredient & Category Management:** Organize ingredients and categories for accurate searching[cite: 144, 147].
-* [cite_start]**User Monitoring:** View user activities and system usage statistics[cite: 149].
+- **Recipe Management:** Add, edit, and delete recipes.
+- **Ingredient & Category Management:** Maintain accurate ingredient and category data.
+- **User Monitoring:** View user activity and system usage statistics.
 
 ---
 
 ## 🛠 Tech Stack
 
-[cite_start]**MhobFinder** is built using modern web technologies to ensure a responsive and efficient user experience[cite: 18].
+**MhobFinder** is built using modern web technologies to ensure performance, scalability, and a responsive user experience.
 
 | Component | Technology | Description |
-| :--- | :--- | :--- |
-| **Frontend** | React.js / JavaScript | [cite_start]Used for dynamic UI components and interactivity[cite: 184, 189]. |
-| **Backend** | Node.js / Express | [cite_start]Handles server-side logic and API requests[cite: 194]. |
-| **Database** | MySQL | [cite_start]Relational database for storing recipes and user data[cite: 198]. |
-| **Auth/Hosting** | Firebase | [cite_start]Provides user authentication and backend services[cite: 18]. |
-| **Design** | Figma | [cite_start]Used for wireframing and UI/UX prototyping[cite: 211]. |
+|---------|-----------|-------------|
+| **Frontend** | React.js / JavaScript | Dynamic user interface and client-side logic |
+| **Backend** | Node.js / Express | Server-side logic and RESTful APIs |
+| **Database** | MySQL | Stores recipes, ingredients, and user data |
+| **Authentication** | Firebase | User authentication and backend services |
+| **Design** | Figma | UI/UX wireframing and prototyping |
 
 ---
 
 ## 💻 Getting Started
 
-To run this project locally, you will need to set up the **Backend** and **Frontend** servers in two separate terminal windows.
+To run this project locally, you need to start the **Backend** and **Frontend** in **two separate terminal windows**.
 
 ### Prerequisites
-* Node.js installed
-* MySQL installed and running
+- Node.js (LTS recommended)
+- MySQL (installed and running)
+- Git
 
-### Installation & Run Guide
+---
+
+### 🚀 Installation & Run Guide
 
 #### 1. Clone the Repository
 ```bash
-git clone [https://github.com/your-username/MhobFinder.git](https://github.com/your-username/MhobFinder.git)
+git clone https://github.com/your-username/MhobFinder.git
 cd MhobFinder
+````
 
-```
+---
 
 #### 2. Terminal 1: Setup Backend
 
-Open your **first terminal** to start the backend server.
+Open your **first terminal window** and run:
 
 ```bash
-# Navigate to the backend directory
 cd backend
-
-# Install dependencies
 npm install
-
-# Start the Backend Server
 npm run dev
-
 ```
+
+---
 
 #### 3. Terminal 2: Setup Frontend
 
-Open a **second terminal** to start the client application.
+Open a **second terminal window** and run:
 
 ```bash
-# Navigate to the frontend directory
 cd frontend
-
-# Install dependencies
 npm install
-
-# Start the React Application
 npm run dev
-
 ```
 
-*Once both terminals are running, the application should be accessible via your browser (typically at `http://localhost:3000` or `http://localhost:5173`).*
+Once both terminals are running, open your browser and visit:
+
+* `http://localhost:3000`
+  or
+* `http://localhost:5173`
+
+(depending on your frontend configuration)
 
 ---
 
 ## 🏗 System Architecture
 
-The system follows a **Physical and Logical Architecture** where users access the application via web browsers. The frontend communicates with the Node.js/Firebase backend, which processes requests and retrieves data from the MySQL database.
+The system follows a **logical and physical architecture** model:
+
+* Users interact with the application via a web browser
+* The **React frontend** communicates with the **Node.js / Express backend**
+* The backend processes requests, handles authentication via **Firebase**, and retrieves data from the **MySQL database**
 
 ---
 
 ## 👥 Team
 
-This Capstone Project was submitted by:
+This Capstone Project was developed and submitted by:
 
-* Mr. Sao Sethavathanak 
-
-
-* Mrs. Kimhong Chhour 
-
-
-* Mr. Pov Davin 
-
-
-* Mr. Mok Chytasenasak 
-
-
-* Mr. Khorn Vannda 
-
-
-* Mr. Luy Virak 
-
-
+* Mr. Sao Sethavathanak
+* Mrs. Kimhong Chhour
+* Mr. Pov Davin
+* Mr. Mok Chytasenasak
+* Mr. Khorn Vannda
+* Mr. Luy Virak
 
 ---
 
 ## 🙏 Acknowledgements
 
-We would like to express our sincere gratitude to our advisor, Mr. Thear Sophal, for his continuous guidance and encouragement. We also thank the **Department of Computer Science** at the **Cambodia Academy of Digital Technology (CADT)** for their support.
+We would like to express our sincere gratitude to our advisor, **Mr. Thear Sophal**, for his continuous guidance and encouragement.
+Special thanks to the **Department of Computer Science** at the **Cambodia Academy of Digital Technology (CADT)** for their support throughout this project.
 
 ```
+
+---
 
 ```
