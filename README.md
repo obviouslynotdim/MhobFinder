@@ -75,8 +75,6 @@ cd MhobFinder
 
 ````
 
----
-
 #### 2. Terminal 1: Setup Backend
 
 Open your **first terminal window** and run:
@@ -86,8 +84,6 @@ cd backend
 npm install
 npm run dev
 ```
-
----
 
 #### 3. Terminal 2: Setup Frontend
 
