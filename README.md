@@ -1,7 +1,3 @@
-Here is the full, professional `README.md` file for **MhobFinder**, incorporating all the details from your report and the specific terminal setup instructions you requested.
-
-You can copy the code block below directly into your project's `README.md` file.
-
 ---
 
 ```markdown
