@@ -1,17 +1,16 @@
-const express = require('express');
-const app = express();
-const PORT = 3000;
+// backend/index.js
+import express from "express";
+import cors from "cors";
+import foodRoutes from "./routes/food.routes.js";
+import ingredientRoutes from "./routes/ingredient.routes.js";
 
+const app = express();
+app.use(cors());
 app.use(express.json());
 
-app.get('/api/recipes', (req, res) => {
-  res.json([
-    { id: 1, name: 'Egg' },
-    { id: 2, name: 'Tomato' },
-    { id: 3, name: 'Garlic' },
-  ]);
-});
+// Routes
+app.use("/api/ingredients", ingredientRoutes);
+app.use("/api/foods", foodRoutes); 
 
-app.listen(PORT, () => {
-  console.log(`Backend running on http://localhost:${PORT}`);
-});
+const PORT = 5000;
+app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));
