@@ -9,5 +9,5 @@ const dummyIngredients = [
 ];
 
 export const getAllIngredients = async (req, res) => {
-  res.json(dummyIngredients); // returns list for sidebar
+  res.json(dummyIngredients); // returns list for sidebars
 };

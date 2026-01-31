@@ -5,7 +5,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Dummy Data matching your screenshots
 const ingredients = [
   { ingredient_id: 1, name: "Eggs", color: "yellow" },
   { ingredient_id: 2, name: "Bell Paper", color: "red" },

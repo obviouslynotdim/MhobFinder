@@ -15,14 +15,14 @@ const dummyFoods = [
   }
 ];
 
-export const getAllFoods = async (req, res) => res.json(dummyFoods); //
+export const getAllFoods = async (req, res) => res.json(dummyFoods); 
 
 export const getMatchedFoods = async (req, res) => {
   const { ingredients } = req.body;
-  if (!ingredients || ingredients.length === 0) return res.json(dummyFoods); //
+  if (!ingredients || ingredients.length === 0) return res.json(dummyFoods); 
   
   const filtered = dummyFoods.filter(food => 
     food.ingredients.some(id => ingredients.includes(id))
   );
-  res.json(filtered); //
+  res.json(filtered);
 };
