@@ -15,17 +15,17 @@
 // ];
 
 // const foods = [
-//   { 
-//     food_id: 1, 
-//     title: "Deviled Eggs, Purgatory Edition", 
-//     image_url: "https://www.supercook.com/images/recipes/Large/1000/deviled-eggs.jpg", 
+//   {
+//     food_id: 1,
+//     title: "Deviled Eggs, Purgatory Edition",
+//     image_url: "https://www.supercook.com/images/recipes/Large/1000/deviled-eggs.jpg",
 //     time: "10 mins", category: "Vegan", difficulty: "Easy",
-//     matched: "Eggs, Mayonnaise, Mustard", ingredients: [1] 
+//     matched: "Eggs, Mayonnaise, Mustard", ingredients: [1]
 //   },
-//   { 
-//     food_id: 2, 
-//     title: "Khmer Stir-fry Pork", 
-//     image_url: "https://grantourismotravels.com/wp-content/uploads/2021/01/Pork-Stir-Fry-with-Holy-Basil-Recipe-Pad-Kra-Pao-Copyright-2021-Terence-Carter-Grantourismo-f.jpg", 
+//   {
+//     food_id: 2,
+//     title: "Khmer Stir-fry Pork",
+//     image_url: "https://grantourismotravels.com/wp-content/uploads/2021/01/Pork-Stir-Fry-with-Holy-Basil-Recipe-Pad-Kra-Pao-Copyright-2021-Terence-Carter-Grantourismo-f.jpg",
 //     time: "15 mins", category: "Traditional", difficulty: "Medium",
 //     matched: "Pork, Bell Paper, Garlic", ingredients: [2, 3]
 //   }
@@ -42,3 +42,5 @@
 
 // const PORT = 5000;
 // app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+
+
