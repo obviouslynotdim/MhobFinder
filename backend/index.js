@@ -8,9 +8,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Routes
 app.use("/api/ingredients", ingredientRoutes);
-app.use("/api/foods", foodRoutes); 
+app.use("/api/foods", foodRoutes);
 
 const PORT = 5000;
-app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Backend running on http://localhost:${PORT}`));
