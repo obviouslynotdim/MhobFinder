@@ -227,6 +227,6 @@ const dummyIngredients = [
   { ingredient_id: 234, name: "Coconut Sugar", color: "yellow", category: "O" },
 ];
 
-export const getAllIngredients = async (req, res) => {
-  res.json(dummyIngredients);
+export const getAllIngredients = async () => {
+  return dummyIngredients;
 };

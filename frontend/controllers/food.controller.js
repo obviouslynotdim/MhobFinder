@@ -15,9 +15,6 @@ const dummyFoods = [
     matched: "Beef, Kampot Pepper", ingredients: [21, 10, 4, 5, 40, 42],
     tag: ["khmer"]
   },
-
-  // ✅ Added foods (using your ingredient ids only)
-
   {
     food_id: 3,
     title: "Kuy Teav (គុយទាវ)",
@@ -148,15 +145,14 @@ const dummyFoods = [
   }
 ];
 
-export const getAllFoods = async (req, res) => res.json(dummyFoods);
+export const getAllFoods = async () => {
+  return dummyFoods;
+};
 
-export const getMatchedFoods = async (req, res) => {
-  const { ingredients } = req.body;
-  if (!ingredients || ingredients.length === 0) return res.json(dummyFoods);
+export const getMatchedFoods = async (ingredients) => {
+  if (!ingredients || ingredients.length === 0) return dummyFoods;
 
-  const filtered = dummyFoods.filter(food =>
+  return dummyFoods.filter(food =>
     food.ingredients.some(id => ingredients.includes(id))
   );
-
-  res.json(filtered);
 };

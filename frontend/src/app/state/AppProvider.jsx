@@ -7,7 +7,9 @@ import React, {
   useRef,
   useState,
 } from "react";
-import axios from "axios";
+// Import your controllers directly
+import { getAllFoods, getMatchedFoods } from "../../../controllers/food.controller.js";
+import { getAllIngredients } from "../../../controllers/ingredient.controller.js";
 
 const AppCtx = createContext(null);
 
@@ -16,12 +18,8 @@ export function AppProvider({ children }) {
   const [selectedIds, setSelectedIds] = useState([]);
   const [foods, setFoods] = useState([]);
   const [search, setSearch] = useState("");
-
-  // initial data loading (ingredients + default foods)
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // loading state for the "match foods" request fired when toggling ingredients
   const [foodsLoading, setFoodsLoading] = useState(false);
 
   const [favorites, setFavorites] = useState(() => {
@@ -32,72 +30,61 @@ export function AppProvider({ children }) {
     }
   });
 
-  // Prevent "older response overwrites newer response"
   const foodsReqIdRef = useRef(0);
 
-  // Prevent double-fetch issues in React StrictMode dev
-
+  // Initial Load using imported functions instead of axios
   useEffect(() => {
-    const controller = new AbortController();
-
     (async () => {
       try {
         setLoading(true);
-        const [ing, food] = await Promise.all([
-          axios.get("/api/ingredients", { signal: controller.signal }),
-          axios.get("/api/foods", { signal: controller.signal }),
+        // Call the controller functions directly
+        const [ingData, foodData] = await Promise.all([
+          getAllIngredients(),
+          getAllFoods(),
         ]);
 
-        setIngredients(ing.data);
-        setFoods(food.data);
+        setIngredients(ingData);
+        setFoods(foodData);
       } catch (e) {
-        // Ignore abort errors (happen in StrictMode dev)
-        if (e?.name !== "CanceledError" && e?.name !== "AbortError") {
-          console.error("Initial load failed:", e);
-        }
+        console.error("Initial load failed:", e);
+        setError(e);
       } finally {
         setLoading(false);
       }
     })();
-
-    return () => controller.abort();
   }, []);
 
   useEffect(() => {
     localStorage.setItem("mhob:favorites", JSON.stringify(favorites));
   }, [favorites]);
 
+  // Updated to use the local matching logic
   const refreshFoods = useCallback(async (ids) => {
     const reqId = ++foodsReqIdRef.current;
 
     try {
       setFoodsLoading(true);
-      const res = await axios.post("/api/foods/match", { ingredients: ids });
+      // Call local filtering logic instead of axios.post
+      const matchedResults = await getMatchedFoods(ids);
 
-      // only accept the latest request's result
       if (reqId === foodsReqIdRef.current) {
-        setFoods(res.data);
+        setFoods(matchedResults);
       }
     } catch (e) {
-      // Optional: surface this error in UI
       setError(e);
     } finally {
-      // only clear loading if this request is still the latest one
       if (reqId === foodsReqIdRef.current) {
         setFoodsLoading(false);
       }
     }
   }, []);
 
-  // ✅ Stale-safe: compute next selection from previous state
   const toggleIngredient = useCallback(
     (id) => {
       setSelectedIds((prev) => {
         const next = prev.includes(id)
           ? prev.filter((x) => x !== id)
           : [...prev, id];
-
-        // fire async refresh (don’t await inside state setter)
         refreshFoods(next);
         return next;
       });
@@ -124,7 +111,6 @@ export function AppProvider({ children }) {
     return foods.filter((f) => (f.title || "").toLowerCase().includes(q));
   }, [foods, search]);
 
-  // ✅ Memoize context value to reduce rerenders
   const value = useMemo(
     () => ({
       ingredients,
@@ -134,29 +120,14 @@ export function AppProvider({ children }) {
       favorites,
       search,
       setSearch,
-
       loading,
       foodsLoading,
       error,
-
       toggleIngredient,
       clearIngredients,
       toggleFavorite,
     }),
-    [
-      ingredients,
-      selectedIds,
-      filteredFoods,
-      foods,
-      favorites,
-      search,
-      loading,
-      foodsLoading,
-      error,
-      toggleIngredient,
-      clearIngredients,
-      toggleFavorite,
-    ],
+    [ingredients, selectedIds, filteredFoods, foods, favorites, search, loading, foodsLoading, error, toggleIngredient, clearIngredients, toggleFavorite],
   );
 
   return <AppCtx.Provider value={value}>{children}</AppCtx.Provider>;
