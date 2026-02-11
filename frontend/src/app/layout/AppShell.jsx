@@ -12,10 +12,16 @@ export default function AppShell() {
   const loc = useLocation();
 
   // ✅ auto-collapse on About, otherwise use user toggle
-  const collapsed = loc.pathname.startsWith("/about") ? true : userCollapsed;
+  const collapsed =
+    loc.pathname.startsWith("/about") || loc.pathname.startsWith("/favorites")
+      ? true
+      : userCollapsed;
 
-  const sidebarW = collapsed ? "72px" : "340px";
+
+  const sidebarW = collapsed ? "72px" : "440px";
   const headerH = "90px";
+
+  
 
   return (
     <Flex direction="column" h="100vh" overflow="hidden">
@@ -41,37 +47,47 @@ export default function AppShell() {
       </Flex>
 
       <Flex flex="1" minH="0" overflow="hidden">
-        <Box w={sidebarW} bg="#E1EDFE" minH="0" overflowY="auto">
+        <Box
+          w={sidebarW}
+          bg={collapsed ? "#4975BB" : "#E1EDFE"} // Change color when collapsed
+          minH="0"
+          overflowY="auto"
+        >
           <Sidebar collapsed={collapsed} />
         </Box>
 
         <Box w="4px" bg="blackAlpha.300" />
 
-        <Box flex="1" minH="0" overflow="hidden" position="relative" bg="#E1EDFE">
-  {/* background pattern layer */}
-  <Box
-    position="absolute"
-    inset="0"
-    bgImage="url('/assets/bg.png')" // rename if you can
-    bgRepeat="repeat"
-    bgSize="320px"          // smaller = less “zoomed in”
-    bgPosition="0 0"
-    opacity={0.38}          // lower = more subtle
-    pointerEvents="none"
-  />
+        <Box
+          flex="1"
+          minH="0"
+          overflow="hidden"
+          position="relative"
+          bg="#E1EDFE"
+        >
+          {/* background pattern layer */}
+          <Box
+            position="absolute"
+            inset="0"
+            bgImage="url('/assets/bg.png')" // rename if you can
+            bgRepeat="repeat"
+            bgSize="320px" // smaller = less “zoomed in”
+            bgPosition="0 0"
+            opacity={0.38} // lower = more subtle
+            pointerEvents="none"
+          />
 
-  {/* your scrollable content */}
-  <Box position="relative" zIndex="1" h="100%" overflowY="auto" minH="0">
-    <Outlet />
-  </Box>
-</Box>
-
-
-
-
-
-
-
+          {/* your scrollable content */}
+          <Box
+            position="relative"
+            zIndex="1"
+            h="100%"
+            overflowY="auto"
+            minH="0"
+          >
+            <Outlet />
+          </Box>
+        </Box>
       </Flex>
     </Flex>
   );

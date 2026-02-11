@@ -17,6 +17,8 @@ export default function TopBarRight() {
   // const loc = useLocation();
   const nav = useNavigate();
 
+  
+
   return (
     <HStack w="full" justify="space-between" gap="4">
       <Text fontWeight="bold" color="white" fontSize="lg" minW="110px">

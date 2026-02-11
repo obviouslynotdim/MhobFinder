@@ -1,89 +1,96 @@
 import {
-  Badge,
   Box,
-  Button,
-  HStack,
-  IconButton,
+  Flex,
   Image,
   Text,
+  Badge,
+  Button,
+  IconButton,
   VStack,
+  HStack,
 } from "@chakra-ui/react";
 import { FiHeart } from "react-icons/fi";
 
-
-
 export default function RecipeCard({ food, isFavorite, onToggleFavorite }) {
   return (
-    <Box
-      bg="white"
-      borderRadius="2xl"
-      overflow="hidden"
+    <Flex
+      direction={{ base: "column", md: "row" }} // Stack vertically on small screens, side by side on larger screens
+      bg="#E3F2FD"
+      borderRadius="lg"
       boxShadow="md"
-      display="flex"
-      flexDirection="column"
+      overflow="hidden"
+      p="5"
+      gap="5" // Adds space between the image section and text section
+      maxW="lg"
+      w="full"
     >
-      <Box position="relative">
+      {/* Left side: Food Image and View Button */}
+      <Box
+        flex="0 0 200px"
+        w="400px"
+        h="200px"
+        overflow="hidden"
+        borderRadius="full"
+      >
         <Image
           src={food.image_url}
+          alt={food.title}
           w="full"
-          h={{ base: "180px", md: "200px" }}
+          h="full"
           objectFit="cover"
-        />
-        <IconButton
-          aria-label="Toggle favorite"
-          position="absolute"
-          top="3"
-          right="3"
           borderRadius="full"
-          bg={isFavorite ? "red.500" : "whiteAlpha.900"}
-          color={isFavorite ? "white" : "gray.800"}
-          _hover={{ opacity: 0.9 }}
-          onClick={() => onToggleFavorite(food.food_id)}
-        >
-          <FiHeart />
-        </IconButton>
+        />
       </Box>
 
-      <VStack align="start" p="5" gap="2" w="full" minW="0" flex="1">
-        <Text fontWeight="bold" fontSize="lg" noOfLines={1} w="full">
+      <VStack align="start" spacing={4} flex="1" pt="2">
+        {/* Recipe Title */}
+        <Text fontWeight="bold" fontSize="xl" isTruncated>
           {food.title}
         </Text>
 
-        <HStack gap={2} flexWrap="wrap">
-          {food.time && (
-            <Badge colorPalette="blue" variant="subtle">
-              {food.time}
-            </Badge>
-          )}
-          {food.category && (
-            <Badge colorPalette="purple" variant="subtle">
-              {food.category}
-            </Badge>
-          )}
-          {food.difficulty && (
-            <Badge colorPalette="orange" variant="subtle">
-              {food.difficulty}
-            </Badge>
-          )}
+        {/* Time, Difficulty, and Vegan Status Badges */}
+        <HStack spacing={3}>
+          <Badge colorScheme="blue" variant="subtle">
+            {food.time} mins
+          </Badge>
+          <Badge colorScheme="green" variant="subtle">
+            {food.isVegan ? "Vegan" : "Non-Vegan"}
+          </Badge>
+          <Badge colorScheme="orange" variant="subtle">
+            {food.difficulty}
+          </Badge>
         </HStack>
 
-        {food.matched && (
-          <Text fontSize="xs" color="gray.500" noOfLines={2}>
-            Matched: {food.matched}
-          </Text>
-        )}
+        {/* Ingredients List */}
+        <Text fontSize="sm" color="gray.500" noOfLines={3}>
+          Ingredients: {food.ingredients?.slice(0, 40)}...
+        </Text>
 
-        <Button
-          colorPalette="blue"
-          size="sm"
-          borderRadius="xl"
-          mt="2"
-          width="full"
-          variant="outline"
-        >
-          View Full Recipe
-        </Button>
+        {/* Buttons and Favorite Icon */}
+        <HStack justify="space-between" w="full" mt="4">
+          <Button
+            colorScheme="orange"
+            size="sm"
+            variant="solid"
+            borderRadius="xl"
+            width="full"
+          >
+            View
+          </Button>
+
+          <IconButton
+            aria-label="Toggle favorite"
+            icon={<FiHeart />}
+            onClick={() => onToggleFavorite(food.food_id)}
+            bg={isFavorite ? "red.500" : "whiteAlpha.900"}
+            color={isFavorite ? "white" : "gray.800"}
+            _hover={{ opacity: 0.9 }}
+            borderRadius="full"
+            top="3"
+            right="3"
+          />
+        </HStack>
       </VStack>
-    </Box>
+    </Flex>
   );
 }

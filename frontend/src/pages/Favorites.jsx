@@ -16,13 +16,7 @@ import { useApp } from "../app/state/AppProvider.jsx";
 
 function FavoriteCard({ food, isFavorite, onToggleFavorite }) {
   return (
-    <Box
-      bg="white"
-      borderRadius="2xl"
-      boxShadow="md"
-      p="4"
-      overflow="hidden"
-    >
+    <Box bg="white" borderRadius="2xl" boxShadow="md" p="4" overflow="hidden">
       <HStack align="stretch" gap="4">
         <Image
           src={food.image_url}
@@ -113,20 +107,27 @@ export default function Favorites() {
             {favoriteFoods.length} recipe{favoriteFoods.length === 1 ? "" : "s"}
           </Text>
         </VStack>
-
-        <Button variant="ghost" onClick={() => nav("/")}>Home</Button>
       </HStack>
 
       {favoriteFoods.length === 0 ? (
         <Center py="16">
-          <VStack bg="white" p="10" borderRadius="3xl" boxShadow="xl" textAlign="center" gap="3">
+          <VStack
+            bg="white"
+            p="10"
+            borderRadius="3xl"
+            boxShadow="xl"
+            textAlign="center"
+            gap="3"
+          >
             <Text fontSize="lg" fontWeight="bold">
               No favorites yet
             </Text>
             <Text fontSize="sm" opacity="0.75" maxW="420px">
               Tap the heart on a recipe card to save it here.
             </Text>
-            <Button colorPalette="blue" onClick={() => nav("/")}>Browse recipes</Button>
+            <Button colorPalette="blue" onClick={() => nav("/")}>
+              Browse recipes
+            </Button>
           </VStack>
         </Center>
       ) : (

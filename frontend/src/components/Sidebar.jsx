@@ -62,7 +62,6 @@ const CATEGORY_ORDER = [
   "Spices & Heat",
 ];
 
-
 function groupByCategory(ingredients) {
   const map = new Map();
   const allowed = new Set(CATEGORY_ORDER);
@@ -126,14 +125,12 @@ export default function Sidebar({ collapsed }) {
 
         return (
           <Box
-  key={cat}
-  mb="10"
-  borderRadius="2xl"
-  p="3"
-  boxShadow="0 8px 24px rgba(0,0,0,0.15)"
->
-
-
+            key={cat}
+            mb="10"
+            borderRadius="2xl"
+            p="3"
+            boxShadow="0 8px 24px rgba(0,0,0,0.15)"
+          >
             <VStack align="start" spacing="1" mb="5">
               <Text fontWeight="bold" color="gray.900" lineHeight="0.9">
                 {cat}
@@ -174,9 +171,12 @@ export default function Sidebar({ collapsed }) {
         ).length;
 
         return (
-          <Box mb="2" borderRadius="2xl"
-  p="3"
-  boxShadow="0 8px 24px rgba(0,0,0,0.15)">
+          <Box
+            mb="2"
+            borderRadius="2xl"
+            p="3"
+            boxShadow="0 8px 24px rgba(0,0,0,0.15)"
+          >
             <VStack align="start" spacing="1" mb="5">
               <Text fontWeight="bold" color="gray.900" lineHeight="0.9">
                 Other
@@ -186,23 +186,22 @@ export default function Sidebar({ collapsed }) {
               </Text>
             </VStack>
 
-
             <Box
               bg="#AEBED9" // ✅ dark gray panel (change if you want darker)
               borderRadius="2xl"
               p="3"
             >
-            <Wrap spacing="2" spacingY="2">
-              {other.map((item) => (
-                <WrapItem key={item.ingredient_id}>
-                  <IngredientChip
-                    item={item}
-                    selected={selectedIds.includes(item.ingredient_id)}
-                    onClick={() => toggleIngredient(item.ingredient_id)}
-                  />
-                </WrapItem>
-              ))}
-            </Wrap>
+              <Wrap spacing="2" spacingY="2">
+                {other.map((item) => (
+                  <WrapItem key={item.ingredient_id}>
+                    <IngredientChip
+                      item={item}
+                      selected={selectedIds.includes(item.ingredient_id)}
+                      onClick={() => toggleIngredient(item.ingredient_id)}
+                    />
+                  </WrapItem>
+                ))}
+              </Wrap>
             </Box>
           </Box>
         );
