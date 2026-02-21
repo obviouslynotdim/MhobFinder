@@ -5,6 +5,7 @@ import { useApp } from "../app/state/AppProvider.jsx";
 import { MdTranslate } from "react-icons/md";
 
 
+
 // function pageTitle(pathname) {
 //   if (pathname === "/") return "Home";
 //   if (pathname.startsWith("/favorites")) return "Favorites";

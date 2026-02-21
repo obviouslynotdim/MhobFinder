@@ -5,6 +5,7 @@ import { useState } from "react";
 import TopBarLeft from "../../components/TopBarLeft.jsx";
 import TopBarRight from "../../components/TopBarRight.jsx";
 import Sidebar from "../../components/Sidebar.jsx";
+import Login from "../../pages/Login.jsx";
 
 
 export default function AppShell() {
@@ -13,7 +14,7 @@ export default function AppShell() {
 
   // ✅ auto-collapse on About, otherwise use user toggle
   const collapsed =
-    loc.pathname.startsWith("/about") || loc.pathname.startsWith("/favorites")
+    loc.pathname.startsWith("/about") || loc.pathname.startsWith("/favorites")|| loc.pathname.startsWith("/login")
       ? true
       : userCollapsed;
 
