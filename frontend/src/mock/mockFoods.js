@@ -1,4 +1,5 @@
-const dummyFoods = [
+// /src/mock/mockFoods.js
+export const dummyFoods = [
   { 
     food_id: 1, 
     title: "Fish Amok (អាម៉ុកត្រី)", 
@@ -144,15 +145,3 @@ const dummyFoods = [
     tag: ["khmer"]
   }
 ];
-
-export const getAllFoods = async () => {
-  return dummyFoods;
-};
-
-export const getMatchedFoods = async (ingredients) => {
-  if (!ingredients || ingredients.length === 0) return dummyFoods;
-
-  return dummyFoods.filter(food =>
-    food.ingredients.some(id => ingredients.includes(id))
-  );
-};

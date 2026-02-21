@@ -1,4 +1,5 @@
-const dummyIngredients = [
+// /src/mock/mockIngredients.js
+export const dummyIngredients = [
   // Pantry Essential
   { ingredient_id: 1, name: "Prahok", color: "orange", category: "Pantry Essential" },
   { ingredient_id: 2, name: "Kroeung", color: "green", category: "Pantry Essential" },
@@ -226,7 +227,3 @@ const dummyIngredients = [
   { ingredient_id: 234, name: "Coconut Sugar", color: "yellow", category: "Sauces & Condiments" },
   { ingredient_id: 234, name: "Coconut Sugar", color: "yellow", category: "O" },
 ];
-
-export const getAllIngredients = async () => {
-  return dummyIngredients;
-};
