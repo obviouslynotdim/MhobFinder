@@ -12,6 +12,52 @@ import { useApp } from "../app/state/AppProvider.jsx";
 import RecipeCard from "../components/RecipeCard.jsx";
 import FullRecipe from "../components/FullRecipe/FullRecipe.jsx";
 
+function HomeEmptyState() {
+  return (
+    <VStack h="full" justify="center" gap="4" textAlign="center" py="20">
+      <Image
+        src="https://cdn-icons-png.flaticon.com/512/2276/2276931.png"
+        alt="Chef"
+        boxSize="96px"
+        opacity="0.9"
+      />
+      <Text fontWeight="normal" fontSize="xl">
+        Add your ingredients to get started
+      </Text>
+      <Text fontWeight="normal" fontSize="xl">
+        Every Ingreadients you add will unlocks more recipes
+      </Text>
+    </VStack>
+  );
+}
+
+function HomeNoResults({ onClear }) {
+  return (
+    <VStack h="full" justify="center" gap="3" textAlign="center" py="20">
+      <Text fontWeight="bold" fontSize="xl">
+        No recipes found
+      </Text>
+      <Text opacity="0.75">
+        Try adding more ingredients, or clear your selection.
+      </Text>
+      <Button variant="outline" onClick={onClear}>
+        Clear ingredients
+      </Button>
+    </VStack>
+  );
+}
+
+function HomeLoading() {
+  return (
+    <VStack h="full" justify="center" gap="3" textAlign="center" py="20">
+      <Text fontWeight="bold">Loading recipes…</Text>
+      <Text opacity="0.75">
+        Matching recipes to your ingredients.
+      </Text>
+    </VStack>
+  );
+}
+
 export default function Home() {
   const {
     selectedIds,
@@ -24,9 +70,17 @@ export default function Home() {
 
   const [selectedRecipe, setSelectedRecipe] = useState(null);
 
-  if (selectedIds.length === 0) return null;
-  if (foodsLoading) return null;
-  if (foods.length === 0) return null;
+  if (selectedIds.length === 0) {
+    return <HomeEmptyState />;
+  }
+
+  if (foodsLoading) {
+    return <HomeLoading />;
+  }
+
+  if (foods.length === 0) {
+    return <HomeNoResults onClear={clearIngredients} />;
+  }
 
   return (
     <Box p={{ base: 4, md: 6 }} position="relative">
@@ -40,13 +94,9 @@ export default function Home() {
             Do you have?
           </Text>
         </VStack>
-
-        <Button variant="ghost" onClick={clearIngredients}>
-          Clear
-        </Button>
       </HStack>
 
-      <SimpleGrid columns={{ base: 1, md: 2 }} gap={{ base: 4, md: 6 }}>
+      <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing="4">
         {foods.map((food) => (
           <RecipeCard
             key={food.food_id}
@@ -58,10 +108,8 @@ export default function Home() {
         ))}
       </SimpleGrid>
 
-      {/* Modal + Backdrop */}
       {selectedRecipe && (
         <>
-          {/* Dark Background */}
           <Box
             position="fixed"
             top="0"
@@ -73,7 +121,6 @@ export default function Home() {
             onClick={() => setSelectedRecipe(null)}
           />
 
-          {/* Slide Panel */}
           <FullRecipe
             foodId={selectedRecipe.food_id}
             onClose={() => setSelectedRecipe(null)}

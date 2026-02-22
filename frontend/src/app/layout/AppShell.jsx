@@ -14,7 +14,8 @@ export default function AppShell() {
 
   // ✅ auto-collapse on About, otherwise use user toggle
   const collapsed =
-    loc.pathname.startsWith("/about") || loc.pathname.startsWith("/favorites")|| loc.pathname.startsWith("/login")
+    loc.pathname.startsWith("/about") 
+    // || loc.pathname.startsWith("/favorites")|| loc.pathname.startsWith("/login")
       ? true
       : userCollapsed;
 
