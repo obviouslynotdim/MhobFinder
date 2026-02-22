@@ -11,20 +11,21 @@ import {
 } from "@chakra-ui/react";
 import { FiHeart } from "react-icons/fi";
 
-export default function RecipeCard({ food, isFavorite, onToggleFavorite }) {
+export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView }) {
   return (
     <Flex
-      direction={{ base: "column", md: "row" }} // Stack vertically on small screens, side by side on larger screens
+      onClick={() => onView(food)}   // 🔥 CONNECTED HERE
+      cursor="pointer"
+      direction={{ base: "column", md: "row" }}
       bg="#E3F2FD"
       borderRadius="lg"
       boxShadow="md"
       overflow="hidden"
       p="5"
-      gap="5" // Adds space between the image section and text section
+      gap="5"
       maxW="lg"
       w="full"
     >
-      {/* Left side: Food Image and View Button */}
       <Box
         flex="0 0 200px"
         w="400px"
@@ -43,12 +44,10 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite }) {
       </Box>
 
       <VStack align="start" spacing={4} flex="1" pt="2">
-        {/* Recipe Title */}
         <Text fontWeight="bold" fontSize="xl" isTruncated>
           {food.title}
         </Text>
 
-        {/* Time, Difficulty, and Vegan Status Badges */}
         <HStack spacing={3}>
           <Badge colorScheme="blue" variant="subtle">
             {food.time} mins
@@ -61,12 +60,10 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite }) {
           </Badge>
         </HStack>
 
-        {/* Ingredients List */}
         <Text fontSize="sm" color="gray.500" noOfLines={3}>
           Ingredients: {food.ingredients?.slice(0, 40)}...
         </Text>
 
-        {/* Buttons and Favorite Icon */}
         <HStack justify="space-between" w="full" mt="4">
           <Button
             colorScheme="orange"
@@ -75,19 +72,20 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite }) {
             borderRadius="xl"
             width="full"
           >
-            View
+            View Recipe
           </Button>
 
           <IconButton
             aria-label="Toggle favorite"
             icon={<FiHeart />}
-            onClick={() => onToggleFavorite(food.food_id)}
+            onClick={(e) => {
+              e.stopPropagation();  // prevent opening FullRecipe
+              onToggleFavorite(food.food_id);
+            }}
             bg={isFavorite ? "red.500" : "whiteAlpha.900"}
             color={isFavorite ? "white" : "gray.800"}
             _hover={{ opacity: 0.9 }}
             borderRadius="full"
-            top="3"
-            right="3"
           />
         </HStack>
       </VStack>
