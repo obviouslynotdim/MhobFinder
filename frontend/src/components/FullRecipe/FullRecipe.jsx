@@ -9,13 +9,10 @@ import { dummyIngredients } from "../../mock/mockIngredients";
 
 const FullRecipe = ({ foodId, onClose }) => {
   const food = dummyFoods.find((f) => f.food_id === foodId);
-
   if (!food) return null;
 
   const ingredientList = food.ingredients
-    .map((id) =>
-      dummyIngredients.find((ing) => ing.ingredient_id === id)
-    )
+    .map((id) => dummyIngredients.find((ing) => ing.ingredient_id === id))
     .filter(Boolean);
 
   return (

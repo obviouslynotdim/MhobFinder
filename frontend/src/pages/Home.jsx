@@ -25,7 +25,7 @@ function HomeEmptyState() {
         Add your ingredients to get started
       </Text>
       <Text fontWeight="normal" fontSize="xl">
-        Every Ingreadients you add will unlocks more recipes
+        Every ingredient you add will unlock more recipes
       </Text>
     </VStack>
   );
@@ -51,9 +51,7 @@ function HomeLoading() {
   return (
     <VStack h="full" justify="center" gap="3" textAlign="center" py="20">
       <Text fontWeight="bold">Loading recipes…</Text>
-      <Text opacity="0.75">
-        Matching recipes to your ingredients.
-      </Text>
+      <Text opacity="0.75">Matching recipes to your ingredients.</Text>
     </VStack>
   );
 }
@@ -70,44 +68,41 @@ export default function Home() {
 
   const [selectedRecipe, setSelectedRecipe] = useState(null);
 
-  if (selectedIds.length === 0) {
-    return <HomeEmptyState />;
-  }
-
-  if (foodsLoading) {
-    return <HomeLoading />;
-  }
-
-  if (foods.length === 0) {
-    return <HomeNoResults onClear={clearIngredients} />;
-  }
+  if (selectedIds.length === 0) return <HomeEmptyState />;
+  if (foodsLoading) return <HomeLoading />;
+  if (foods.length === 0) return <HomeNoResults onClear={clearIngredients} />;
 
   return (
     <Box p={{ base: 4, md: 6 }} position="relative">
       <HStack justify="space-between" mb="4" align="start">
         <VStack align="start" gap="0">
           <Text fontWeight="bold" fontSize={{ base: "lg", md: "2xl" }}>
-            You can make {foods.length} recipe
-            {foods.length > 1 ? "s" : ""}
+            You can make {foods.length} recipe{foods.length > 1 ? "s" : ""}
           </Text>
           <Text fontSize="sm" opacity="0.75">
             Do you have?
           </Text>
         </VStack>
+
+        <Button variant="ghost" onClick={clearIngredients}>
+          Clear
+        </Button>
       </HStack>
 
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing="4">
+      {/* 2 cards per row + spacing */}
+      <SimpleGrid columns={2} spacing={1000}>
         {foods.map((food) => (
           <RecipeCard
             key={food.food_id}
             food={food}
             isFavorite={favorites.includes(food.food_id)}
             onToggleFavorite={toggleFavorite}
-            onView={(food) => setSelectedRecipe(food)}
+            onView={() => setSelectedRecipe(food)}
           />
         ))}
       </SimpleGrid>
 
+      {/* FullRecipe Modal + Dark Backdrop */}
       {selectedRecipe && (
         <>
           <Box
