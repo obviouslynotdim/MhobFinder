@@ -1,46 +1,108 @@
-// import express from "express";
-// import cors from "cors";
+import express from "express";
+import cors from "cors";
+import session from "express-session";
+import passport from "passport";
+import "./config/passport.js";
+import sequelize from "./config/database.js";
+import "dotenv/config";
 
-// const app = express();
-// app.use(cors());
-// app.use(express.json());
+// Routes
+import foodRoutes from "./routes/food.routes.js";
+import ingredientRoutes from "./routes/ingredient.routes.js";
+import commentRoutes from "./routes/comment.routes.js";
+import favoriteRoutes from "./routes/favorite.routes.js";
+import ratingRoutes from "./routes/rating.routes.js";
+import userRoutes from "./routes/user.routes.js";
 
-// const ingredients = [
-//   { ingredient_id: 1, name: "Eggs", color: "yellow" },
-//   { ingredient_id: 2, name: "Bell Paper", color: "red" },
-//   { ingredient_id: 3, name: "Pork", color: "orange" },
-//   { ingredient_id: 4, name: "Carrots", color: "orange" },
-//   { ingredient_id: 5, name: "Broccoli", color: "green" },
-//   { ingredient_id: 6, name: "Mushroom", color: "yellow" }
-// ];
+// Swagger
+import swaggerJsdoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
 
-// const foods = [
-//   {
-//     food_id: 1,
-//     title: "Deviled Eggs, Purgatory Edition",
-//     image_url: "https://www.supercook.com/images/recipes/Large/1000/deviled-eggs.jpg",
-//     time: "10 mins", category: "Vegan", difficulty: "Easy",
-//     matched: "Eggs, Mayonnaise, Mustard", ingredients: [1]
-//   },
-//   {
-//     food_id: 2,
-//     title: "Khmer Stir-fry Pork",
-//     image_url: "https://grantourismotravels.com/wp-content/uploads/2021/01/Pork-Stir-Fry-with-Holy-Basil-Recipe-Pad-Kra-Pao-Copyright-2021-Terence-Carter-Grantourismo-f.jpg",
-//     time: "15 mins", category: "Traditional", difficulty: "Medium",
-//     matched: "Pork, Bell Paper, Garlic", ingredients: [2, 3]
-//   }
-// ];
+export const app = express();
 
-// app.get("/api/ingredients", (req, res) => res.json(ingredients));
-// app.get("/api/foods", (req, res) => res.json(foods));
-// app.post("/api/foods/match", (req, res) => {
-//   const { ingredients: selectedIds } = req.body;
-//   if (!selectedIds || selectedIds.length === 0) return res.json(foods);
-//   const filtered = foods.filter(f => f.ingredients.some(id => selectedIds.includes(id)));
-//   res.json(filtered);
-// });
+// ENVIRONMENT VALIDATION
+const requiredEnvs = [
+  "SESSION_SECRET",
+  "GOOGLE_CLIENT_ID",
+  "GOOGLE_CLIENT_SECRET",
+  "DB_NAME",
+  "DB_USER",
+  "DB_PASSWORD",
+  "DB_HOST",
+];
 
-// const PORT = 5000;
-// app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+requiredEnvs.forEach((env) => {
+  if (!process.env[env]) {
+    throw new Error(`Missing required environment variable: ${env}`);
+  }
+});
 
+// MIDDLEWARE
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(express.json());
 
+// Logging
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
+
+// Session
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax" },
+  })
+);
+
+// Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// ROUTES
+app.use("/api/foods", foodRoutes);
+app.use("/api/ingredients", ingredientRoutes);
+app.use("/api/comments", commentRoutes);
+app.use("/api/favorites", favoriteRoutes);
+app.use("/api/ratings", ratingRoutes);
+app.use("/api/users", userRoutes);
+
+// Google OAuth
+app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+
+app.get("/auth/google/callback", (req, res, next) => {
+  passport.authenticate("google", (err, user) => {
+    if (err || !user) return res.status(401).json({ error: "Authentication failed" });
+    req.logIn(user, (err) => {
+      if (err) return res.status(500).json({ error: "Login failed" });
+      return res.json({ message: "Login successful", user });
+    });
+  })(req, res, next);
+});
+
+// SWAGGER SETUP
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Food App API",
+      version: "1.0.0",
+      description: "API documentation for Food App",
+    },
+    servers: [{ url: "http://localhost:5000" }],
+  },
+  apis: ["./routes/*.js"], // <-- looks for @swagger comments in routes
+};
+
+const specs = swaggerJsdoc(swaggerOptions);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+
+// ERROR HANDLING
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ error: err.message || "Internal server error" });
+});
+
+export default app;
