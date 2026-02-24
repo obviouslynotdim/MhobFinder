@@ -90,7 +90,7 @@ export default function Home() {
       </HStack>
 
       {/* 2 cards per row + spacing */}
-      <SimpleGrid columns={2} spacing={1000}>
+      <SimpleGrid columns={{ base: 1, md: 2 }} gap={{ base: 4, md: 6 }}>
         {foods.map((food) => (
           <RecipeCard
             key={food.food_id}
