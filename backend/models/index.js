@@ -38,6 +38,7 @@ Category.belongsToMany(Food, {
 // ---------------------------
 // Favorites: User ↔ Food
 // ---------------------------
+
 User.belongsToMany(Food, { through: Favorite, foreignKey: "user_id" });
 Food.belongsToMany(User, { through: Favorite, foreignKey: "food_id" });
 

@@ -1,5 +1,5 @@
 import express from "express";
-import { getCommentsByFood, addComment } from "../controllers/comment.controller.js";
+import { getCommentsByFood, addComment } from "../controllers/Comment.controller.js";
 
 const router = express.Router();
 

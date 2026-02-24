@@ -3,7 +3,7 @@ import {
   getAllFoods,
   getMatchedFoods,
   getFoodById,
-} from "../controllers/food.controller.js";
+} from "../controllers/Food.controller.js";
 
 const router = express.Router();
 

@@ -1,8 +1,22 @@
 import express from "express";
-import { getUserFavorites, addFavorite, removeFavorite } from "../controllers/favorite.controller.js";
+import {
+  getUserFavorites,
+  addFavorite,
+  removeFavorite,
+} from "../controllers/Favorite.controller.js";
 
 const router = express.Router();
 
+// ---------------------------
+// Routes
+// ---------------------------
+router.get("/users/:userId", getUserFavorites);
+router.post("/users/:userId/:foodId", addFavorite);
+router.delete("/users/:userId/:foodId", removeFavorite);
+
+// ---------------------------
+// Swagger Documentation
+// ---------------------------
 /**
  * @swagger
  * /api/favorites/users/{userId}:
@@ -19,7 +33,6 @@ const router = express.Router();
  *       200:
  *         description: List of favorite foods
  */
-router.get("/users/:userId", getUserFavorites);
 
 /**
  * @swagger
@@ -41,7 +54,6 @@ router.get("/users/:userId", getUserFavorites);
  *       201:
  *         description: Food added to favorites
  */
-router.post("/users/:userId/:foodId", addFavorite);
 
 /**
  * @swagger
@@ -63,6 +75,5 @@ router.post("/users/:userId/:foodId", addFavorite);
  *       200:
  *         description: Food removed from favorites
  */
-router.delete("/users/:userId/:foodId", removeFavorite);
 
 export default router;
