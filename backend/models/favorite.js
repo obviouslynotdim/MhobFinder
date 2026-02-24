@@ -9,10 +9,11 @@ const Favorite = sequelize.define(
   },
   {
     tableName: "favorites",
-    timestamps: true,      
+    timestamps: true,
     createdAt: "createdAt",
     updatedAt: false,
   }
 );
 
 export default Favorite;
+
