@@ -1,4 +1,5 @@
-import { User, Food } from "../models/index.js";
+// Favorite.controller.js
+import { User, Food } from "../models/index.js"; // <-- add this
 
 export const getUserFavorites = async (req, res) => {
   try {
@@ -7,13 +8,14 @@ export const getUserFavorites = async (req, res) => {
     const user = await User.findByPk(userId, {
       include: {
         model: Food,
-        through: { attributes: [] }, 
+        as: "FavoriteFoods",   // must match the 'as' in association
+        through: { attributes: [] },
       },
     });
 
     if (!user) return res.status(404).json({ error: "User not found" });
 
-    res.json(user.Foods);
+    res.json(user.FavoriteFoods);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
@@ -26,7 +28,7 @@ export const addFavorite = async (req, res) => {
     const user = await User.findByPk(userId);
     if (!user) return res.status(404).json({ error: "User not found" });
 
-    await user.addFood(foodId); // Sequelize magic method
+    await user.addFavoriteFood(foodId); // uses magic method from 'as'
     res.status(201).json({ message: "Added to favorites" });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -39,7 +41,7 @@ export const removeFavorite = async (req, res) => {
     const user = await User.findByPk(userId);
     if (!user) return res.status(404).json({ error: "User not found" });
 
-    await user.removeFood(foodId); // Sequelize magic method
+    await user.removeFavoriteFood(foodId);
     res.json({ message: "Removed from favorites" });
   } catch (err) {
     res.status(500).json({ error: err.message });

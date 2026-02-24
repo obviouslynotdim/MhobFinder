@@ -2,8 +2,9 @@ import Rating from "../models/Rating.js";
 
 export const getRatingsByFood = async (req, res, next) => {
   try {
+    const { foodId } = req.params;
     const ratings = await Rating.findAll({
-      where: { food_id: req.params.food_id },
+      where: { food_id: foodId },
     });
     res.json(ratings);
   } catch (err) {

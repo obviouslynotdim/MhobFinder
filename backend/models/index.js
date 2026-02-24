@@ -13,11 +13,13 @@ import Favorite from "./Favorite.js";
 Food.belongsToMany(Ingredient, {
   through: "food_ingredients",
   foreignKey: "food_id",
+  as: "ingredients",
   timestamps: false,
 });
 Ingredient.belongsToMany(Food, {
   through: "food_ingredients",
   foreignKey: "ingredient_id",
+  as: "foods",
   timestamps: false,
 });
 
@@ -27,40 +29,49 @@ Ingredient.belongsToMany(Food, {
 Food.belongsToMany(Category, {
   through: "food_categories",
   foreignKey: "food_id",
+  as: "categories",
   timestamps: false,
 });
 Category.belongsToMany(Food, {
   through: "food_categories",
   foreignKey: "category_id",
+  as: "foods",
   timestamps: false,
 });
 
 // ---------------------------
 // Favorites: User ↔ Food
 // ---------------------------
-
-User.belongsToMany(Food, { through: Favorite, foreignKey: "user_id" });
-Food.belongsToMany(User, { through: Favorite, foreignKey: "food_id" });
+User.belongsToMany(Food, {
+  through: Favorite,
+  foreignKey: "user_id",
+  as: "FavoriteFoods", // user.getFavoriteFoods()
+});
+Food.belongsToMany(User, {
+  through: Favorite,
+  foreignKey: "food_id",
+  as: "UsersWhoFavorited", // optional, food.getUsersWhoFavorited()
+});
 
 // ---------------------------
-// Comments (self-reference)
+// Comments (self-reference & associations)
 // ---------------------------
 Comment.belongsTo(Comment, { as: "parent", foreignKey: "parent_id" });
 Comment.hasMany(Comment, { as: "replies", foreignKey: "parent_id" });
 
-// ---------------------------
-// Other relationships
-// ---------------------------
-User.hasMany(Comment, { foreignKey: "user_id" });
-Comment.belongsTo(User, { foreignKey: "user_id" });
+User.hasMany(Comment, { foreignKey: "user_id", as: "comments" });
+Comment.belongsTo(User, { foreignKey: "user_id", as: "user" });
 
-Food.hasMany(Comment, { foreignKey: "food_id" });
-Comment.belongsTo(Food, { foreignKey: "food_id" });
+Food.hasMany(Comment, { foreignKey: "food_id", as: "comments" });
+Comment.belongsTo(Food, { foreignKey: "food_id", as: "food" });
 
-User.hasMany(Rating, { foreignKey: "user_id" });
-Food.hasMany(Rating, { foreignKey: "food_id" });
-Rating.belongsTo(User, { foreignKey: "user_id" });
-Rating.belongsTo(Food, { foreignKey: "food_id" });
+// ---------------------------
+// Ratings
+// ---------------------------
+User.hasMany(Rating, { foreignKey: "user_id", as: "ratings" });
+Food.hasMany(Rating, { foreignKey: "food_id", as: "ratings" });
+Rating.belongsTo(User, { foreignKey: "user_id", as: "user" });
+Rating.belongsTo(Food, { foreignKey: "food_id", as: "food" });
 
 // ---------------------------
 // Export
