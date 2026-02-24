@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 5000;
     console.log("✅ Database connected successfully");
 
     // Sync tables (development only)
-    await sequelize.sync({ alter: true });
+    await sequelize.sync();
     console.log("✅ Tables synced successfully");
 
     app.listen(PORT, () => console.log(`🚀 Backend running on http://localhost:${PORT}`));
