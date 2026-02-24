@@ -2,9 +2,12 @@ import Rating from "../models/Rating.js";
 
 export const getRatingsByFood = async (req, res, next) => {
   try {
+    const { foodId } = req.params;
+
     const ratings = await Rating.findAll({
-      where: { food_id: req.params.food_id },
+      where: { food_id: foodId },
     });
+
     res.json(ratings);
   } catch (err) {
     next(err);
@@ -13,13 +16,20 @@ export const getRatingsByFood = async (req, res, next) => {
 
 export const addOrUpdateRating = async (req, res, next) => {
   try {
-    const { user_id, food_id, rating } = req.body;
-    const [newRating, created] = await Rating.upsert({
+    const { foodId } = req.params;
+    const { user_id, rating } = req.body;
+
+    if (!user_id || rating == null) {
+      return res.status(400).json({ message: "user_id and rating are required" });
+    }
+
+    await Rating.upsert({
       user_id,
-      food_id,
+      food_id: foodId,
       rating,
     });
-    res.json(newRating);
+
+    res.status(200).json({ message: "Rating added or updated successfully" });
   } catch (err) {
     next(err);
   }

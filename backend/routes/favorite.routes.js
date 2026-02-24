@@ -3,7 +3,7 @@ import {
   getUserFavorites,
   addFavorite,
   removeFavorite,
-} from "../controllers/Favorite.controller.js";
+} from "../controllers/favorite.controller.js";
 
 const router = express.Router();
 
