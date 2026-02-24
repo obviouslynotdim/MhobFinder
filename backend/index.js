@@ -1,8 +1,4 @@
-import express from "express";
-import cors from "cors";
-import session from "express-session";
-import passport from "passport";
-import "./config/passport.js"; // <-- Passport Google OAuth config
+import app from "./server.js";
 import sequelize from "./config/database.js";
 import "./models/index.js";
 import "dotenv/config";
@@ -121,7 +117,7 @@ const PORT = process.env.PORT || 5000;
     console.log("✅ Database connected successfully");
 
     // Sync tables (development only)
-    await sequelize.sync({ alter: true });
+    await sequelize.sync();
     console.log("✅ Tables synced successfully");
 
     app.listen(PORT, () => console.log(`🚀 Backend running on http://localhost:${PORT}`));

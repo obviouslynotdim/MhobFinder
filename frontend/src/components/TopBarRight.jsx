@@ -67,6 +67,7 @@ export default function TopBarRight() {
           variant="ghost"
           color="white"
           _hover={{ bg: "whiteAlpha.200" }}
+          onClick={() => nav("/favorites")}
         >
           <FiUser />
         </IconButton>

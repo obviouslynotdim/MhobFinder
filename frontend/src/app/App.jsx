@@ -19,12 +19,17 @@ export default function App() {
     <UserProvider>
       <AppProvider>
         <Routes>
-          <Route path="/login" element={<Login />} />
           <Route element={<AppShell />}>
             <Route index element={<Home />} />
-            <Route path="favorites" element={
-              <ProtectedRoute><Favorites /></ProtectedRoute>
-            } />
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="favorites"
+              element={
+                <ProtectedRoute>
+                  <Favorites />
+                </ProtectedRoute>
+              }
+            />
             <Route path="about" element={<About />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>

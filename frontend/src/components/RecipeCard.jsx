@@ -1,6 +1,6 @@
 import {
-  Box,
   Flex,
+  Box,
   Image,
   Text,
   Badge,
@@ -11,45 +11,43 @@ import {
 } from "@chakra-ui/react";
 import { FiHeart } from "react-icons/fi";
 
-export default function RecipeCard({ food, isFavorite, onToggleFavorite }) {
+export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView }) {
   return (
     <Flex
-      direction={{ base: "column", md: "row" }} // Stack vertically on small screens, side by side on larger screens
+      onClick={() => onView(food)}
+      cursor="pointer"
+      direction={{ base: "column", md: "row" }}
       bg="#E3F2FD"
       borderRadius="lg"
       boxShadow="md"
       overflow="hidden"
-      p="5"
-      gap="5" // Adds space between the image section and text section
-      maxW="lg"
-      w="full"
+      p="4"
+      maxW="100%" // ensure it stays within grid cell
     >
-      {/* Left side: Food Image and View Button */}
+      {/* Image */}
       <Box
-        flex="0 0 200px"
-        w="400px"
-        h="200px"
+        flex={{ base: "1 1 100%", md: "0 0 150px" }}
+        h="150px"
         overflow="hidden"
         borderRadius="full"
       >
         <Image
           src={food.image_url}
           alt={food.title}
-          w="full"
-          h="full"
+          w="100%"
+          h="100%"
           objectFit="cover"
           borderRadius="full"
         />
       </Box>
 
-      <VStack align="start" spacing={4} flex="1" pt="2">
-        {/* Recipe Title */}
+      {/* Info */}
+      <VStack align="start" spacing={3} flex="1" pt="2">
         <Text fontWeight="bold" fontSize="xl" isTruncated>
           {food.title}
         </Text>
 
-        {/* Time, Difficulty, and Vegan Status Badges */}
-        <HStack spacing={3}>
+        <HStack spacing={2}>
           <Badge colorScheme="blue" variant="subtle">
             {food.time} mins
           </Badge>
@@ -61,13 +59,11 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite }) {
           </Badge>
         </HStack>
 
-        {/* Ingredients List */}
         <Text fontSize="sm" color="gray.500" noOfLines={3}>
           Ingredients: {food.ingredients?.slice(0, 40)}...
         </Text>
 
-        {/* Buttons and Favorite Icon */}
-        <HStack justify="space-between" w="full" mt="4">
+        <HStack justify="space-between" w="75%">
           <Button
             colorScheme="orange"
             size="sm"
@@ -75,19 +71,20 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite }) {
             borderRadius="xl"
             width="full"
           >
-            View
+            View Recipe
           </Button>
 
           <IconButton
             aria-label="Toggle favorite"
             icon={<FiHeart />}
-            onClick={() => onToggleFavorite(food.food_id)}
-            bg={isFavorite ? "red.500" : "whiteAlpha.900"}
-            color={isFavorite ? "white" : "gray.800"}
-            _hover={{ opacity: 0.9 }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleFavorite(food.food_id);
+            }}
+            bg={isFavorite ? "red.500" : "white"}
+            color={isFavorite ? "white" : "red.500"} // heart visible
+            _hover={{ opacity: 0.8 }}
             borderRadius="full"
-            top="3"
-            right="3"
           />
         </HStack>
       </VStack>

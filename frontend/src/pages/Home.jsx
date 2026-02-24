@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -9,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { useApp } from "../app/state/AppProvider.jsx";
 import RecipeCard from "../components/RecipeCard.jsx";
+import FullRecipe from "../components/FullRecipe/FullRecipe.jsx";
 
 function HomeEmptyState() {
   return (
@@ -23,7 +25,7 @@ function HomeEmptyState() {
         Add your ingredients to get started
       </Text>
       <Text fontWeight="normal" fontSize="xl">
-        Every Ingreadients you add will unlocks more recipes
+        Every ingredient you add will unlock more recipes
       </Text>
     </VStack>
   );
@@ -64,22 +66,14 @@ export default function Home() {
     foodsLoading,
   } = useApp();
 
-  if (selectedIds.length === 0) {
-    return <HomeEmptyState />;
-  }
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
 
-  // Avoid the "blank" main panel when an ingredient has no matches
-  // or while the match request is in-flight.
-  if (foodsLoading) {
-    return <HomeLoading />;
-  }
-
-  if (foods.length === 0) {
-    return <HomeNoResults onClear={clearIngredients} />;
-  }
+  if (selectedIds.length === 0) return <HomeEmptyState />;
+  if (foodsLoading) return <HomeLoading />;
+  if (foods.length === 0) return <HomeNoResults onClear={clearIngredients} />;
 
   return (
-    <Box p={{ base: 4, md: 6 }}>
+    <Box p={{ base: 4, md: 6 }} position="relative">
       <HStack justify="space-between" mb="4" align="start">
         <VStack align="start" gap="0">
           <Text fontWeight="bold" fontSize={{ base: "lg", md: "2xl" }}>
@@ -95,16 +89,39 @@ export default function Home() {
         </Button>
       </HStack>
 
-      <SimpleGrid columns={{ base: 1, md: 2 }} gap={{ base: 4, md: 6 }}>
+      {/* 2 cards per row + spacing */}
+      <SimpleGrid columns={2} spacing={1000}>
         {foods.map((food) => (
           <RecipeCard
             key={food.food_id}
             food={food}
             isFavorite={favorites.includes(food.food_id)}
             onToggleFavorite={toggleFavorite}
+            onView={() => setSelectedRecipe(food)}
           />
         ))}
       </SimpleGrid>
+
+      {/* FullRecipe Modal + Dark Backdrop */}
+      {selectedRecipe && (
+        <>
+          <Box
+            position="fixed"
+            top="0"
+            left="0"
+            width="100vw"
+            height="100vh"
+            bg="blackAlpha.600"
+            zIndex="9"
+            onClick={() => setSelectedRecipe(null)}
+          />
+
+          <FullRecipe
+            foodId={selectedRecipe.food_id}
+            onClose={() => setSelectedRecipe(null)}
+          />
+        </>
+      )}
     </Box>
   );
 }
