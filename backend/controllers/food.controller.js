@@ -1,5 +1,5 @@
-import Food from "../models/food.js";
-import Ingredient from "../models/ingredient.js";
+import Food from "../models/Food.js";
+import Ingredient from "../models/Ingredient.js";
 
 export const getAllFoods = async (req, res, next) => {
   try {
@@ -7,6 +7,24 @@ export const getAllFoods = async (req, res, next) => {
       include: [{ model: Ingredient, through: { attributes: [] } }],
     });
     res.json(foods);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getFoodById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const food = await Food.findByPk(id, {
+      include: [{ model: Ingredient, through: { attributes: [] } }],
+    });
+
+    if (!food) {
+      return res.status(404).json({ message: "Food not found" });
+    }
+
+    res.json(food);
   } catch (err) {
     next(err);
   }

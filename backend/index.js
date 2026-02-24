@@ -4,7 +4,9 @@ import session from "express-session";
 import passport from "passport";
 import "./config/passport.js"; // <-- Passport Google OAuth config
 import sequelize from "./config/database.js";
+import "./models/index.js";
 import "dotenv/config";
+
 
 // Routes
 import foodRoutes from "./routes/food.routes.js";

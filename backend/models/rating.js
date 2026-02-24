@@ -4,16 +4,21 @@ import sequelize from "../config/database.js";
 const Rating = sequelize.define(
   "Rating",
   {
-    rating_id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+    rating_id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
     user_id: { type: DataTypes.INTEGER },
     food_id: { type: DataTypes.INTEGER },
     rating: { type: DataTypes.INTEGER },
-    created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
   },
   {
     tableName: "ratings",
-    timestamps: false,
-  }
+    timestamps: true,
+    createdAt: "createdAt",
+    updatedAt: "updatedAt",
+  },
 );
 
 export default Rating;

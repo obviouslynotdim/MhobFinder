@@ -6,12 +6,13 @@ const Favorite = sequelize.define(
   {
     user_id: { type: DataTypes.INTEGER, primaryKey: true },
     food_id: { type: DataTypes.INTEGER, primaryKey: true },
-    created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
   },
   {
     tableName: "favorites",
-    timestamps: false,
-  }
+    timestamps: true,
+    createdAt: "createdAt",
+    updatedAt: false,
+  },
 );
 
 export default Favorite;

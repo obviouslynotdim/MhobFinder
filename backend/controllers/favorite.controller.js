@@ -1,8 +1,10 @@
-import Favorite from "../models/favorite.js";
+import Favorite from "../models/Favorite.js";
 
 export const getUserFavorites = async (req, res, next) => {
   try {
-    const favorites = await Favorite.findAll({ where: { user_id: req.params.user_id } });
+    const favorites = await Favorite.findAll({
+      where: { user_id: req.params.user_id },
+    });
     res.json(favorites);
   } catch (err) {
     next(err);

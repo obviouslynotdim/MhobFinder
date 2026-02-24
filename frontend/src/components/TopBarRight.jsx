@@ -1,9 +1,15 @@
-import { Button, HStack, IconButton, Input, InputGroup, Text } from "@chakra-ui/react";
-import { FiHeart, FiUser,FiSearch} from "react-icons/fi";
-import {  useNavigate } from "react-router-dom";
+import {
+  Button,
+  HStack,
+  IconButton,
+  Input,
+  InputGroup,
+  Text,
+} from "@chakra-ui/react";
+import { FiHeart, FiUser, FiSearch } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 import { useApp } from "../app/state/AppProvider.jsx";
 import { MdTranslate } from "react-icons/md";
-
 
 // function pageTitle(pathname) {
 //   if (pathname === "/") return "Home";
@@ -17,12 +23,16 @@ export default function TopBarRight() {
   // const loc = useLocation();
   const nav = useNavigate();
 
-  
-
   return (
     <HStack w="full" justify="space-between" gap="4">
       <Text fontWeight="bold" color="white" fontSize="lg" minW="110px">
-        <Button fontSize= "lg" variant="ghost" color="white" _hover={{ bg: "whiteAlpha.200" }} onClick={() => nav("/about")}>
+        <Button
+          fontSize="lg"
+          variant="ghost"
+          color="white"
+          _hover={{ bg: "whiteAlpha.200" }}
+          onClick={() => nav("/about")}
+        >
           ABOUT US
         </Button>
       </Text>
@@ -69,7 +79,6 @@ export default function TopBarRight() {
         >
           <MdTranslate />
         </IconButton>
-
       </HStack>
     </HStack>
   );
