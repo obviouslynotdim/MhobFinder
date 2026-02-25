@@ -1,19 +1,42 @@
-import { Box, Image, Text } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import { Box, Image, Text, Spinner, Center } from "@chakra-ui/react";
 import OverlayBox from "./ui/OverlayBox";
 import ViewFullRecipe from "./ui/ViewFullRecipe";
 import MayLike from "./ui/MayLike";
 import CommentSection from "./ui/CommentSection";
 
-import { dummyFoods } from "../../mock/mockFoods";
-import { dummyIngredients } from "../../mock/mockIngredients";
-
 const FullRecipe = ({ foodId, onClose }) => {
-  const food = dummyFoods.find((f) => f.food_id === foodId);
+  const [food, setFood] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (!foodId) return;
+    setLoading(true);
+    setError(null);
+
+    fetch(`/api/foods/${foodId}`, { credentials: "include" })
+      .then((res) => {
+        if (!res.ok) throw new Error(`fetch failed ${res.status}`);
+        return res.json();
+      })
+      .then((data) => setFood(data))
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false));
+  }, [foodId]);
+
+  if (loading)
+    return (
+      <Center h="full">
+        <Spinner size="xl" />
+      </Center>
+    );
+
+  if (error) return <Text color="red.500">{error}</Text>;
   if (!food) return null;
 
-  const ingredientList = food.ingredients
-    .map((id) => dummyIngredients.find((ing) => ing.ingredient_id === id))
-    .filter(Boolean);
+  // ingredients come as array of objects thanks to the include clause
+  const ingredientList = food.ingredients || [];
 
   return (
     <Box

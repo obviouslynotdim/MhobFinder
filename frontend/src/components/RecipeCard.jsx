@@ -60,7 +60,9 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
         </HStack>
 
         <Text fontSize="sm" color="gray.500" noOfLines={3}>
-          Ingredients: {food.ingredients?.slice(0, 40)}...
+          Ingredients: {food.ingredients
+            ? food.ingredients.map(i => i.name).join(", ")
+            : ""}
         </Text>
 
         <HStack justify="space-between" w="75%">
