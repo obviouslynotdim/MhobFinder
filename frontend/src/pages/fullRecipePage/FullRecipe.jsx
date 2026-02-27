@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Box, Image, Text, Spinner, Center } from "@chakra-ui/react";
-import OverlayBox from "./ui/OverlayBox";
-import ViewFullRecipe from "./ui/ViewFullRecipe";
-import MayLike from "./ui/MayLike";
-import CommentSection from "./ui/CommentSection";
+import OverlayBox from "./components/OverlayBox";
+import ViewFullRecipe from "./components/ViewFullRecipe";
+import MayLike from "./components/MayLike";
+import CommentSection from "./components/CommentSection";
 
 const FullRecipe = ({ foodId, onClose }) => {
   const [food, setFood] = useState(null);

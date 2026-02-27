@@ -1,12 +1,12 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import AppShell from "./layout/AppShell.jsx";
-import { AppProvider } from "./state/AppProvider.jsx";
-import { UserProvider, useUser } from "./state/UserProvider.jsx";
+import AppShell from "./app/layout/AppShell.jsx";
+import { AppProvider } from "./app/state/AppProvider.jsx";
+import { UserProvider, useUser } from "./app/state/UserProvider.jsx";
 
-import Home from "../pages/Home.jsx";
-import Favorites from "../pages/Favorites.jsx";
-import About from "../pages/About.jsx";
-import Login from "../pages/Login.jsx";
+import Home from "./pages/Home.jsx";
+import Favorites from "./pages/Favorites.jsx";
+import About from "./pages/About.jsx";
+import Login from "./pages/Login.jsx";
 
 // Protect routes that require login
 function ProtectedRoute({ children }) {

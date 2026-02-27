@@ -8,9 +8,9 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { useApp } from "../app/state/AppProvider.jsx";
+import { useApp } from "../context/AppProvider.jsx";
 import RecipeCard from "../components/RecipeCard.jsx";
-import FullRecipe from "../components/FullRecipe/FullRecipe.jsx";
+import FullRecipe from "./fullRecipePage/FullRecipe.jsx";
 
 function HomeEmptyState() {
   return (

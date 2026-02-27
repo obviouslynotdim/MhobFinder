@@ -2,28 +2,22 @@ import { Box, Flex } from "@chakra-ui/react";
 import { Outlet, useLocation } from "react-router-dom";
 import { useState } from "react";
 
-import TopBarLeft from "../../components/TopBarLeft.jsx";
-import TopBarRight from "../../components/TopBarRight.jsx";
-import Sidebar from "../../components/Sidebar.jsx";
-import Login from "../../pages/Login.jsx";
-
+import TopBarLeft from "./TopBarLeft.jsx";
+import TopBarRight from "./TopBarRight.jsx";
+import Sidebar from "./Sidebar.jsx";
 
 export default function AppShell() {
   const [userCollapsed, setUserCollapsed] = useState(false);
   const loc = useLocation();
 
   // ✅ auto-collapse on About, otherwise use user toggle
-  const collapsed =
-    loc.pathname.startsWith("/about") 
-    // || loc.pathname.startsWith("/favorites")|| loc.pathname.startsWith("/login")
-      ? true
-      : userCollapsed;
-
+  const collapsed = loc.pathname.startsWith("/about")
+    ? // || loc.pathname.startsWith("/favorites")|| loc.pathname.startsWith("/login")
+      true
+    : userCollapsed;
 
   const sidebarW = collapsed ? "72px" : "440px";
   const headerH = "90px";
-
-  
 
   return (
     <Flex direction="column" h="100vh" overflow="hidden">

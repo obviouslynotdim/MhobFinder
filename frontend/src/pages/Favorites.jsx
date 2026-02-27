@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { FiArrowLeft, FiHeart } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import { useApp } from "../app/state/AppProvider.jsx";
+import { useApp } from "../context/AppProvider.jsx";
 
 function FavoriteCard({ food, isFavorite, onToggleFavorite }) {
   return (

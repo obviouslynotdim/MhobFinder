@@ -1,6 +1,6 @@
 import { HStack, IconButton, Text, VStack } from "@chakra-ui/react";
 import { FiMenu } from "react-icons/fi";
-import { useApp } from "../app/state/AppProvider.jsx";
+import { useApp } from "../context/AppProvider.jsx";
 
 export default function TopBarLeft({ collapsed, onToggleCollapse }) {
   const { selectedIds } = useApp();
@@ -24,7 +24,8 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
               MhobFinder
             </Text>
             <Text fontSize="xs" color="whiteAlpha.800">
-              You have {selectedIds.length} ingredient{selectedIds.length !== 1 ? "s" : ""}
+              You have {selectedIds.length} ingredient
+              {selectedIds.length !== 1 ? "s" : ""}
             </Text>
           </VStack>
         )}
