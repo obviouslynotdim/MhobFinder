@@ -10,6 +10,11 @@ const Ingredient = sequelize.define(
       autoIncrement: true,
     },
     name: { type: DataTypes.STRING, allowNull: false },
+    type_id: {
+      // foreign key to ingredient_types
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   },
   { tableName: "ingredients", timestamps: false },
 );

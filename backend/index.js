@@ -14,6 +14,7 @@ import commentRoutes from "./routes/comment.routes.js";
 import favoriteRoutes from "./routes/favorite.routes.js";
 import ratingRoutes from "./routes/rating.routes.js";
 import categoriesRoutes from "./routes/categories.routes.js";
+import ingredientTypeRoutes from "./routes/ingredientType.routes.js";
 
 const app = express();
 
@@ -86,6 +87,7 @@ app.use("/api/comments", commentRoutes);
 app.use("/api/favorites", favoriteRoutes);
 app.use("/api/ratings", ratingRoutes);
 app.use("/api/categories", categoriesRoutes);
+app.use("/api/ingredient-types", ingredientTypeRoutes);
 
 // Google OAuth
 app.get(

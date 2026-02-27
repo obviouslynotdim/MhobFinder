@@ -6,6 +6,7 @@ import Category from "./Category.js";
 import Comment from "./Comment.js";
 import Rating from "./Rating.js";
 import Favorite from "./Favorite.js";
+import IngredientType from "./ingredientType.js";
 
 // ---------------------------
 // Food ↔ Ingredient
@@ -21,6 +22,18 @@ Ingredient.belongsToMany(Food, {
   foreignKey: "ingredient_id",
   as: "foods", // important for include
   timestamps: false,
+});
+
+// ---------------------------
+// Ingredient ↔ IngredientType
+// ---------------------------
+Ingredient.belongsTo(IngredientType, {
+  foreignKey: "type_id",
+  as: "type",
+});
+IngredientType.hasMany(Ingredient, {
+  foreignKey: "type_id",
+  as: "ingredients",
 });
 
 // ---------------------------
@@ -85,4 +98,5 @@ export {
   Comment,
   Rating,
   Favorite,
+  IngredientType,
 };
