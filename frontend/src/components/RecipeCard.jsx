@@ -1,39 +1,55 @@
 import {
-  Flex,
-  Box,
-  Image,
-  Text,
-  Badge,
-  Button,
-  IconButton,
-  VStack,
-  HStack,
+  Flex, Box, Image, Text, Badge, Button, IconButton, VStack, HStack,
 } from "@chakra-ui/react";
 import { FiHeart } from "react-icons/fi";
+import { useApp } from "../app/state/AppProvider.jsx";
+
 
 export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView }) {
-  const ingredientsPreview = (() => {
-    const ing = food.ingredients;
+  const { selectedIds } = useApp();
+  // build a lookup: { "1": "Salt", "2": "Garlic", ... }
+  // const ingredientNameById = Object.fromEntries(
+  //   (dummyIngredients ?? []).map((i) => [String(i.id), i.name])
+  // );
 
-    if (Array.isArray(ing)) {
-      const shown = ing.slice(0, 6);
-      return `${shown.join(", ")}${ing.length > shown.length ? "…" : ""}`;
-    }
+  // const ingredientsPreview = (() => {
+  //   const ing = food?.ingredients;
 
-    if (typeof ing === "string") {
-      const trimmed = ing.trim();
-      const max = 80;
-      return trimmed.length > max ? `${trimmed.slice(0, max)}…` : trimmed;
-    }
+  //   if (Array.isArray(ing)) {
+  //     const normalized = ing
+  //       .map((x) => {
+  //         // ingredient object
+  //         if (x && typeof x === "object") {
+  //           return x.name ?? x.title ?? x.label ?? x.id;
+  //         }
+  //         // ingredient id (number/string) -> name
+  //         const key = String(x);
+  //         return ingredientNameById[key] ?? x;
+  //       })
+  //       .filter(Boolean);
 
-    return "—";
-  })();
+  //     const shown = normalized.slice(0, 6);
+  //     return `${shown.join(", ")}${normalized.length > shown.length ? "…" : ""}`;
+  //   }
+
+  //   if (typeof ing === "string") {
+  //     const trimmed = ing.trim();
+  //     const max = 80;
+  //     return trimmed.length > max ? `${trimmed.slice(0, max)}…` : trimmed;
+  //   }
+
+  //   return "—";
+  // })();
+
+  const title =
+    food?.title ?? food?.name ?? food?.food_name ?? food?.foodName ?? `Food #${food?.food_id ?? food?.id ?? "—"}`;
 
   return (
     <Flex
       onClick={() => onView(food)}
       cursor="pointer"
       direction={{ base: "column", md: "row" }}
+      gap={{ base: 4, md: 6 }} 
       bg="#E3F2FD"
       borderRadius="lg"
       boxShadow="md"
@@ -42,7 +58,6 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
       w="full"
       _hover={{ boxShadow: "lg" }}
     >
-      {/* Image */}
       <Box
         flexShrink={0}
         w="150px"
@@ -55,7 +70,7 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
       >
         <Image
           src={food.image_url}
-          alt={food.title}
+          alt={title}
           w="full"
           h="full"
           objectFit="cover"
@@ -64,10 +79,9 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
         />
       </Box>
 
-      {/* Info */}
-      <VStack align="start" spacing={3} flex="1">
+      <VStack align="start" spacing={10} flex="1">
         <Text fontWeight="bold" fontSize="xl" noOfLines={1}>
-          {food.title}
+          {title}
         </Text>
 
         <HStack spacing={2} flexWrap="wrap">
@@ -83,7 +97,7 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
         </HStack>
 
         <Text fontSize="sm" color="gray.600" noOfLines={3}>
-          Ingredients: {ingredientsPreview}
+          You have all {selectedIds.length} ingredients.
         </Text>
 
         <HStack justify="space-between" w="full" pt={1}>
