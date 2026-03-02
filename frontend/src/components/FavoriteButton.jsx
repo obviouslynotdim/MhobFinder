@@ -1,5 +1,5 @@
 // src/components/FavoriteButton.jsx
-import { useUser } from "../state/UserProvider.jsx";
+import { useUser } from "../context/UserProvider.jsx";
 
 export default function FavoriteButton({ foodId }) {
   const { user, login } = useUser();

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useUser } from "../app/state/UserProvider.jsx";
+import { useUser } from "../context/UserProvider.jsx";
 import { useNavigate } from "react-router-dom";
 import {
   Box,

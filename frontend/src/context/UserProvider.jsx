@@ -7,7 +7,8 @@ export function UserProvider({ children }) {
   const [loading, setLoading] = useState(false);
 
   // Mock login (replace later with Google OAuth)
-  const login = async (email) => {
+  const login = async (email, password) => {
+    // password currently unused in mock implementation
     setLoading(true);
     await new Promise(res => setTimeout(res, 500)); // simulate server
     const mockUser = { id: 1, name: "Dim Dom", email };
@@ -15,10 +16,19 @@ export function UserProvider({ children }) {
     setLoading(false);
   };
 
+  // Mock signup that behaves like login for now
+  const signup = async (email, password) => {
+    setLoading(true);
+    await new Promise(res => setTimeout(res, 500));
+    const mockUser = { id: 2, name: "New User", email };
+    setUser(mockUser);
+    setLoading(false);
+  };
+
   const logout = () => setUser(null);
 
   return (
-    <UserContext.Provider value={{ user, login, logout, loading }}>
+    <UserContext.Provider value={{ user, login, signup, logout, loading }}>
       {children}
     </UserContext.Provider>
   );

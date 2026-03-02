@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import AppShell from "./app/layout/AppShell.jsx";
-import { AppProvider } from "./app/state/AppProvider.jsx";
-import { UserProvider, useUser } from "./app/state/UserProvider.jsx";
+import AppShell from "./layouts/AppShell.jsx";
+import { AppProvider } from "./context/AppProvider.jsx";
+import { UserProvider, useUser } from "./context/UserProvider.jsx";
 
 import Home from "./pages/Home.jsx";
 import Favorites from "./pages/Favorites.jsx";

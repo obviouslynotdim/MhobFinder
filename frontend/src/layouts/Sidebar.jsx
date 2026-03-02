@@ -11,7 +11,7 @@ import {
 
 import { Link, useLocation } from "react-router-dom";
 import { FiHeart, FiHome, FiInfo } from "react-icons/fi";
-import { useApp } from "../app/state/AppProvider.jsx";
+import { useApp } from "../context/AppProvider.jsx";
 
 function chipBg(color) {
   // small mapping so your dummyIngredient colors look nice on the brown sidebar

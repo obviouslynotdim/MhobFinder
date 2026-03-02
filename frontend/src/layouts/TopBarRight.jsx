@@ -8,7 +8,7 @@ import {
 } from "@chakra-ui/react";
 import { FiHeart, FiUser, FiSearch } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import { useApp } from "../app/state/AppProvider.jsx";
+import { useApp } from "../context/AppProvider.jsx";
 import { MdTranslate } from "react-icons/md";
 
 // function pageTitle(pathname) {
