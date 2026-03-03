@@ -10,77 +10,79 @@ export default function AppShell() {
   const [userCollapsed, setUserCollapsed] = useState(false);
   const loc = useLocation();
 
-  // ✅ auto-collapse on About, otherwise use user toggle
   const collapsed = loc.pathname.startsWith("/about")
-    ? // || loc.pathname.startsWith("/favorites")|| loc.pathname.startsWith("/login")
-      true
+    ? true
     : userCollapsed;
 
-  const sidebarW = collapsed ? "72px" : "440px";
+  const sidebarW = collapsed
+    ? "72px"
+    : { base: "260px", md: "320px", lg: "380px" };
+
   const headerH = "90px";
 
   return (
-    <Flex direction="column" h="100vh" overflow="hidden">
-      <Flex h={headerH} flex="0 0 auto" overflow="hidden">
+    <Flex h="100vh" overflow="hidden">
+      {/* LEFT COLUMN (scrolls as ONE unit) */}
+      <Box
+        w={sidebarW}
+        bg={collapsed ? "#4975BB" : "#E1EDFE"}
+        overflowY="auto"     // scroll here
+        transition="width 0.2s ease"
+      >
+        {/* TopBarLeft */}
         <Box
-          w={sidebarW}
-          bg="#4975BB"
+          h={headerH}
           px="4"
           display="flex"
           alignItems="center"
+          bg="#4975BB"
         >
           <TopBarLeft
             collapsed={collapsed}
-            onToggleCollapse={() => setUserCollapsed((v) => !v)}
+            onToggleCollapse={() =>
+              setUserCollapsed((v) => !v)
+            }
           />
         </Box>
 
-        <Box w="4px" bg="blackAlpha.400" />
+        {/* Sidebar */}
+        <Sidebar collapsed={collapsed} />
+      </Box>
 
-        <Box flex="1" bg="#4975BB" px="6" display="flex" alignItems="center">
+      <Box w="4px" bg="blackAlpha.300" />
+
+      {/* RIGHT COLUMN */}
+      <Flex flex="1" direction="column" overflow="hidden">
+        {/* TopBarRight */}
+        <Box
+          h={headerH}
+          px="6"
+          display="flex"
+          alignItems="center"
+          bg="#4975BB"
+          flexShrink="0"
+        >
           <TopBarRight />
         </Box>
-      </Flex>
 
-      <Flex flex="1" minH="0" overflow="hidden">
-        <Box
-          w={sidebarW}
-          bg={collapsed ? "#4975BB" : "#E1EDFE"} // Change color when collapsed
-          minH="0"
-          overflowY="auto"
-        >
-          <Sidebar collapsed={collapsed} />
-        </Box>
-
-        <Box w="4px" bg="blackAlpha.300" />
-
+        {/* Content Scroll */}
         <Box
           flex="1"
-          minH="0"
-          overflow="hidden"
+          overflowY="auto"
           position="relative"
           bg="#E1EDFE"
         >
-          {/* background pattern layer */}
           <Box
             position="absolute"
             inset="0"
-            bgImage="url('/assets/bg.png')" // rename if you can
+            bgImage="url('/assets/bg.png')"
             bgRepeat="repeat"
-            bgSize="320px" // smaller = less “zoomed in”
-            bgPosition="0 0"
-            opacity={0.38} // lower = more subtle
+            bgSize="320px"
+            opacity={0.38}
             pointerEvents="none"
           />
 
-          {/* your scrollable content */}
-          <Box
-            position="relative"
-            zIndex="1"
-            h="100%"
-            overflowY="auto"
-            minH="0"
-          >
+          <Box position="relative" zIndex="1" p="6">
             <Outlet />
           </Box>
         </Box>
