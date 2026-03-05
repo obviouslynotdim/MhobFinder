@@ -14,9 +14,15 @@ import { FiHeart, FiHome, FiInfo } from "react-icons/fi";
 import { useApp } from "../context/AppProvider.jsx";
 
 // Import ingredient type images
+import pantryImg from "../assets/type/cuisine.png";
 import dairyImg from "../assets/type/dairy.png";
 import meatsImg from "../assets/type/meats.png";
 import vegetablesImg from "../assets/type/vegetables.png";
+import seafoodImg from "../assets/type/seafood.png";
+import fruitsImg from "../assets/type/fruits.png";
+import spicesImg from "../assets/type/spices.png";
+import saucesImg from "../assets/type/sauces.png";
+import grainsImg from "../assets/type/grains.png";
 
 function chipBg(color) {
   // small mapping so your dummyIngredient colors look nice on the brown sidebar
@@ -73,18 +79,18 @@ function groupByCategory(ingredients) {
 
   // Mapping from ingredient type to category
   const typeToCategory = {
-    "Meat": "Meats",
-    "Seafood": "Seafood",
-    "Vegetable": "Vegetables & Greens",
-    "Herb": "Vegetables & Greens",
-    "Fruit": "Fruits",
-    "Grain": "Noodles & Grains",
-    "Dairy": "Dairy",
-    "Egg": "Meats",
-    "Spice": "Spices & Heat",
-    "Sauce": "Sauces & Condiments",
-    "Sweetener": "Pantry Essentials",
-    "Oil": "Pantry Essentials",
+    Meat: "Meats",
+    Seafood: "Seafood",
+    Vegetable: "Vegetables & Greens",
+    Herb: "Vegetables & Greens",
+    Fruit: "Fruits",
+    Grain: "Noodles & Grains",
+    Dairy: "Dairy",
+    Egg: "Meats",
+    Spice: "Spices & Heat",
+    Sauce: "Sauces & Condiments",
+    Sweetener: "Pantry Essentials",
+    Oil: "Pantry Essentials",
     "Flour & Starch": "Pantry Essentials",
   };
 
@@ -101,9 +107,15 @@ function groupByCategory(ingredients) {
 
 function getCategoryImage(category) {
   const imageMap = {
-    "Dairy": dairyImg,
-    "Meats": meatsImg,
+    Dairy: dairyImg,
+    Meats: meatsImg,
     "Vegetables & Greens": vegetablesImg,
+    "Pantry Essentials": pantryImg,
+    Seafood: seafoodImg,
+    Fruits: fruitsImg,
+    "Spices & Heat": spicesImg,
+    "Sauces & Condiments": saucesImg,
+    "Noodles & Grains": grainsImg,
     // Add more images as they become available
   };
   return imageMap[category] || null;
@@ -163,31 +175,32 @@ export default function Sidebar({ collapsed }) {
             p="3"
             boxShadow="0 8px 24px rgba(0,0,0,0.15)"
           >
-            <HStack align="start" spacing="3" mb="5">
+            <HStack align="center" spacing="3" mb="5">
               {(() => {
                 const img = getCategoryImage(cat);
                 return img ? (
                   <Image
                     src={img}
                     alt={cat}
-                    boxSize="40px"
+                    boxSize="50px"
                     objectFit="contain"
                     flexShrink={0}
                   />
                 ) : null;
               })()}
-              <VStack align="start" spacing="1">
-                <Text fontWeight="bold" color="gray.900" lineHeight="0.9">
+
+              <VStack align="start" justify="center" spacing="1">
+                <Text fontWeight="bold" color="gray.900" lineHeight="1">
                   {cat}
                 </Text>
-                <Text fontSize="xs" color="gray.600" lineHeight="0.9">
+                <Text fontSize="xs" color="gray.600" lineHeight="1">
                   {selectedCount}/{list.length} Ingredients
                 </Text>
               </VStack>
             </HStack>
 
             <Box
-              bg="#AEBED9" // ✅ dark gray panel (change if you want darker)
+              bg="#AEBED9" // dark gray panel (change if you want darker)
               borderRadius="2xl"
               p="3"
             >
@@ -235,7 +248,7 @@ export default function Sidebar({ collapsed }) {
             </HStack>
 
             <Box
-              bg="#AEBED9" // ✅ dark gray panel (change if you want darker)
+              bg="#AEBED9" // dark gray panel (change if you want darker)
               borderRadius="2xl"
               p="3"
             >
