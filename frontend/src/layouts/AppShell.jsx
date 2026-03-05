@@ -6,6 +6,8 @@ import TopBarLeft from "./TopBarLeft.jsx";
 import TopBarRight from "./TopBarRight.jsx";
 import Sidebar from "./Sidebar.jsx";
 
+import backgroundImage from "../assets/bg.png";
+
 export default function AppShell() {
   const [userCollapsed, setUserCollapsed] = useState(false);
   const loc = useLocation();
@@ -75,14 +77,14 @@ export default function AppShell() {
           <Box
             position="absolute"
             inset="0"
-            bgImage="url('/assets/bg.png')"
+            bgImage={`url(${backgroundImage})`}
             bgRepeat="repeat"
             bgSize="320px"
             opacity={0.38}
             pointerEvents="none"
           />
 
-          <Box position="relative" zIndex="1" p="6">
+          <Box position="relative" zIndex="1" p="1">
             <Outlet />
           </Box>
         </Box>

@@ -11,6 +11,8 @@ import {
   Image,
 } from "@chakra-ui/react";
 
+import googleIcon from "../assets/google.png";
+
 export default function Login() {
   const { login, signup, loading } = useUser(); // Assuming signup is added to UserProvider
   const navigate = useNavigate();
@@ -101,7 +103,7 @@ export default function Login() {
                     borderRadius="12px"
                     leftIcon={
                       <Image
-                        src="/assets/n.png"
+                        src={googleIcon}
                         alt="Google Logo"
                         w="32px"
                         h="32px"

@@ -12,13 +12,15 @@ import { useApp } from "../context/AppProvider.jsx";
 import RecipeCard from "../components/RecipeCard.jsx";
 import FullRecipe from "./fullRecipePage/FullRecipe.jsx";
 
+import chefImage from "../assets/chef-serving.png";
+
 function HomeEmptyState() {
   return (
     <VStack h="full" justify="center" gap="4" textAlign="center" py="20">
       <Image
-        src="https://cdn-icons-png.flaticon.com/512/2276/2276931.png"
+        src={chefImage}
         alt="Chef"
-        boxSize="96px"
+        boxSize="160px"
         opacity="0.9"
       />
       <Text fontWeight="normal" fontSize="xl">
