@@ -13,6 +13,11 @@ import { Link, useLocation } from "react-router-dom";
 import { FiHeart, FiHome, FiInfo } from "react-icons/fi";
 import { useApp } from "../context/AppProvider.jsx";
 
+// Import ingredient type images
+import dairyImg from "../assets/type/dairy.png";
+import meatsImg from "../assets/type/meats.png";
+import vegetablesImg from "../assets/type/vegetables.png";
+
 function chipBg(color) {
   // small mapping so your dummyIngredient colors look nice on the brown sidebar
   const map = {
@@ -52,11 +57,11 @@ function IngredientChip({ item, selected, onClick }) {
 
 const CATEGORY_ORDER = [
   "Pantry Essentials",
+  "Meats",
+  "Vegetables & Greens",
   "Sauces & Condiments",
   "Noodles & Grains",
   "Seafood",
-  "Proteins",
-  "Vegetables & Greens",
   "Fruits",
   "Dairy",
   "Spices & Heat",
@@ -68,14 +73,14 @@ function groupByCategory(ingredients) {
 
   // Mapping from ingredient type to category
   const typeToCategory = {
-    "Meat": "Proteins",
+    "Meat": "Meats",
     "Seafood": "Seafood",
     "Vegetable": "Vegetables & Greens",
     "Herb": "Vegetables & Greens",
     "Fruit": "Fruits",
     "Grain": "Noodles & Grains",
     "Dairy": "Dairy",
-    "Egg": "Proteins",
+    "Egg": "Meats",
     "Spice": "Spices & Heat",
     "Sauce": "Sauces & Condiments",
     "Sweetener": "Pantry Essentials",
@@ -92,6 +97,16 @@ function groupByCategory(ingredients) {
   }
 
   return map;
+}
+
+function getCategoryImage(category) {
+  const imageMap = {
+    "Dairy": dairyImg,
+    "Meats": meatsImg,
+    "Vegetables & Greens": vegetablesImg,
+    // Add more images as they become available
+  };
+  return imageMap[category] || null;
 }
 
 export default function Sidebar({ collapsed }) {
@@ -148,14 +163,28 @@ export default function Sidebar({ collapsed }) {
             p="3"
             boxShadow="0 8px 24px rgba(0,0,0,0.15)"
           >
-            <VStack align="start" spacing="1" mb="5">
-              <Text fontWeight="bold" color="gray.900" lineHeight="0.9">
-                {cat}
-              </Text>
-              <Text fontSize="xs" color="gray.600" lineHeight="0.9">
-                {selectedCount}/{list.length} Ingredients
-              </Text>
-            </VStack>
+            <HStack align="start" spacing="3" mb="5">
+              {(() => {
+                const img = getCategoryImage(cat);
+                return img ? (
+                  <Image
+                    src={img}
+                    alt={cat}
+                    boxSize="40px"
+                    objectFit="contain"
+                    flexShrink={0}
+                  />
+                ) : null;
+              })()}
+              <VStack align="start" spacing="1">
+                <Text fontWeight="bold" color="gray.900" lineHeight="0.9">
+                  {cat}
+                </Text>
+                <Text fontSize="xs" color="gray.600" lineHeight="0.9">
+                  {selectedCount}/{list.length} Ingredients
+                </Text>
+              </VStack>
+            </HStack>
 
             <Box
               bg="#AEBED9" // ✅ dark gray panel (change if you want darker)
@@ -194,14 +223,16 @@ export default function Sidebar({ collapsed }) {
             p="3"
             boxShadow="0 8px 24px rgba(0,0,0,0.15)"
           >
-            <VStack align="start" spacing="1" mb="5">
-              <Text fontWeight="bold" color="gray.900" lineHeight="0.9">
-                Other
-              </Text>
-              <Text fontSize="xs" color="gray.600" lineHeight="0.9">
-                {selectedCount}/{other.length} Ingredients
-              </Text>
-            </VStack>
+            <HStack align="start" spacing="3" mb="5">
+              <VStack align="start" spacing="1">
+                <Text fontWeight="bold" color="gray.900" lineHeight="0.9">
+                  Other
+                </Text>
+                <Text fontSize="xs" color="gray.600" lineHeight="0.9">
+                  {selectedCount}/{other.length} Ingredients
+                </Text>
+              </VStack>
+            </HStack>
 
             <Box
               bg="#AEBED9" // ✅ dark gray panel (change if you want darker)
