@@ -51,14 +51,14 @@ function IngredientChip({ item, selected, onClick }) {
 }
 
 const CATEGORY_ORDER = [
-  "Pantry Essential",
+  "Pantry Essentials",
   "Sauces & Condiments",
   "Noodles & Grains",
-  "Seafoods",
+  "Seafood",
   "Proteins",
-  "Vegetables",
+  "Vegetables & Greens",
   "Fruits",
-  "Aromatics & Herbs",
+  "Dairy",
   "Spices & Heat",
 ];
 
@@ -66,9 +66,26 @@ function groupByCategory(ingredients) {
   const map = new Map();
   const allowed = new Set(CATEGORY_ORDER);
 
+  // Mapping from ingredient type to category
+  const typeToCategory = {
+    "Meat": "Proteins",
+    "Seafood": "Seafood",
+    "Vegetable": "Vegetables & Greens",
+    "Herb": "Vegetables & Greens",
+    "Fruit": "Fruits",
+    "Grain": "Noodles & Grains",
+    "Dairy": "Dairy",
+    "Egg": "Proteins",
+    "Spice": "Spices & Heat",
+    "Sauce": "Sauces & Condiments",
+    "Sweetener": "Pantry Essentials",
+    "Oil": "Pantry Essentials",
+    "Flour & Starch": "Pantry Essentials",
+  };
+
   for (const ing of ingredients) {
-    const raw = (ing.category || "").trim();
-    const cat = allowed.has(raw) ? raw : "Other";
+    const typeName = (ing.type?.name || "").trim();
+    const cat = typeToCategory[typeName] || "Other";
 
     if (!map.has(cat)) map.set(cat, []);
     map.get(cat).push(ing);
