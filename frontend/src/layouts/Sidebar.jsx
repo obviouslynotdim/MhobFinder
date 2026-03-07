@@ -170,7 +170,7 @@ export default function Sidebar({ collapsed }) {
         return (
           <Box
             key={cat}
-            mb="10"
+            mb="7"
             borderRadius="2xl"
             p="3"
             boxShadow="0 8px 24px rgba(0,0,0,0.15)"
