@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 
 import { Link, useLocation } from "react-router-dom";
-import { FiHeart, FiHome, FiInfo } from "react-icons/fi";
+import { FiHeart, FiHome, FiInfo, FiUser } from "react-icons/fi";
 import { useApp } from "../context/AppProvider.jsx";
 
 // Import ingredient type images
@@ -130,6 +130,7 @@ export default function Sidebar({ collapsed }) {
     const navItems = [
       { to: "/", icon: <FiHome />, label: "Home" },
       { to: "/favorites", icon: <FiHeart />, label: "Favorites" },
+      { to: "/profile", icon: <FiUser />, label: "Profile" },
       { to: "/about", icon: <FiInfo />, label: "About" },
     ];
 

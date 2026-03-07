@@ -7,6 +7,7 @@ import Home from "./pages/Home.jsx";
 import Favorites from "./pages/Favorites.jsx";
 import About from "./pages/About.jsx";
 import Login from "./pages/Login.jsx";
+import Profile from "./pages/Profile.jsx";
 
 // Protect routes that require login
 function ProtectedRoute({ children }) {
@@ -27,6 +28,14 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <Favorites />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
                 </ProtectedRoute>
               }
             />
