@@ -4,15 +4,16 @@ import {
   addFavorite,
   removeFavorite,
 } from "../controllers/favorite.controller.js";
+import { verifyFirebaseToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
 // ---------------------------
 // Routes
 // ---------------------------
-router.get("/users/:userId", getUserFavorites);
-router.post("/users/:userId/:foodId", addFavorite);
-router.delete("/users/:userId/:foodId", removeFavorite);
+router.get("/users/:userId", verifyFirebaseToken, getUserFavorites);
+router.post("/users/:userId/:foodId", verifyFirebaseToken, addFavorite);
+router.delete("/users/:userId/:foodId", verifyFirebaseToken, removeFavorite);
 
 // ---------------------------
 // Swagger Documentation

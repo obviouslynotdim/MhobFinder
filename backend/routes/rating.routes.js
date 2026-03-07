@@ -1,5 +1,6 @@
 import express from "express";
 import { getRatingsByFood, addOrUpdateRating } from "../controllers/rating.controller.js";
+import { verifyFirebaseToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -48,6 +49,6 @@ router.get("/foods/:foodId", getRatingsByFood);
  *       200:
  *         description: Rating added or updated
  */
-router.post("/foods/:foodId", addOrUpdateRating);
+router.post("/foods/:foodId", verifyFirebaseToken, addOrUpdateRating);
 
 export default router;

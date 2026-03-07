@@ -3,6 +3,7 @@ import cors from "cors";
 import session from "express-session";
 import passport from "passport";
 import "./config/passport.js";
+import "./config/firebase.js"; // Initialize Firebase Admin
 import sequelize from "./config/database.js";
 import "./models/index.js";
 import "dotenv/config";

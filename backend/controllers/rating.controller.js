@@ -17,14 +17,14 @@ export const getRatingsByFood = async (req, res, next) => {
 export const addOrUpdateRating = async (req, res, next) => {
   try {
     const { foodId } = req.params;
-    const { user_id, rating } = req.body;
+    const { rating } = req.body;
 
-    if (!user_id || rating == null) {
-      return res.status(400).json({ message: "user_id and rating are required" });
+    if (rating == null) {
+      return res.status(400).json({ message: "rating is required" });
     }
 
     await Rating.upsert({
-      user_id,
+      user_id: req.user.user_id,
       food_id: foodId,
       rating,
     });

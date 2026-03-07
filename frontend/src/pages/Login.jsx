@@ -14,7 +14,7 @@ import {
 import googleIcon from "../assets/google.png";
 
 export default function Login() {
-  const { login, signup, loading } = useUser(); // Assuming signup is added to UserProvider
+  const { loginWithGoogle, loading } = useUser();
   const navigate = useNavigate();
   const [isSignup, setIsSignup] = useState(false);
   const [email, setEmail] = useState("");
@@ -22,22 +22,19 @@ export default function Login() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
 
+  const handleGoogleSignIn = async () => {
+    try {
+      setError("");
+      await loginWithGoogle();
+      navigate("/");
+    } catch (err) {
+      setError("Google sign in failed. Please try again.");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isSignup && password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-    try {
-      if (isSignup) {
-        await signup(email, password);
-      } else {
-        await login(email, password); // Assuming login now takes password
-      }
-      navigate("/");
-    } catch {
-      setError(isSignup ? "Signup failed" : "Login failed");
-    }
+    setError("Please use Google sign in for authentication.");
   };
 
   return (
@@ -111,8 +108,10 @@ export default function Login() {
                     }
                     _hover={{ bg: "gray.100" }}
                     type="button"
+                    onClick={handleGoogleSignIn}
+                    disabled={loading}
                   >
-                    Continue with google
+                    {loading ? "Signing in..." : "Continue with google"}
                   </Button>
 
                   {/* Or Divider */}
@@ -225,8 +224,10 @@ export default function Login() {
                     }
                     _hover={{ bg: "gray.100" }}
                     type="button"
+                    onClick={handleGoogleSignIn}
+                    disabled={loading}
                   >
-                    Continue with google
+                    {loading ? "Signing in..." : "Continue with google"}
                   </Button>
 
                   {/* Or Divider */}

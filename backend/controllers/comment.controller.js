@@ -19,11 +19,11 @@ export const getCommentsByFood = async (req, res, next) => {
 
 export const addComment = async (req, res, next) => {
   try {
-    const { user_id, parent_id, comment_text } = req.body;
+    const { parent_id, comment_text } = req.body;
     const { foodId } = req.params;
 
     const comment = await Comment.create({
-      user_id,
+      user_id: req.user.user_id,
       food_id: foodId,
       parent_id,
       comment_text,
