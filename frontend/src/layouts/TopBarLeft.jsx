@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   HStack,
   IconButton,
   Input,
@@ -8,14 +9,16 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useRef, useState } from "react";
-import { FiMenu, FiMoreVertical, FiSearch } from "react-icons/fi";
+import { FiMenu, FiMoreVertical, FiSearch, FiTrash2 } from "react-icons/fi";
 import { useApp } from "../context/AppProvider.jsx";
+import { colors } from "../theme/tokens.js";
 
 export default function TopBarLeft({ collapsed, onToggleCollapse }) {
   const { ingredients, selectedIds, toggleIngredient, clearIngredients } =
     useApp();
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [ingSearch, setIngSearch] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const inputRef = useRef(null);
@@ -36,8 +39,9 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
     inputRef.current?.focus();
   }
 
-  function handleClearAll() {
+  function handleConfirmClearAll() {
     clearIngredients();
+    setConfirmOpen(false);
     setMenuOpen(false);
   }
 
@@ -116,14 +120,69 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
                 color="red.500"
                 cursor="pointer"
                 _hover={{ bg: "red.50" }}
-                onClick={handleClearAll}
+                onClick={() => {
+                  setMenuOpen(false);
+                  setConfirmOpen(true);
+                }}
               >
-                Clear all ingredients
+                <HStack gap="2">
+                  <FiTrash2 size={13} />
+                  <Text fontSize={12}>Clear all ingredients</Text>
+                </HStack>
               </Box>
             </Box>
           )}
         </Box>
       </HStack>
+
+      {confirmOpen && (
+        <>
+          <Box
+            position="fixed"
+            inset="0"
+            bg="blackAlpha.400"
+            zIndex="modal"
+            onClick={() => setConfirmOpen(false)}
+          />
+
+          <Box
+            position="fixed"
+            top="50%"
+            left="50%"
+            transform="translate(-50%, -50%)"
+            zIndex="modal"
+            bg="white"
+            border="1px solid"
+            borderColor={`${colors.primary}55`}
+            borderRadius="xl"
+            boxShadow="0 14px 36px rgba(43,76,126,0.2)"
+            w={{ base: "90vw", sm: "420px" }}
+            p="5"
+          >
+            <Text fontWeight="bold" fontSize="lg" color={colors.darkest} mb="2">
+              Remove all ingredients?
+            </Text>
+            <Text fontSize="sm" color={colors.dark} mb="5">
+              Are you sure you want to remove all selected ingredients?
+            </Text>
+
+            <HStack justify="flex-end" gap="2">
+              <Button
+                variant="outline"
+                borderColor={colors.primary}
+                color={colors.dark}
+                _hover={{ bg: colors.chipHover }}
+                onClick={() => setConfirmOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button bg={colors.primary} color="white" _hover={{ bg: colors.dark }} onClick={handleConfirmClearAll}>
+                OK
+              </Button>
+            </HStack>
+          </Box>
+        </>
+      )}
 
       {/* ── Row 2: ingredient search ── */}
       <Box position="relative">

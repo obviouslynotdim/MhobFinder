@@ -15,6 +15,7 @@ import RecipeCard from "../components/RecipeCard.jsx";
 import IngredientChip from "../components/IngredientChip.jsx";
 import CategoryDropdown from "../components/CategoryDropdown.jsx";
 import FullRecipe from "./fullRecipePage/FullRecipe.jsx";
+import { colors } from "../theme/tokens.js";
 
 import chefImage from "../assets/chef-serving.png";
 
@@ -160,10 +161,14 @@ export default function Home() {
     <Box p={{ base: 4, md: 6 }} position="relative">
       <HStack justify="space-between" mb="4" align="start">
         <VStack align="start" gap="0">
-          <Text fontWeight="bold" fontSize={{ base: "lg", md: "2xl" }}>
+          <Text
+            fontWeight="bold"
+            fontSize={{ base: "lg", md: "2xl" }}
+            color={colors.darkest}
+          >
             You can make {filteredFoods.length} recipe{filteredFoods.length > 1 ? "s" : ""}
           </Text>
-          <Text fontSize="sm" opacity="0.75">
+          <Text fontSize="sm" color={colors.dark} opacity="0.85">
             Do you have?
           </Text>
 

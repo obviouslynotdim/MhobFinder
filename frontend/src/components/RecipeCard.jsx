@@ -2,6 +2,8 @@ import { Box, Flex, HStack, IconButton, Image, Text, VStack } from "@chakra-ui/r
 import { FiExternalLink, FiHeart } from "react-icons/fi";
 import { MdOutlineFoodBank } from "react-icons/md";
 import { colors } from "../theme/tokens.js";
+import { useUser } from "../context/UserProvider.jsx";
+import { useNavigate } from "react-router-dom";
 
 function formatDomain(url) {
   try {
@@ -12,7 +14,18 @@ function formatDomain(url) {
 }
 
 export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView }) {
+  const { user } = useUser();
+  const navigate = useNavigate();
   const ingredientCount = food.ingredients?.length ?? 0;
+
+  function handleFavoriteClick(e) {
+    e.stopPropagation();
+    if (!user) {
+      navigate("/login");
+    } else {
+      onToggleFavorite(food.food_id);
+    }
+  }
 
   return (
     <Flex
@@ -55,7 +68,7 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
         {/* Food name */}
         <Text
           fontWeight="bold"
-          fontSize={{ base: "sm", md: "md" }}
+          fontSize={{ base: "sm", md: "lg" }}
           color={colors.darkest}
           lineClamp={1}
           lineHeight="1.3"
@@ -105,7 +118,7 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
           <Box
             as="button"
             flex="1"
-            py="1"
+            py="2"
             px="2"
             bg={colors.primary}
             color="white"
@@ -125,17 +138,17 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
 
           <IconButton
             aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleFavorite(food.food_id);
-            }}
+            onClick={handleFavoriteClick}
             bg={isFavorite ? "red.500" : "white"}
-            color={isFavorite ? "white" : "red.400"}
+            color={isFavorite ? "white" : "red.500"}
             border="1px solid"
-            borderColor={isFavorite ? "red.500" : "red.200"}
-            _hover={{ opacity: 0.85 }}
+            borderColor={isFavorite ? "red.500" : "red.300"}
+            _hover={{
+              bg: isFavorite ? "red.600" : "red.200",
+              color: isFavorite ? "white" : "red.600",
+            }}
             borderRadius="md"
-            size="xs"
+            size="sm"
             flexShrink="0"
           >
             <FiHeart />

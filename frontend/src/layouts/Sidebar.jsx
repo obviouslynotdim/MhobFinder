@@ -12,6 +12,7 @@ import {
 import { Link, useLocation } from "react-router-dom";
 import { FiHeart, FiHome, FiInfo, FiUser } from "react-icons/fi";
 import { useApp } from "../context/AppProvider.jsx";
+import { colors } from "../theme/tokens.js";
 
 // Import ingredient type images
 import pantryImg from "../assets/type/cuisine.png";
@@ -25,20 +26,20 @@ import saucesImg from "../assets/type/sauces.png";
 import grainsImg from "../assets/type/grains.png";
 
 function chipBg(color) {
-  // small mapping so your dummyIngredient colors look nice on the brown sidebar
+  // Muted palette to keep chips readable and consistent with the blue brand theme.
   const map = {
-    orange: "orange.300",
-    green: "green.300",
-    blue: "blue.300",
-    teal: "teal.300",
-    red: "red.300",
-    yellow: "yellow.300",
-    gray: "gray.200",
-    pink: "pink.200",
-    purple: "purple.200",
-    cyan: "cyan.200",
+    orange: "orange.100",
+    green: "green.100",
+    blue: "blue.100",
+    teal: "teal.100",
+    red: "red.100",
+    yellow: "yellow.100",
+    gray: "gray.100",
+    pink: "pink.100",
+    purple: "purple.100",
+    cyan: "cyan.100",
   };
-  return map[color] || "whiteAlpha.900";
+  return map[color] || "gray.100";
 }
 
 function IngredientChip({ item, selected, onClick }) {
@@ -46,12 +47,18 @@ function IngredientChip({ item, selected, onClick }) {
     <Box
       px="3"
       py="1"
+      border="1px solid"
+      borderColor={selected ? colors.primary : "transparent"}
       borderRadius="full"
       cursor="pointer"
       fontSize="sm"
-      bg={selected ? "blue.700" : chipBg(item.color)}
-      color={selected ? "white" : "gray.900"}
-      _hover={{ transform: "translateY(-1px)", opacity: 0.95 }}
+      bg={selected ? colors.primary : chipBg(item.color)}
+      color={selected ? "white" : colors.darkest}
+      _hover={{
+        transform: "translateY(-1px)",
+        bg: selected ? colors.dark : colors.chipHover,
+        color: selected ? "white" : colors.darkest,
+      }}
       onClick={onClick}
       boxShadow="sm"
       userSelect="none"
@@ -159,7 +166,7 @@ export default function Sidebar({ collapsed }) {
   const grouped = groupByCategory(ingredients);
 
   return (
-    <Box p="5" color="white">
+    <Box p="5" color={colors.darkest}>
       {CATEGORY_ORDER.map((cat) => {
         const list = grouped.get(cat) || [];
         if (list.length === 0) return null;
@@ -174,7 +181,10 @@ export default function Sidebar({ collapsed }) {
             mb="7"
             borderRadius="2xl"
             p="5"
-            boxShadow="0 8px 24px rgba(0,0,0,0.15)"
+            bg="white"
+            border="1px solid"
+            borderColor={`${colors.primary}22`}
+            boxShadow="0 8px 20px rgba(43,76,126,0.12)"
           >
             <HStack align="center" spacing="3" mb="5">
               {(() => {
@@ -191,17 +201,19 @@ export default function Sidebar({ collapsed }) {
               })()}
 
               <VStack align="start" justify="center" spacing="1">
-                <Text fontWeight="bold" color="gray.900" lineHeight="1">
+                <Text fontWeight="bold" color={colors.darkest} lineHeight="1">
                   {cat}
                 </Text>
-                <Text fontSize="xs" color="gray.600" lineHeight="1">
+                <Text fontSize="xs" color={colors.dark} lineHeight="1">
                   {selectedCount}/{list.length} Ingredients
                 </Text>
               </VStack>
             </HStack>
 
             <Box
-              bg="#AEBED9" // dark gray panel (change if you want darker)
+              bg={colors.pageBg}
+              border="1px solid"
+              borderColor={`${colors.primary}26`}
               borderRadius="2xl"
               p="3"
             >
@@ -235,21 +247,26 @@ export default function Sidebar({ collapsed }) {
             mb="2"
             borderRadius="2xl"
             p="3"
-            boxShadow="0 8px 24px rgba(0,0,0,0.15)"
+            bg="white"
+            border="1px solid"
+            borderColor={`${colors.primary}22`}
+            boxShadow="0 8px 20px rgba(43,76,126,0.12)"
           >
             <HStack align="start" spacing="3" mb="5">
               <VStack align="start" spacing="1">
-                <Text fontWeight="bold" color="gray.900" lineHeight="0.9">
+                <Text fontWeight="bold" color={colors.darkest} lineHeight="0.9">
                   Other
                 </Text>
-                <Text fontSize="xs" color="gray.600" lineHeight="0.9">
+                <Text fontSize="xs" color={colors.dark} lineHeight="0.9">
                   {selectedCount}/{other.length} Ingredients
                 </Text>
               </VStack>
             </HStack>
 
             <Box
-              bg="#AEBED9" // dark gray panel (change if you want darker)
+              bg={colors.pageBg}
+              border="1px solid"
+              borderColor={`${colors.primary}26`}
               borderRadius="2xl"
               p="3"
             >
