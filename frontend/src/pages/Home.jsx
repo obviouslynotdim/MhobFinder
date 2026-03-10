@@ -1,22 +1,42 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Button,
   HStack,
   Image,
   SimpleGrid,
-  Tag,
   Text,
   VStack,
   Wrap,
   WrapItem,
 } from "@chakra-ui/react";
-import { FiX } from "react-icons/fi";
 import { useApp } from "../context/AppProvider.jsx";
 import RecipeCard from "../components/RecipeCard.jsx";
+import IngredientChip from "../components/IngredientChip.jsx";
+import CategoryDropdown from "../components/CategoryDropdown.jsx";
 import FullRecipe from "./fullRecipePage/FullRecipe.jsx";
 
 import chefImage from "../assets/chef-serving.png";
+
+const FALLBACK_CATEGORY_NAMES = [
+  "Khmer Food",
+  "European",
+  "Seafood",
+  "Dessert",
+  "Street Food",
+  "Curry",
+  "Soup",
+];
+
+const FALLBACK_CATEGORY_KEYWORDS = {
+  "Khmer Food": ["khmer", "cambodian"],
+  European: ["italian", "french", "spanish", "german", "greek", "british", "hungarian", "austrian"],
+  Seafood: ["fish", "crab", "squid", "prawn", "shrimp", "seafood"],
+  Dessert: ["dessert", "cake", "sweet", "pancake", "jelly", "rice balls"],
+  "Street Food": ["street", "sandwich", "skewers", "grilled", "stir-fried", "fried"],
+  Curry: ["curry"],
+  Soup: ["soup", "samlor", "tom yum", "broth", "minestrone"],
+};
 
 function HomeEmptyState() {
   return (
@@ -79,6 +99,58 @@ export default function Home() {
   );
 
   const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [categoryOptions, setCategoryOptions] = useState([
+    { name: "All", foodIds: null },
+    ...FALLBACK_CATEGORY_NAMES.map((name) => ({ name, foodIds: null })),
+  ]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadCategories() {
+      try {
+        const API_BASE = import.meta.env.VITE_API_BASE || "";
+        const res = await fetch(`${API_BASE}/api/categories`, {
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error(`Failed to load categories: ${res.status}`);
+
+        const data = await res.json();
+        if (!mounted || !Array.isArray(data)) return;
+
+        const normalized = data.map((cat) => ({
+          name: cat.name,
+          foodIds: new Set((cat.foods || []).map((food) => food.food_id)),
+        }));
+
+        setCategoryOptions([{ name: "All", foodIds: null }, ...normalized]);
+      } catch {
+        // Keep fallback options when categories API is unavailable.
+      }
+    }
+
+    loadCategories();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const filteredFoods = useMemo(() => {
+    if (selectedCategory === "All") return foods;
+    const selected = categoryOptions.find((cat) => cat.name === selectedCategory);
+    if (!selected) return foods;
+    if (!selected.foodIds || selected.foodIds.size === 0) {
+      const keywords = FALLBACK_CATEGORY_KEYWORDS[selectedCategory] || [];
+      if (keywords.length === 0) return foods;
+
+      return foods.filter((food) => {
+        const haystack = `${food.title || ""} ${food.description || ""}`.toLowerCase();
+        return keywords.some((kw) => haystack.includes(kw));
+      });
+    }
+    return foods.filter((food) => selected.foodIds.has(food.food_id));
+  }, [foods, categoryOptions, selectedCategory]);
 
   if (selectedIds.length === 0) return <HomeEmptyState />;
   if (foodsLoading) return <HomeLoading />;
@@ -89,7 +161,7 @@ export default function Home() {
       <HStack justify="space-between" mb="4" align="start">
         <VStack align="start" gap="0">
           <Text fontWeight="bold" fontSize={{ base: "lg", md: "2xl" }}>
-            You can make {foods.length} recipe{foods.length > 1 ? "s" : ""}
+            You can make {filteredFoods.length} recipe{filteredFoods.length > 1 ? "s" : ""}
           </Text>
           <Text fontSize="sm" opacity="0.75">
             Do you have?
@@ -97,42 +169,38 @@ export default function Home() {
 
           {/* Selected ingredient chips */}
           {selectedIngredients.length > 0 && (
-            <Wrap gap="1" mt="1">
+            <Wrap gap="1.5" mt="2">
               {selectedIngredients.map((i) => (
                 <WrapItem key={i.ingredient_id}>
-                  <Tag.Root
-                    size="sm"
-                    bg="blue.600"
-                    color="white"
-                    borderRadius="full"
-                  >
-                    <Tag.Label>{i.name}</Tag.Label>
-                    <Tag.EndElement>
-                      <Box
-                        as="span"
-                        cursor="pointer"
-                        onClick={() => toggleIngredient(i.ingredient_id)}
-                        display="flex"
-                        alignItems="center"
-                      >
-                        <FiX size={10} />
-                      </Box>
-                    </Tag.EndElement>
-                  </Tag.Root>
+                  <IngredientChip
+                    name={i.name}
+                    onRemove={() => toggleIngredient(i.ingredient_id)}
+                  />
                 </WrapItem>
               ))}
             </Wrap>
           )}
         </VStack>
 
-        <Button variant="ghost" onClick={clearIngredients}>
-          Clear
-        </Button>
+        <CategoryDropdown
+          options={categoryOptions}
+          selectedCategory={selectedCategory}
+          onChange={setSelectedCategory}
+        />
       </HStack>
+
+      {filteredFoods.length === 0 && (
+        <VStack h="full" justify="center" gap="3" textAlign="center" py="20">
+          <Text fontWeight="bold" fontSize="xl">
+            No recipes in {selectedCategory}
+          </Text>
+          <Text opacity="0.75">Try another category.</Text>
+        </VStack>
+      )}
 
       {/* 2 cards per row + spacing */}
       <SimpleGrid columns={2} spacing={1000}>
-        {foods.map((food) => (
+        {filteredFoods.map((food) => (
           <RecipeCard
             key={food.food_id}
             food={food}
