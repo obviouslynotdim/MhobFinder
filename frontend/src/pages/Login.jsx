@@ -1,15 +1,9 @@
 import { useEffect, useState } from "react";
-import { useUser } from "../context/UserProvider.jsx";
 import { useNavigate } from "react-router-dom";
-import {
-  Box,
-  Button,
-  Input,
-  Text,
-  Link,
-  VStack,
-  Image,
-} from "@chakra-ui/react";
+import { Box, Button, Image, Link, Text, VStack } from "@chakra-ui/react";
+import { FcGoogle } from "react-icons/fc";
+import { useUser } from "../context/UserProvider.jsx";
+import { colors } from "../theme/tokens.js";
 
 import googleIcon from "../assets/google.png";
 
@@ -17,10 +11,8 @@ export default function Login() {
   const { loginWithGoogle, loading, user } = useUser();
   const navigate = useNavigate();
   const [isSignup, setIsSignup] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [googleIconFailed, setGoogleIconFailed] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -36,199 +28,96 @@ export default function Login() {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("Please use Google sign in for authentication.");
-  };
+  const handleBackToMain = () => navigate("/");
 
   return (
-    <Box height="85vh" display="flex" flexDirection="column" bg="transparent">
-      <Box display="flex" justifyContent="flex-end" p={6}>
+    <Box minH="85vh" display="flex" flexDirection="column" bg="transparent">
+      <Box display="flex" justifyContent="space-between" p={6}>
         <Link
-          color="black"
-          fontSize="lg"
+          color={colors.dark}
+          fontSize={{ base: "md", md: "lg" }}
+          fontWeight="semibold"
+          onClick={handleBackToMain}
+          cursor="pointer"
+          textDecoration="none"
+          _hover={{ color: colors.primary, textDecoration: "underline" }}
+        >
+          Back to Main
+        </Link>
+        <Link
+          color={colors.dark}
+          fontSize={{ base: "md", md: "lg" }}
           fontWeight="semibold"
           onClick={() => setIsSignup(!isSignup)}
           cursor="pointer"
+          textDecoration="none"
+          _hover={{ color: colors.primary, textDecoration: "underline" }}
         >
           {isSignup ? "Login" : "Sign Up"}
         </Link>
       </Box>
 
       <Box display="flex" justifyContent="center" alignItems="center" flexGrow={1}>
-        <VStack justify="center" spacing={6} maxW="450px" w="100%" px={6}>
+        <VStack
+          justify="center"
+          spacing={6}
+          maxW="460px"
+          w="100%"
+          px={6}
+          py={8}
+          bg="white"
+          borderRadius="2xl"
+          boxShadow="md"
+        >
           <Text fontSize="4xl" fontWeight="bold" color="blue.400" textAlign="center">
             MhobFinder
           </Text>
 
-          {isSignup ? (
-            <>
-              <Text fontSize="md" color="gray.700" textAlign="center" lineHeight="1.6">
-                Create an account to get started. Sign up with Google or enter
-                your details below.
-              </Text>
+          <Text fontSize="md" color="gray.700" textAlign="center" lineHeight="1.6">
+            {isSignup
+              ? "Create your account instantly with Google."
+              : "Sign in instantly with your Google account."}
+          </Text>
 
-              <form onSubmit={handleSubmit} style={{ width: "100%" }}>
-                <VStack spacing={4} w="100%">
-                  <Button
-                    w="100%"
-                    py={6}
-                    fontSize="lg"
-                    fontWeight="semibold"
-                    bg="white"
-                    color="black"
-                    border="2px solid black"
-                    borderRadius="12px"
-                    leftIcon={<Image src={googleIcon} alt="Google Logo" w="32px" h="32px" />}
-                    _hover={{ bg: "gray.100" }}
-                    type="button"
-                    onClick={handleGoogleSignIn}
-                    disabled={loading}
-                  >
-                    {loading ? "Signing in..." : "Continue with Google"}
-                  </Button>
+          <Button
+            w="100%"
+            py={6}
+            fontSize="lg"
+            fontWeight="semibold"
+            bg="white"
+            color={colors.darkest}
+            border="1px solid"
+            borderColor={colors.primary}
+            borderRadius="12px"
+            leftIcon={
+              googleIconFailed ? (
+                <FcGoogle size={24} />
+              ) : (
+                <Image
+                  src={googleIcon}
+                  alt="Google Logo"
+                  w="26px"
+                  h="26px"
+                  onError={() => setGoogleIconFailed(true)}
+                />
+              )
+            }
+            _hover={{ bg: colors.chipBg }}
+            type="button"
+            onClick={handleGoogleSignIn}
+            disabled={loading}
+          >
+            {loading
+              ? "Connecting..."
+              : isSignup
+                ? "Continue with Google"
+                : "Sign in with Google"}
+          </Button>
 
-                  <Text fontSize="sm" color="gray.600" fontWeight="medium">
-                    or
-                  </Text>
-
-                  <Input
-                    type="email"
-                    placeholder="Enter email address"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    p={4}
-                    bg="white"
-                    border="2px solid black"
-                    borderRadius="12px"
-                    fontSize="lg"
-                    _placeholder={{ color: "gray.400" }}
-                    required
-                  />
-
-                  <Input
-                    type="password"
-                    placeholder="Enter password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    p={4}
-                    bg="white"
-                    border="2px solid black"
-                    borderRadius="12px"
-                    fontSize="lg"
-                    _placeholder={{ color: "gray.400" }}
-                    required
-                  />
-
-                  <Input
-                    type="password"
-                    placeholder="Confirm password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    p={4}
-                    bg="white"
-                    border="2px solid black"
-                    borderRadius="12px"
-                    fontSize="lg"
-                    _placeholder={{ color: "gray.400" }}
-                    required
-                  />
-
-                  {error && (
-                    <Text color="red.500" fontSize="sm" textAlign="center">
-                      {error}
-                    </Text>
-                  )}
-
-                  <Button
-                    type="submit"
-                    disabled={loading}
-                    colorScheme="blue"
-                    w="100%"
-                    py={6}
-                    fontSize="lg"
-                    fontWeight="bold"
-                    borderRadius="8px"
-                    bg="#4975BB"
-                    _hover={{ bg: "#3a5e9c" }}
-                  >
-                    {loading ? "Signing up..." : "Sign Up"}
-                  </Button>
-                </VStack>
-              </form>
-            </>
-          ) : (
-            <>
-              <Text fontSize="md" color="gray.700" textAlign="center" lineHeight="1.6">
-                To interact more with this website, please sign in or create an
-                account.
-              </Text>
-
-              <form onSubmit={handleSubmit} style={{ width: "100%" }}>
-                <VStack spacing={4} w="100%">
-                  <Button
-                    w="100%"
-                    py={6}
-                    fontSize="lg"
-                    fontWeight="semibold"
-                    bg="white"
-                    color="black"
-                    border="2px solid black"
-                    borderRadius="12px"
-                    leftIcon={<Image src={googleIcon} alt="Google Logo" w="32px" h="32px" />}
-                    _hover={{ bg: "gray.100" }}
-                    type="button"
-                    onClick={handleGoogleSignIn}
-                    disabled={loading}
-                  >
-                    {loading ? "Signing in..." : "Continue with Google"}
-                  </Button>
-
-                  <Text fontSize="sm" color="gray.600" fontWeight="medium">
-                    or
-                  </Text>
-
-                  <Input
-                    type="email"
-                    placeholder="Enter email address"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    p={4}
-                    bg="white"
-                    border="2px solid black"
-                    borderRadius="12px"
-                    fontSize="lg"
-                    _placeholder={{ color: "gray.400" }}
-                    required
-                  />
-
-                  {error && (
-                    <Text color="red.500" fontSize="sm" textAlign="center">
-                      {error}
-                    </Text>
-                  )}
-
-                  <Button
-                    type="submit"
-                    disabled={loading}
-                    colorScheme="blue"
-                    w="100%"
-                    py={6}
-                    fontSize="lg"
-                    fontWeight="bold"
-                    borderRadius="8px"
-                    bg="#4975BB"
-                    _hover={{ bg: "#3a5e9c" }}
-                  >
-                    {loading ? "Logging in..." : "Login"}
-                  </Button>
-                </VStack>
-              </form>
-
-              <Link color="blue.500" fontSize="sm" mt={2} cursor="pointer">
-                Forgot Password
-              </Link>
-            </>
+          {error && (
+            <Text color="red.500" fontSize="sm" textAlign="center">
+              {error}
+            </Text>
           )}
         </VStack>
       </Box>

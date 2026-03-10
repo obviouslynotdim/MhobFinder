@@ -16,7 +16,7 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
 
   return (
     <Flex
-      direction="row"
+      direction={{ base: "column", md: "row" }}
       bg={colors.chipBg}
       borderRadius="xl"
       boxShadow="sm"
@@ -27,10 +27,15 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
       _hover={{ boxShadow: "md", transform: "translateY(-2px)" }}
       cursor="pointer"
       onClick={() => onView(food)}
-      h="190px"
+      h={{ base: "auto", md: "190px" }}
     >
-      {/* Image — fixed left column */}
-      <Box w="190px" flexShrink="0" overflow="hidden">
+      {/* Image */}
+      <Box
+        w={{ base: "full", md: "190px" }}
+        h={{ base: "160px", md: "full" }}
+        flexShrink="0"
+        overflow="hidden"
+      >
         <Image
           src={food.image_url}
           alt={food.title}
@@ -38,19 +43,19 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
           h="100%"
           objectFit="cover"
           fallback={
-            <Flex w="130px" h="100%" align="center" justify="center" bg={colors.pageBg}>
+            <Flex w="100%" h="100%" align="center" justify="center" bg={colors.pageBg}>
               <MdOutlineFoodBank size={40} color={colors.primary} />
             </Flex>
           }
         />
       </Box>
 
-      {/* Content — right column */}
+      {/* Content */}
       <VStack align="start" px="3" py="2.5" gap="1" flex="1" overflow="hidden">
         {/* Food name */}
         <Text
           fontWeight="bold"
-          fontSize="sm"
+          fontSize={{ base: "sm", md: "md" }}
           color={colors.darkest}
           lineClamp={1}
           lineHeight="1.3"
@@ -90,7 +95,7 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
 
         {/* Description */}
         {food.description && (
-          <Text fontSize="xs" color="gray.500" lineClamp={3} lineHeight="1.5">
+          <Text fontSize={{ base: "xs", md: "sm" }} color="gray.500" lineClamp={3} lineHeight="1.5">
             {food.description}
           </Text>
         )}

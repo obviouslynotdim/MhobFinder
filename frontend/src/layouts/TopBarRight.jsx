@@ -19,7 +19,7 @@ export default function TopBarRight() {
     <VStack w="full" gap="4" align="stretch">
       {/* Row 1: MhobFinder centered, icons pinned to the right */}
       <HStack w="full" position="relative" justify="center">
-        <Text fontWeight="bold" color="white" fontSize="2xl" letterSpacing="wider">
+        <Text fontWeight="bold" color="white" fontSize="2xl" letterSpacing="wider" onClick={() => nav("/home")} cursor="pointer">
           MhobFinder
         </Text>
 
