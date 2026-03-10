@@ -81,6 +81,9 @@ app.use(passport.session());
 // ROUTES
 // ---------------------------
 
+app.get("/", (req, res) => {
+  res.send("Backend is working");
+});
 // API routes
 app.use("/api/foods", foodRoutes);
 app.use("/api/ingredients", ingredientRoutes);
@@ -122,21 +125,40 @@ app.use((err, req, res, next) => {
 // ---------------------------
 const PORT = process.env.PORT || 5000;
 
-(async () => {
+
+async function startServer() {
   try {
-    // Test DB connection
     await sequelize.authenticate();
     console.log("✅ Database connected successfully");
 
-    // Sync tables (development only)
     await sequelize.sync();
     console.log("✅ Tables synced successfully");
 
-    app.listen(PORT, () =>
-      console.log(`🚀 Backend running on http://localhost:${PORT}`),
-    );
+    app.listen(PORT, () => {
+      console.log(`🚀 Backend running on http://localhost:${PORT}`);
+    });
   } catch (err) {
-    console.error("❌ Database connection failed:", err.message);
-    process.exit(1);
+    console.error("❌ Startup failed:", err);
   }
-})();
+}
+
+startServer();
+
+// (async () => {
+//   try {
+//     // Test DB connection
+//     await sequelize.authenticate();
+//     console.log("✅ Database connected successfully");
+
+//     // Sync tables (development only)
+//     await sequelize.sync();
+//     console.log("✅ Tables synced successfully");
+
+//     app.listen(PORT, () =>
+//       console.log(`🚀 Backend running on http://localhost:${PORT}`),
+//     );
+//   } catch (err) {
+//     console.error("❌ Database connection failed:", err.message);
+//     process.exit(1);
+//   }
+// })();

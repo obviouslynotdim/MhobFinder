@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "../context/UserProvider.jsx";
 import { useNavigate } from "react-router-dom";
 import {
@@ -14,7 +14,7 @@ import {
 import googleIcon from "../assets/google.png";
 
 export default function Login() {
-  const { loginWithGoogle, loading } = useUser();
+  const { loginWithGoogle, loading, user } = useUser();
   const navigate = useNavigate();
   const [isSignup, setIsSignup] = useState(false);
   const [email, setEmail] = useState("");
@@ -22,11 +22,15 @@ export default function Login() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    if (!user) return;
+    navigate(user.isAdmin ? "/admin/add-food" : "/", { replace: true });
+  }, [user, navigate]);
+
   const handleGoogleSignIn = async () => {
     try {
       setError("");
       await loginWithGoogle();
-      navigate("/");
     } catch (err) {
       setError("Google sign in failed. Please try again.");
     }
@@ -39,7 +43,6 @@ export default function Login() {
 
   return (
     <Box height="85vh" display="flex" flexDirection="column" bg="transparent">
-      {/* Top Right Sign Up/Login Link */}
       <Box display="flex" justifyContent="flex-end" p={6}>
         <Link
           color="black"
@@ -52,43 +55,21 @@ export default function Login() {
         </Link>
       </Box>
 
-      {/* Center Content */}
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        flexGrow={1}
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" flexGrow={1}>
         <VStack justify="center" spacing={6} maxW="450px" w="100%" px={6}>
-          
-
-          {/* Title */}
-          <Text
-            fontSize="4xl"
-            fontWeight="bold"
-            color="blue.400"
-            textAlign="center"
-          >
+          <Text fontSize="4xl" fontWeight="bold" color="blue.400" textAlign="center">
             MhobFinder
           </Text>
 
           {isSignup ? (
-            // SIGNUP FORM
             <>
-              {/* Description */}
-              <Text
-                fontSize="md"
-                color="gray.700"
-                textAlign="center"
-                lineHeight="1.6"
-              >
+              <Text fontSize="md" color="gray.700" textAlign="center" lineHeight="1.6">
                 Create an account to get started. Sign up with Google or enter
                 your details below.
               </Text>
 
               <form onSubmit={handleSubmit} style={{ width: "100%" }}>
                 <VStack spacing={4} w="100%">
-                  {/* Google Button */}
                   <Button
                     w="100%"
                     py={6}
@@ -98,28 +79,19 @@ export default function Login() {
                     color="black"
                     border="2px solid black"
                     borderRadius="12px"
-                    leftIcon={
-                      <Image
-                        src={googleIcon}
-                        alt="Google Logo"
-                        w="32px"
-                        h="32px"
-                      />
-                    }
+                    leftIcon={<Image src={googleIcon} alt="Google Logo" w="32px" h="32px" />}
                     _hover={{ bg: "gray.100" }}
                     type="button"
                     onClick={handleGoogleSignIn}
                     disabled={loading}
                   >
-                    {loading ? "Signing in..." : "Continue with google"}
+                    {loading ? "Signing in..." : "Continue with Google"}
                   </Button>
 
-                  {/* Or Divider */}
                   <Text fontSize="sm" color="gray.600" fontWeight="medium">
                     or
                   </Text>
 
-                  {/* Email Input */}
                   <Input
                     type="email"
                     placeholder="Enter email address"
@@ -134,7 +106,6 @@ export default function Login() {
                     required
                   />
 
-                  {/* Password Input */}
                   <Input
                     type="password"
                     placeholder="Enter password"
@@ -149,7 +120,6 @@ export default function Login() {
                     required
                   />
 
-                  {/* Confirm Password Input */}
                   <Input
                     type="password"
                     placeholder="Confirm password"
@@ -170,7 +140,6 @@ export default function Login() {
                     </Text>
                   )}
 
-                  {/* Sign Up Button */}
                   <Button
                     type="submit"
                     disabled={loading}
@@ -189,22 +158,14 @@ export default function Login() {
               </form>
             </>
           ) : (
-            // LOGIN FORM
             <>
-              {/* Description */}
-              <Text
-                fontSize="md"
-                color="gray.700"
-                textAlign="center"
-                lineHeight="1.6"
-              >
+              <Text fontSize="md" color="gray.700" textAlign="center" lineHeight="1.6">
                 To interact more with this website, please sign in or create an
                 account.
               </Text>
 
               <form onSubmit={handleSubmit} style={{ width: "100%" }}>
                 <VStack spacing={4} w="100%">
-                  {/* Google Button */}
                   <Button
                     w="100%"
                     py={6}
@@ -214,28 +175,19 @@ export default function Login() {
                     color="black"
                     border="2px solid black"
                     borderRadius="12px"
-                    leftIcon={
-                      <Image
-                        src="/assets/n.png"
-                        alt="Google Logo"
-                        w="32px"
-                        h="32px"
-                      />
-                    }
+                    leftIcon={<Image src={googleIcon} alt="Google Logo" w="32px" h="32px" />}
                     _hover={{ bg: "gray.100" }}
                     type="button"
                     onClick={handleGoogleSignIn}
                     disabled={loading}
                   >
-                    {loading ? "Signing in..." : "Continue with google"}
+                    {loading ? "Signing in..." : "Continue with Google"}
                   </Button>
 
-                  {/* Or Divider */}
                   <Text fontSize="sm" color="gray.600" fontWeight="medium">
                     or
                   </Text>
 
-                  {/* Email Input */}
                   <Input
                     type="email"
                     placeholder="Enter email address"
@@ -256,7 +208,6 @@ export default function Login() {
                     </Text>
                   )}
 
-                  {/* Login Button */}
                   <Button
                     type="submit"
                     disabled={loading}
@@ -274,7 +225,6 @@ export default function Login() {
                 </VStack>
               </form>
 
-              {/* Forgot Password Link */}
               <Link color="blue.500" fontSize="sm" mt={2} cursor="pointer">
                 Forgot Password
               </Link>
