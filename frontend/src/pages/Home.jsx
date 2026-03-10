@@ -199,7 +199,7 @@ export default function Home() {
       )}
 
       {/* 2 cards per row + spacing */}
-      <SimpleGrid columns={2} spacing={1000}>
+      <SimpleGrid columns={2} gap="3">
         {filteredFoods.map((food) => (
           <RecipeCard
             key={food.food_id}

@@ -1,93 +1,140 @@
-import {
-  Flex,
-  Box,
-  Image,
-  Text,
-  Badge,
-  Button,
-  IconButton,
-  VStack,
-  HStack,
-} from "@chakra-ui/react";
-import { FiHeart } from "react-icons/fi";
+import { Box, Flex, HStack, IconButton, Image, Text, VStack } from "@chakra-ui/react";
+import { FiExternalLink, FiHeart } from "react-icons/fi";
+import { MdOutlineFoodBank } from "react-icons/md";
+import { colors } from "../theme/tokens.js";
+
+function formatDomain(url) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
+}
 
 export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView }) {
+  const ingredientCount = food.ingredients?.length ?? 0;
+
   return (
     <Flex
-      onClick={() => onView(food)}
-      cursor="pointer"
-      direction={{ base: "column", md: "row" }}
-      bg="#E3F2FD"
-      borderRadius="lg"
-      boxShadow="md"
+      direction="row"
+      bg={colors.chipBg}
+      borderRadius="xl"
+      boxShadow="sm"
       overflow="hidden"
-      p="4"
-      maxW="100%" // ensure it stays within grid cell
+      border="1px solid"
+      borderColor={`${colors.primary}30`}
+      transition="all 0.2s ease"
+      _hover={{ boxShadow: "md", transform: "translateY(-2px)" }}
+      cursor="pointer"
+      onClick={() => onView(food)}
+      h="190px"
     >
-      {/* Image */}
-      <Box
-        flex={{ base: "1 1 100%", md: "0 0 150px" }}
-        h="150px"
-        overflow="hidden"
-        borderRadius="full"
-      >
+      {/* Image — fixed left column */}
+      <Box w="190px" flexShrink="0" overflow="hidden">
         <Image
           src={food.image_url}
           alt={food.title}
           w="100%"
           h="100%"
           objectFit="cover"
-          borderRadius="full"
+          fallback={
+            <Flex w="130px" h="100%" align="center" justify="center" bg={colors.pageBg}>
+              <MdOutlineFoodBank size={40} color={colors.primary} />
+            </Flex>
+          }
         />
       </Box>
 
-      {/* Info */}
-      <VStack align="start" spacing={3} flex="1" pt="2">
-        <Text fontWeight="bold" fontSize="xl" isTruncated>
+      {/* Content — right column */}
+      <VStack align="start" px="3" py="2.5" gap="1" flex="1" overflow="hidden">
+        {/* Food name */}
+        <Text
+          fontWeight="bold"
+          fontSize="sm"
+          color={colors.darkest}
+          lineClamp={1}
+          lineHeight="1.3"
+          w="full"
+        >
           {food.title}
         </Text>
 
-        <HStack spacing={2}>
-          <Badge colorScheme="blue" variant="subtle">
-            {food.time} mins
-          </Badge>
-          <Badge colorScheme="green" variant="subtle">
-            {food.isVegan ? "Vegan" : "Non-Vegan"}
-          </Badge>
-          <Badge colorScheme="orange" variant="subtle">
-            {food.difficulty}
-          </Badge>
+        {/* Website URL */}
+        {food.link_url && (
+          <HStack
+            gap="1"
+            as="a"
+            href={food.link_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            color={colors.primary}
+            _hover={{ textDecoration: "underline", color: colors.dark }}
+            maxW="full"
+            overflow="hidden"
+          >
+            <FiExternalLink size={10} flexShrink={0} />
+            <Text fontSize="xs" isTruncated>
+              {formatDomain(food.link_url)}
+            </Text>
+          </HStack>
+        )}
+
+        {/* Ingredient count */}
+        <HStack gap="1">
+          <MdOutlineFoodBank size={13} color={colors.dark} />
+          <Text fontSize="xs" color="gray.500">
+            {ingredientCount} ingredient{ingredientCount !== 1 ? "s" : ""}
+          </Text>
         </HStack>
 
-        <Text fontSize="sm" color="gray.500" noOfLines={3}>
-          Ingredients: {food.ingredients
-            ? food.ingredients.map(i => i.name).join(", ")
-            : ""}
-        </Text>
+        {/* Description */}
+        {food.description && (
+          <Text fontSize="xs" color="gray.500" lineClamp={3} lineHeight="1.5">
+            {food.description}
+          </Text>
+        )}
 
-        <HStack justify="space-between" w="75%">
-          <Button
-            colorScheme="orange"
-            size="sm"
-            variant="solid"
-            borderRadius="xl"
-            width="full"
+        {/* Actions — pushed to bottom */}
+        <HStack w="full" gap="2" mt="auto">
+          <Box
+            as="button"
+            flex="1"
+            py="1"
+            px="2"
+            bg={colors.primary}
+            color="white"
+            borderRadius="md"
+            fontSize="xs"
+            fontWeight="semibold"
+            textAlign="center"
+            transition="background 0.15s"
+            _hover={{ bg: colors.dark }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onView(food);
+            }}
           >
             View Recipe
-          </Button>
+          </Box>
 
           <IconButton
-            aria-label="Toggle favorite"
-            icon={<FiHeart />}
+            aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
             onClick={(e) => {
               e.stopPropagation();
               onToggleFavorite(food.food_id);
             }}
             bg={isFavorite ? "red.500" : "white"}
-            color={isFavorite ? "white" : "red.500"} // heart visible
-            _hover={{ opacity: 0.8 }}
-            borderRadius="full"
-          />
+            color={isFavorite ? "white" : "red.400"}
+            border="1px solid"
+            borderColor={isFavorite ? "red.500" : "red.200"}
+            _hover={{ opacity: 0.85 }}
+            borderRadius="md"
+            size="xs"
+            flexShrink="0"
+          >
+            <FiHeart />
+          </IconButton>
         </HStack>
       </VStack>
     </Flex>
