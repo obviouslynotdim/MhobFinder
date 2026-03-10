@@ -159,7 +159,7 @@ export default function Sidebar({ collapsed }) {
   const grouped = groupByCategory(ingredients);
 
   return (
-    <Box p="4" color="white">
+    <Box p="5" color="white">
       {CATEGORY_ORDER.map((cat) => {
         const list = grouped.get(cat) || [];
         if (list.length === 0) return null;
@@ -173,7 +173,7 @@ export default function Sidebar({ collapsed }) {
             key={cat}
             mb="7"
             borderRadius="2xl"
-            p="3"
+            p="5"
             boxShadow="0 8px 24px rgba(0,0,0,0.15)"
           >
             <HStack align="center" spacing="3" mb="5">

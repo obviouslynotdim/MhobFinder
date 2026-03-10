@@ -20,7 +20,7 @@ export default function AppShell() {
     ? "72px"
     : { base: "260px", md: "320px", lg: "380px" };
 
-  const headerH = "90px";
+  const headerH = "120px";
 
   return (
     <Flex h="100vh" overflow="hidden">

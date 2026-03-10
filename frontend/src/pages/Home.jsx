@@ -5,9 +5,13 @@ import {
   HStack,
   Image,
   SimpleGrid,
+  Tag,
   Text,
   VStack,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
+import { FiX } from "react-icons/fi";
 import { useApp } from "../context/AppProvider.jsx";
 import RecipeCard from "../components/RecipeCard.jsx";
 import FullRecipe from "./fullRecipePage/FullRecipe.jsx";
@@ -60,13 +64,19 @@ function HomeLoading() {
 
 export default function Home() {
   const {
+    ingredients,
     selectedIds,
     foods,
     favorites,
     toggleFavorite,
     clearIngredients,
+    toggleIngredient,
     foodsLoading,
   } = useApp();
+
+  const selectedIngredients = ingredients.filter((i) =>
+    selectedIds.includes(i.ingredient_id),
+  );
 
   const [selectedRecipe, setSelectedRecipe] = useState(null);
 
@@ -84,6 +94,35 @@ export default function Home() {
           <Text fontSize="sm" opacity="0.75">
             Do you have?
           </Text>
+
+          {/* Selected ingredient chips */}
+          {selectedIngredients.length > 0 && (
+            <Wrap gap="1" mt="1">
+              {selectedIngredients.map((i) => (
+                <WrapItem key={i.ingredient_id}>
+                  <Tag.Root
+                    size="sm"
+                    bg="blue.600"
+                    color="white"
+                    borderRadius="full"
+                  >
+                    <Tag.Label>{i.name}</Tag.Label>
+                    <Tag.EndElement>
+                      <Box
+                        as="span"
+                        cursor="pointer"
+                        onClick={() => toggleIngredient(i.ingredient_id)}
+                        display="flex"
+                        alignItems="center"
+                      >
+                        <FiX size={10} />
+                      </Box>
+                    </Tag.EndElement>
+                  </Tag.Root>
+                </WrapItem>
+              ))}
+            </Wrap>
+          )}
         </VStack>
 
         <Button variant="ghost" onClick={clearIngredients}>
