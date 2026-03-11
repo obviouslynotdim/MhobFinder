@@ -1,84 +1,120 @@
-# 🍲 MhobFinder
+<div align="center">
 
-**Capstone Project 2 | Institute of Digital Technology** *A Smart Ingredient-Based Recipe Discovery Platform*
+<p align="center">
+  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=40&duration=3000&pause=1000&color=FFFFFF&center=true&vCenter=true&width=300&lines=MhobFinder" alt="MhobFinder">&nbsp;
+  <img width="80" alt="MhobFinder Logo" src="https://media.tenor.com/eSdacaX7VtAAAAAi/bubu-dudu-sseeyall.gif">
+</p>
 
-**MhobFinder** is a web-based system designed to help users discover recipes based on the ingredients they already have at home. By solving the common problem of *“what to cook”*, this platform simplifies meal planning, encourages healthier cooking habits, and helps reduce food waste.
+### Ingredient-Based Recipe Discovery Platform  
+**Capstone Project**  
 
----
+</div>
 
-## 📖 Table of Contents
-- [About the Project](#-about-the-project)
-- [Key Features](#-key-features)
-- [Tech Stack](#-tech-stack)
-- [Getting Started](#-getting-started)
-  - [Installation & Run Guide](#-installation--run-guide)
-- [System Architecture](#-system-architecture)
-- [Team](#-team)
 
----
-
-## 🧐 About the Project
-
-Home cooking often faces challenges such as difficulty deciding what to cook and wasting food due to unused ingredients. **MhobFinder** addresses this problem by allowing users to input available ingredients and instantly receive suitable recipe suggestions complete with cooking instructions.
-
-The project was developed over a **12-week period** using the **Waterfall methodology**, progressing from requirement analysis to system design, implementation, testing, and a fully functional prototype.
+<p align="center">
+  <img src="https://img.shields.io/badge/React-Frontend-blue?style=for-the-badge&logo=react">
+  <img src="https://img.shields.io/badge/Node.js-Backend-green?style=for-the-badge&logo=node.js">
+  <img src="https://img.shields.io/badge/MySQL-Database-orange?style=for-the-badge&logo=mysql">
+  <img src="https://img.shields.io/badge/Firebase-Authentication-yellow?style=for-the-badge&logo=firebase">
+  <img src="https://img.shields.io/badge/Figma-UI%20Design-purple?style=for-the-badge&logo=figma">
+</p>
 
 ---
 
-## ✨ Key Features
+## 📌 Project Overview
 
-### User Functionalities
-- **Ingredient-Based Search:** Users can input ingredients (e.g., egg, tomato) to generate meal ideas.
-- **Recipe Suggestions:** Displays relevant dishes based on ingredient compatibility.
-- **Detailed Instructions:** Step-by-step cooking guides with optional images.
-- **Smart Filtering:** Filter recipes by cuisine type, dietary preferences, and cooking time.
-- **Favorites System:** Logged-in users can save favorite recipes for later use.
-- **Alternative Ingredients:** Suggests substitutes when certain ingredients are unavailable.
+**MhobFinder** is a web application that helps users discover recipes based on the ingredients they already have at home.
 
-### Admin Functionalities
-- **Recipe Management:** Add, edit, and delete recipes.
-- **Ingredient & Category Management:** Maintain accurate ingredient and category data.
-- **User Monitoring:** View user activity and system usage statistics.
+Instead of searching through many recipes, users can simply enter available ingredients and receive relevant meal suggestions with step-by-step cooking instructions.
+
+The platform aims to:
+
+- Reduce **food waste**
+- Simplify **meal planning**
+- Encourage **home cooking**
+- Provide an easy and efficient recipe discovery experience
 
 ---
 
-## 🛠 Tech Stack
+## 🎯 Objectives
 
-**MhobFinder** is built using modern web technologies to ensure performance, scalability, and a responsive user experience.
-
-| Component | Technology | Description |
-|:---|:---|:---|
-| **Frontend** | React.js / JavaScript | Dynamic user interface and client-side logic |
-| **Backend** | Node.js / Express | Server-side logic and RESTful APIs |
-| **Database** | MySQL | Stores recipes, ingredients, and user data |
-| **Authentication** | Firebase | User authentication and backend services |
-| **Design** | Figma | UI/UX wireframing and prototyping |
+- Allow users to search recipes using available ingredients  
+- Provide clear cooking instructions for each recipe  
+- Support filtering by cuisine type
+- Enable users to save favorite recipes  
+- Provide a simple system for administrators to manage recipes and ingredients  
 
 ---
 
-## 💻 Getting Started
+## 🧠 System Features
 
-To run this project locally, you need to start the **Backend** and **Frontend** in **two separate terminal windows**.
+### User Features
 
-### Prerequisites
-- Node.js (LTS recommended)
-- MySQL (installed and running)
-- Git
+- 🔎 **Ingredient-Based Search**  
+  Search recipes using ingredients such as eggs, chicken, or vegetables.
+
+- 🍽 **Recipe Recommendations**  
+  Display recipes that match selected ingredients.
+
+- 📋 **Cooking Instructions**  
+  Each recipe contains clear step-by-step preparation instructions.
+
+- 🎛 **Recipe Filters**  
+  Filter recipes by cuisine type, dietary preference, or cooking time.
+
+- ❤️ **Favorites System**  
+  Logged-in users can save recipes for future use.
+
+- 🔄 **Ingredient Alternatives**  
+  Suggest substitutions for missing ingredients.
 
 ---
 
-### 🚀 Installation & Run Guide
+### Admin Features
 
-#### 1. Clone the Repository
+- 📖 **Recipe Management**  
+  Add, update, or delete recipes.
+
+- 🧂 **Ingredient Management**  
+  Maintain ingredient and category data.
+
+- 📊 **User Monitoring**  
+  View system usage and user activity.
+
+---
+
+## 🏗 System Architecture
+
+The application follows a **three-tier architecture**.
+
+```
+User (Web Browser)
+        │
+        ▼
+Frontend – React.js
+        │
+        ▼
+Backend API – Node.js / Express
+        │
+        ▼
+Database – MySQL
+        │
+        ▼
+Authentication – Firebase
+```
+
+---
+
+## ⚙️ How to Run
+
+### 1️⃣ Clone the repository
+
 ```bash
 git clone https://github.com/your-username/MhobFinder.git
 cd MhobFinder
+```
 
-````
-
-#### 2. Terminal 1: Setup Backend
-
-Open your **first terminal window** and run:
+### 2️⃣ Start the Backend
 
 ```bash
 cd backend
@@ -86,9 +122,9 @@ npm install
 npm run dev
 ```
 
-#### 3. Terminal 2: Setup Frontend
+### 3️⃣ Start the Frontend
 
-Open a **second terminal window** and run:
+Open another terminal:
 
 ```bash
 cd frontend
@@ -96,33 +132,54 @@ npm install
 npm run dev
 ```
 
-Once both terminals are running, open your browser and visit:
+### 4️⃣ Open the application
 
-* `http://localhost:3000`
-  or
-* `http://localhost:5173`
+```
+http://localhost:3000
+```
 
-(depending on your frontend configuration)
+or
 
----
+```
+http://localhost:5173
+```
 
-## 🏗 System Architecture
-
-The system follows a **logical and physical architecture** model:
-
-* Users interact with the application via a web browser
-* The **React frontend** communicates with the **Node.js / Express backend**
-* The backend processes requests, handles authentication via **Firebase**, and retrieves data from the **MySQL database**
+(depending on your configuration)
 
 ---
 
-## 👥 Team
+## 📁 Project Structure
 
-This Capstone Project was developed and submitted by:
+```text
+MhobFinder/
+│
+├── backend/
+│   ├── controllers
+│   ├── routes
+│   ├── models
+│   └── server.js
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components
+│   │   ├── pages
+│   │   ├── context
+│   │   └── App.jsx
+│
+├── README.md
+└── package.json
+```
 
-* Mr. Sao Sethavathanak
-* Mrs. Kimhong Chhour
-* Mr. Pov Davin
-* Mr. Mok Chytasenasak
-* Mr. Khorn Vannda
-* Mr. Luy Virak
+---
+
+## 👨‍💻 Team Members
+
+| Sao Sethavathanak | Kimhong Chhour | Pov Davin |
+|-----------------|-----------------|-----------------|
+| **Mok Chytasenasak** | **Khorn Vannda** | **Luy Virak** |
+
+---
+
+<p align="center">
+© Team Members - MhobFinder Project | 2025-2026 ©
+</p>
