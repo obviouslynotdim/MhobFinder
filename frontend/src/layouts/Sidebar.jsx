@@ -3,6 +3,7 @@ import {
   HStack,
   IconButton,
   Image,
+  Spacer,
   Text,
   VStack,
   Wrap,
@@ -10,7 +11,8 @@ import {
 } from "@chakra-ui/react";
 
 import { Link, useLocation } from "react-router-dom";
-import { FiHeart, FiHome, FiInfo, FiUser } from "react-icons/fi";
+import { FiChevronDown, FiChevronUp, FiHeart, FiHome, FiInfo, FiUser } from "react-icons/fi";
+import { useState } from "react";
 import { useApp } from "../context/AppProvider.jsx";
 import { colors } from "../theme/tokens.js";
 
@@ -128,9 +130,20 @@ function getCategoryImage(category) {
   return imageMap[category] || null;
 }
 
+const CACHE_LIMIT = 10;
+
 export default function Sidebar({ collapsed }) {
   const { ingredients, selectedIds, toggleIngredient } = useApp();
   const loc = useLocation();
+  const [expandedCats, setExpandedCats] = useState(new Set());
+
+  function toggleCat(cat) {
+    setExpandedCats((prev) => {
+      const next = new Set(prev);
+      next.has(cat) ? next.delete(cat) : next.add(cat);
+      return next;
+    });
+  }
 
   // Collapsed sidebar (icon rail)
   if (collapsed) {
@@ -171,6 +184,11 @@ export default function Sidebar({ collapsed }) {
         const list = grouped.get(cat) || [];
         if (list.length === 0) return null;
 
+        const hasOverflow = list.length > CACHE_LIMIT;
+        const isExpanded = expandedCats.has(cat);
+        const visibleList = hasOverflow && !isExpanded ? list.slice(0, CACHE_LIMIT) : list;
+        const hiddenCount = list.length - CACHE_LIMIT;
+
         const selectedCount = list.filter((x) =>
           selectedIds.includes(x.ingredient_id),
         ).length;
@@ -208,6 +226,20 @@ export default function Sidebar({ collapsed }) {
                   {selectedCount}/{list.length} Ingredients
                 </Text>
               </VStack>
+
+              <Spacer />
+
+              {hasOverflow && (
+                <IconButton
+                  aria-label={isExpanded ? "Show less" : "Show more"}
+                  size="sm"
+                  variant="ghost"
+                  color={colors.dark}
+                  onClick={() => toggleCat(cat)}
+                >
+                  {isExpanded ? <FiChevronUp /> : <FiChevronDown />}
+                </IconButton>
+              )}
             </HStack>
 
             <Box
@@ -218,7 +250,7 @@ export default function Sidebar({ collapsed }) {
               p="3"
             >
               <Wrap spacing="2" spacingY="2">
-                {list.map((item) => (
+                {visibleList.map((item) => (
                   <WrapItem key={item.ingredient_id}>
                     <IngredientChip
                       item={item}
@@ -227,6 +259,23 @@ export default function Sidebar({ collapsed }) {
                     />
                   </WrapItem>
                 ))}
+
+                {hasOverflow && !isExpanded && (
+                  <WrapItem>
+                    <Box
+                      px="3"
+                      py="1"
+                      borderRadius="full"
+                      fontSize="sm"
+                      bg="gray.200"
+                      color={colors.dark}
+                      cursor="pointer"
+                      onClick={() => toggleCat(cat)}
+                    >
+                      +{hiddenCount} more
+                    </Box>
+                  </WrapItem>
+                )}
               </Wrap>
             </Box>
           </Box>
