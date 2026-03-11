@@ -203,8 +203,8 @@ export default function Home() {
         </VStack>
       )}
 
-      {/* 2 cards per row + spacing */}
-      <SimpleGrid columns={{ base: 1, md: 2 }} gap="3">
+      {/* 2 cards per row + spacing — switch to 2 col only at lg so md viewport has room */}
+      <SimpleGrid columns={{ base: 1, lg: 2 }} gap="3">
         {filteredFoods.map((food) => (
           <RecipeCard
             key={food.food_id}

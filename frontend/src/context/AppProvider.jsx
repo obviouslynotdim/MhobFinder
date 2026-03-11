@@ -9,19 +9,20 @@ import {
 } from "react";
 import { getAllFoods, getMatchedFoods } from "../services/api/food.service.js";
 import { getAllIngredients } from "../services/api/ingredient.service.js";
+import { useUser } from "./UserProvider.jsx";
 
 const AppCtx = createContext(null);
 
 export function AppProvider({ children }) {
+  const { user } = useUser();
   const [ingredients, setIngredients] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]);
   const [foods, setFoods] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [foodsLoading, setFoodsLoading] = useState(false);
-  const [favorites, setFavorites] = useState(() =>
-    JSON.parse(localStorage.getItem("mhob:favorites") || "[]"),
-  );
+  // Start empty; the effect below loads the correct user-scoped favorites.
+  const [favorites, setFavorites] = useState([]);
   const foodsReqIdRef = useRef(0);
 
   useEffect(() => {
@@ -42,10 +43,27 @@ export function AppProvider({ children }) {
     })();
   }, []);
 
-  useEffect(
-    () => localStorage.setItem("mhob:favorites", JSON.stringify(favorites)),
-    [favorites],
-  );
+  // Load favorites scoped to the current user; clear when logged out.
+  useEffect(() => {
+    if (user?.id) {
+      const stored = JSON.parse(
+        localStorage.getItem(`mhob:favorites:${user.id}`) || "[]",
+      );
+      setFavorites(stored);
+    } else {
+      setFavorites([]);
+    }
+  }, [user?.id]);
+
+  // Persist favorites only for the logged-in user.
+  useEffect(() => {
+    if (user?.id) {
+      localStorage.setItem(
+        `mhob:favorites:${user.id}`,
+        JSON.stringify(favorites),
+      );
+    }
+  }, [favorites, user?.id]);
 
   const refreshFoods = useCallback(async (ids) => {
     const reqId = ++foodsReqIdRef.current;
