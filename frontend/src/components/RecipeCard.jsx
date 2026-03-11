@@ -1,9 +1,10 @@
-import { Box, Flex, HStack, IconButton, Image, Text, VStack } from "@chakra-ui/react";
+import { Box, Button, Flex, HStack, IconButton, Image, Text, VStack } from "@chakra-ui/react";
 import { FiExternalLink, FiHeart } from "react-icons/fi";
 import { MdOutlineFoodBank } from "react-icons/md";
 import { colors } from "../theme/tokens.js";
 import { useUser } from "../context/UserProvider.jsx";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 function formatDomain(url) {
   try {
@@ -17,17 +18,19 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
   const { user } = useUser();
   const navigate = useNavigate();
   const ingredientCount = food.ingredients?.length ?? 0;
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
 
   function handleFavoriteClick(e) {
     e.stopPropagation();
     if (!user) {
-      navigate("/login");
+      setShowAuthDialog(true);
     } else {
       onToggleFavorite(food.food_id);
     }
   }
 
   return (
+    <>
     <Flex
       direction={{ base: "column", md: "row" }}
       bg={colors.chipBg}
@@ -144,7 +147,7 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
             border="1px solid"
             borderColor={isFavorite ? "red.500" : "red.300"}
             _hover={{
-              bg: isFavorite ? "red.600" : "red.200",
+              bg: isFavorite ? "red.600" : "red.500",
               color: isFavorite ? "white" : "red.600",
             }}
             borderRadius="md"
@@ -156,5 +159,59 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
         </HStack>
       </VStack>
     </Flex>
+
+    {/* Auth required dialog */}
+    {showAuthDialog && (
+      <>
+        <Box
+          position="fixed"
+          inset="0"
+          bg="blackAlpha.400"
+          zIndex="modal"
+          onClick={() => setShowAuthDialog(false)}
+        />
+        <Box
+          position="fixed"
+          top="50%"
+          left="50%"
+          transform="translate(-50%, -50%)"
+          zIndex="modal"
+          bg="white"
+          border="1px solid"
+          borderColor={`${colors.primary}55`}
+          borderRadius="xl"
+          boxShadow="0 14px 36px rgba(43,76,126,0.2)"
+          w={{ base: "90vw", sm: "420px" }}
+          p="5"
+        >
+          <Text fontWeight="bold" fontSize="lg" color={colors.darkest} mb="2">
+            You are not registered
+          </Text>
+          <Text fontSize="sm" color={colors.dark} mb="5">
+            You need an account to favorite recipes. Would you like to sign up now?
+          </Text>
+          <HStack justify="flex-end" gap="2">
+            <Button
+              variant="outline"
+              borderColor={colors.primary}
+              color={colors.dark}
+              _hover={{ bg: colors.chipHover }}
+              onClick={() => setShowAuthDialog(false)}
+            >
+              No
+            </Button>
+            <Button
+              bg={colors.primary}
+              color="white"
+              _hover={{ bg: colors.dark }}
+              onClick={() => { setShowAuthDialog(false); navigate("/login"); }}
+            >
+              Yes
+            </Button>
+          </HStack>
+        </Box>
+      </>
+    )}
+    </>
   );
 }

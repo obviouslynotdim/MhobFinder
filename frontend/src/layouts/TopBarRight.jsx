@@ -9,10 +9,12 @@ import {
 import { FiHeart, FiUser, FiSearch } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "../context/AppProvider.jsx";
+import { useUser } from "../context/UserProvider.jsx";
 import { MdTranslate } from "react-icons/md";
 
 export default function TopBarRight() {
   const { search, setSearch } = useApp();
+  const { user } = useUser();
   const nav = useNavigate();
 
   return (
@@ -24,15 +26,17 @@ export default function TopBarRight() {
         </Text>
 
         <HStack position="absolute" right="0">
-          <IconButton
-            aria-label="Favorites"
-            variant="ghost"
-            color="white"
-            _hover={{ bg: "whiteAlpha.200" }}
-            onClick={() => nav("/favorites")}
-          >
-            <FiHeart />
-          </IconButton>
+          {user && (
+            <IconButton
+              aria-label="Favorites"
+              variant="ghost"
+              color="white"
+              _hover={{ bg: "whiteAlpha.200" }}
+              onClick={() => nav("/favorites")}
+            >
+              <FiHeart />
+            </IconButton>
+          )}
 
           <IconButton
             aria-label="User"

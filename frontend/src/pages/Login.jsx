@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Button, Image, Link, Text, VStack } from "@chakra-ui/react";
+import { Box, Button, HStack, Image, Link, Text, VStack } from "@chakra-ui/react";
 import { FcGoogle } from "react-icons/fc";
+import { FiArrowLeft } from "react-icons/fi";
 import { useUser } from "../context/UserProvider.jsx";
 import { colors } from "../theme/tokens.js";
 
@@ -42,7 +43,10 @@ export default function Login() {
           textDecoration="none"
           _hover={{ color: colors.primary, textDecoration: "underline" }}
         >
-          Back to Main
+          <HStack as="span" spacing={2} align="center">
+            <FiArrowLeft size={18} />
+            <Text as="span">Back to Main</Text>
+          </HStack>
         </Link>
         <Link
           color={colors.dark}
@@ -89,29 +93,31 @@ export default function Login() {
             border="1px solid"
             borderColor={colors.primary}
             borderRadius="12px"
-            leftIcon={
-              googleIconFailed ? (
-                <FcGoogle size={24} />
-              ) : (
-                <Image
-                  src={googleIcon}
-                  alt="Google Logo"
-                  w="26px"
-                  h="26px"
-                  onError={() => setGoogleIconFailed(true)}
-                />
-              )
-            }
             _hover={{ bg: colors.chipBg }}
             type="button"
             onClick={handleGoogleSignIn}
             disabled={loading}
           >
-            {loading
-              ? "Connecting..."
-              : isSignup
-                ? "Continue with Google"
-                : "Sign in with Google"}
+            <HStack spacing={3} align="center">
+              {googleIconFailed ? (
+                <FcGoogle size={24} />
+              ) : (
+                <Image
+                  src={googleIcon}
+                  alt="Google Logo"
+                  w="32px"
+                  h="32px"
+                  onError={() => setGoogleIconFailed(true)}
+                />
+              )}
+              <Text as="span">
+                {loading
+                  ? "Connecting..."
+                  : isSignup
+                    ? "Continue with Google"
+                    : "Sign in with Google"}
+              </Text>
+            </HStack>
           </Button>
 
           {error && (

@@ -196,6 +196,7 @@ export default function Sidebar({ collapsed }) {
         return (
           <Box
             key={cat}
+            mt="4"
             mb="7"
             borderRadius="2xl"
             p="5"
