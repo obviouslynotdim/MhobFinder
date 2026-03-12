@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Button, HStack, Image, Link, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  HStack,
+  Image,
+  Link,
+  Spinner,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { FcGoogle } from "react-icons/fc";
 import { FiArrowLeft } from "react-icons/fi";
 import { useUser } from "../context/UserProvider.jsx";
@@ -11,7 +20,7 @@ import googleIcon from "../assets/google.png";
 export default function Login() {
   const { loginWithGoogle, loading, user } = useUser();
   const navigate = useNavigate();
-  const [isSignup, setIsSignup] = useState(false);
+  const [isRegister, setIsRegister] = useState(false);
   const [error, setError] = useState("");
   const [googleIconFailed, setGoogleIconFailed] = useState(false);
 
@@ -32,88 +41,117 @@ export default function Login() {
   const handleBackToMain = () => navigate("/home");
 
   return (
-    <Box minH="85vh" display="flex" flexDirection="column" bg="transparent">
-      <Box display="flex" justifyContent="space-between" p={6}>
+    <Box
+      minH="70vh"
+      display="flex"
+      flexDirection="column"
+      px={{ base: 4, md: 6 }}
+      py={{ base: 5, md: 6 }}
+      overflow="hidden"
+    >
+      {/* Top nav bar */}
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        gap="3"
+        flexWrap="wrap"
+        mb="4"
+        maxW="960px"
+        mx="auto"
+        w="full"
+      >
         <Link
           color={colors.dark}
-          fontSize={{ base: "md", md: "lg" }}
-          fontWeight="semibold"
+          fontSize={{ base: "sm", md: "md" }}
+          fontWeight="600"
           onClick={handleBackToMain}
           cursor="pointer"
           textDecoration="none"
-          _hover={{ color: colors.primary, textDecoration: "underline" }}
+          _hover={{ color: colors.primary }}
         >
           <HStack as="span" spacing={2} align="center">
-            <FiArrowLeft size={18} />
-            <Text as="span">Back to Main</Text>
+            <FiArrowLeft size={16} />
+            <Text as="span">Back to Home</Text>
           </HStack>
         </Link>
-        <Link
-          color={colors.dark}
-          fontSize={{ base: "md", md: "lg" }}
-          fontWeight="semibold"
-          onClick={() => setIsSignup(!isSignup)}
-          cursor="pointer"
-          textDecoration="none"
-          _hover={{ color: colors.primary, textDecoration: "underline" }}
+
+        <Button
+          size="sm"
+          variant="outline"
+          borderColor={colors.primary}
+          color={colors.darkest}
+          fontWeight="700"
+          borderRadius="full"
+          _hover={{ bg: "white", borderColor: colors.dark }}
+          onClick={() => setIsRegister((prev) => !prev)}
         >
-          {isSignup ? "Login" : "Sign Up"}
-        </Link>
+          {isRegister ? "Back to Login" : "Register"}
+        </Button>
       </Box>
 
-      <Box display="flex" justifyContent="center" alignItems="center" flexGrow={1}>
-        <VStack
-          justify="center"
-          spacing={6}
+      <Box
+        flex="1"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Box
           maxW="460px"
-          w="100%"
-          px={6}
-          py={8}
+          w="full"
+          mx="auto"
           bg="white"
-          borderRadius="2xl"
-          boxShadow="md"
+          borderRadius="3xl"
+          p={{ base: 6, md: 8 }}
+          border="1px solid"
+          borderColor="#CFE0FA"
+          boxShadow="0 18px 18px rgba(43,76,126,0.12)"
         >
-          <Text fontSize="4xl" fontWeight="bold" color="blue.400" textAlign="center">
-            MhobFinder
+        <VStack align="stretch" spacing={5}>
+          <Text fontSize="3xl" fontWeight="800" color={colors.darkest} textAlign="center">
+            {isRegister ? "Register" : "Login"}
           </Text>
 
-          <Text fontSize="md" color="gray.700" textAlign="center" lineHeight="1.6">
-            {isSignup
-              ? "Create your account instantly with Google."
-              : "Sign in instantly with your Google account."}
+          <Text fontSize="sm" color={colors.dark} lineHeight="1.7" textAlign="center">
+            {isRegister
+              ? "Create your account with Google to get started."
+              : "Sign in with your Google account to continue."}
           </Text>
 
           <Button
             w="100%"
-            py={6}
-            fontSize="lg"
-            fontWeight="semibold"
+            py={7}
+            fontSize="md"
+            fontWeight="700"
             bg="white"
             color={colors.darkest}
             border="1px solid"
             borderColor={colors.primary}
-            borderRadius="12px"
-            _hover={{ bg: colors.chipBg }}
+            borderRadius="14px"
+            _hover={{ bg: colors.chipBg, borderColor: colors.dark }}
+            _disabled={{ opacity: 0.75, cursor: "not-allowed" }}
             type="button"
             onClick={handleGoogleSignIn}
             disabled={loading}
           >
             <HStack spacing={3} align="center">
-              {googleIconFailed ? (
-                <FcGoogle size={24} />
+              {loading ? (
+                <Spinner size="sm" color={colors.primary} thickness="3px" />
+              ) : googleIconFailed ? (
+                <FcGoogle size={22} />
               ) : (
                 <Image
                   src={googleIcon}
                   alt="Google Logo"
-                  w="32px"
-                  h="32px"
+                  w="28px"
+                  h="28px"
                   onError={() => setGoogleIconFailed(true)}
                 />
               )}
               <Text as="span">
                 {loading
                   ? "Connecting..."
-                  : isSignup
+                  : isRegister
                     ? "Continue with Google"
                     : "Sign in with Google"}
               </Text>
@@ -121,11 +159,21 @@ export default function Login() {
           </Button>
 
           {error && (
-            <Text color="red.500" fontSize="sm" textAlign="center">
-              {error}
-            </Text>
+            <Box
+              border="1px solid"
+              borderColor="red.200"
+              bg="red.50"
+              borderRadius="lg"
+              px="4"
+              py="3"
+            >
+              <Text color="red.600" fontSize="sm" textAlign="left" fontWeight="500">
+                {error}
+              </Text>
+            </Box>
           )}
         </VStack>
+        </Box>
       </Box>
     </Box>
   );

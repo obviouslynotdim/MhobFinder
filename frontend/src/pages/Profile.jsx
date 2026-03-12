@@ -1,10 +1,10 @@
-import { Avatar, Box, Button, Text, VStack } from "@chakra-ui/react";
+import { Avatar, Box, Button, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserProvider.jsx";
 import { colors } from "../theme/tokens.js";
 
 export default function Profile() {
-  const { user, logout } = useUser();
+  const { user, logout, loading } = useUser();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -16,23 +16,50 @@ export default function Profile() {
     }
   };
 
+  if (loading) {
+    return (
+      <Box p={{ base: 8, md: 10 }} textAlign="center">
+        <VStack gap="3">
+          <Spinner size="lg" color={colors.primary} thickness="4px" />
+          <Text color={colors.dark}>Loading profile...</Text>
+        </VStack>
+      </Box>
+    );
+  }
+
   if (!user) {
     return (
-      <Box p="8" textAlign="center">
-        <Text color="gray.500">Please log in to view your profile.</Text>
+      <Box p={{ base: 8, md: 10 }} textAlign="center">
+        <VStack gap="4">
+          <Text color={colors.dark}>Please log in to view your profile.</Text>
+          <Button
+            onClick={() => navigate("/login")}
+            bg={colors.primary}
+            color="white"
+            _hover={{ bg: colors.dark }}
+          >
+            Go to Login
+          </Button>
+        </VStack>
       </Box>
     );
   }
 
   return (
-    <Box p={{ base: 6, md: 10 }} maxW="480px" mx="auto">
+    <Box p={{ base: 6, md: 10 }} maxW="560px" mx="auto">
       <Box
-        bg={colors.adminCard}
-        borderRadius="xl"
+        bg="white"
+        border="1px solid"
+        borderColor="#CFE0FA"
+        borderRadius="2xl"
         p="8"
-        boxShadow="md"
+        boxShadow="0 14px 35px rgba(43,76,126,0.12)"
       >
-        <VStack gap="4" align="center">
+        <VStack gap="5" align="center">
+          <Text fontWeight="800" fontSize="2xl" color={colors.darkest}>
+            My Profile
+          </Text>
+
           <Avatar.Root size="2xl">
             <Avatar.Image src={user.photoURL} />
             <Avatar.Fallback name={user.name} bg={colors.primary} color="white" />
@@ -42,7 +69,7 @@ export default function Profile() {
             <Text fontWeight="bold" fontSize="xl" color={colors.darkest}>
               {user.name}
             </Text>
-            <Text fontSize="sm" color="gray.500">
+            <Text fontSize="sm" color={colors.dark}>
               {user.email}
             </Text>
             {user.isAdmin && (
@@ -60,17 +87,34 @@ export default function Profile() {
             )}
           </VStack>
 
-          <Button
-            mt="2"
+          <Box
             w="full"
-            variant="outline"
-            borderColor={colors.primary}
-            color={colors.dark}
-            _hover={{ bg: colors.chipBg }}
-            onClick={handleLogout}
+            pt="2"
+            display="grid"
+            gridTemplateColumns={{ base: "1fr", sm: "1fr 1fr" }}
+            gap="3"
           >
-            Log Out
-          </Button>
+            <Button
+              w="full"
+              variant="outline"
+              borderColor={colors.primary}
+              color={colors.dark}
+              _hover={{ bg: colors.chipBg }}
+              onClick={() => navigate("/home")}
+            >
+              Back to Home
+            </Button>
+
+            <Button
+              w="full"
+              bg={colors.primary}
+              color="white"
+              _hover={{ bg: colors.dark }}
+              onClick={handleLogout}
+            >
+              Log Out
+            </Button>
+          </Box>
         </VStack>
       </Box>
     </Box>
