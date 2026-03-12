@@ -10,8 +10,10 @@ import About from "./pages/About.jsx";
 import Login from "./pages/Login.jsx";
 import Profile from "./pages/Profile.jsx";
 
-import AdminHome from "./pages/admin/AdminHome.jsx";
+import AdminHomePage from "./pages/admin/AdminHomePage.jsx";
+import AdminFoodPage from "./pages/admin/AdminFoodPage.jsx";
 import AddFood from "./pages/admin/AddFood.jsx";
+import EditFood from "./pages/admin/EditFood.jsx";
 import ManageUser from "./pages/admin/ManageUser.jsx";
 import Analytical from "./pages/admin/Analytical.jsx";
 import UserDetail from "./pages/admin/UserDetail.jsx";
@@ -71,9 +73,11 @@ export default function App() {
             }
           >
             <Route index element={<Navigate to="home" replace />} />
-            <Route path="home" element={<AdminHome />} />
+            <Route path="home" element={<AdminHomePage />} />
             <Route path="favorites" element={<Favorites />} />
+            <Route path="foods" element={<AdminFoodPage />} />
             <Route path="add-food" element={<AddFood />} />
+            <Route path="edit-food/:id" element={<EditFood />} />
             <Route path="manage-user" element={<ManageUser />} />
             <Route path="analytical" element={<Analytical />} />
             <Route path="users/:id" element={<UserDetail />} />

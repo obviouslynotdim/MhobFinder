@@ -1,9 +1,10 @@
-import { Box, Flex, Icon, IconButton, Text, VStack } from "@chakra-ui/react";
+import { Box, Flex, Icon, Text, VStack } from "@chakra-ui/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   FiMenu,
   FiHome,
   FiHeart,
+  FiGrid,
   FiPlusSquare,
   FiUsers,
   FiBarChart2,
@@ -16,6 +17,7 @@ export default function AdminSidebar({ expanded, onToggle }) {
   const items = [
     { icon: FiHome, label: "Home", path: "/admin/home", key: "home" },
     { icon: FiHeart, label: "Favorite", path: "/admin/favorites", key: "favorites" },
+    { icon: FiGrid, label: "All Food", path: "/admin/foods", key: "foods" },
     { icon: FiPlusSquare, label: "Add Food", path: "/admin/add-food", key: "add-food" },
     { icon: FiUsers, label: "Manage User", path: "/admin/manage-user", key: "manage-user" },
     { icon: FiBarChart2, label: "Analytical", path: "/admin/analytical", key: "analytical" },
@@ -37,19 +39,27 @@ export default function AdminSidebar({ expanded, onToggle }) {
       transition="width 0.25s ease"
       h="100vh"
     >
-      <Flex justify={expanded ? "flex-end" : "center"} px={expanded ? 4 : 0}>
-        <IconButton
-          aria-label="menu"
-          variant="ghost"
-          color="white"
-          fontSize="24px"
+      {/* Menu toggle */}
+      <Flex justify={expanded ? "flex-start" : "center"} px={4}>
+        <Box
+          as="button"
+          type="button"
           onClick={onToggle}
-          _hover={{ bg: "whiteAlpha.200" }}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          w="48px"
+          h="48px"
+          borderRadius="12px"
+          bg="transparent"
+          _hover={{ bg: "whiteAlpha.300" }}
+          transition="background 0.2s ease"
         >
-          <FiMenu />
-        </IconButton>
+          <Icon as={FiMenu} boxSize={8} color="white" strokeWidth={2.5} />
+        </Box>
       </Flex>
 
+      {/* Sidebar items */}
       <VStack gap={3} mt={2} align="stretch" px={expanded ? 3 : 0}>
         {items.map((item) => (
           <Flex
@@ -61,11 +71,19 @@ export default function AdminSidebar({ expanded, onToggle }) {
             h="48px"
             px={expanded ? 4 : 0}
             borderRadius="12px"
-            bg={isActive(item.path) ? "whiteAlpha.200" : "transparent"}
+            bg={isActive(item.path) ? "whiteAlpha.300" : "transparent"}
             cursor="pointer"
-            _hover={{ bg: "whiteAlpha.200" }}
+            _hover={{ bg: "whiteAlpha.300" }}
+            transition="background 0.2s ease"
           >
-            <Icon as={item.icon} color="white" boxSize={5} flexShrink={0} />
+            <Icon
+              as={item.icon}
+              color="white"
+              boxSize={6}
+              strokeWidth={2.5}
+              flexShrink={0}
+            />
+
             {expanded && (
               <Text color="white" fontWeight="600" whiteSpace="nowrap">
                 {item.label}

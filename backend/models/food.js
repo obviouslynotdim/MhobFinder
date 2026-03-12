@@ -8,6 +8,7 @@ const Food = sequelize.define(
     title: { type: DataTypes.STRING, allowNull: false },
     description: DataTypes.TEXT,
     image_url: DataTypes.STRING,
+    public_id: DataTypes.STRING,
     link_url: DataTypes.STRING,
   },
   { tableName: "foods", timestamps: false },
