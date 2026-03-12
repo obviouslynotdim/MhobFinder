@@ -4,6 +4,7 @@ import AdminLayout from "./layouts/AdminLayout.jsx";
 import { AppProvider } from "./context/AppProvider.jsx";
 import { UserProvider, useUser } from "./context/UserProvider.jsx";
 
+import Start from "./pages/Start.jsx";
 import Home from "./pages/Home.jsx";
 import Favorites from "./pages/Favorites.jsx";
 import About from "./pages/About.jsx";
@@ -30,7 +31,7 @@ function AdminRoute({ children }) {
 
   if (loading) return <div>Loading...</div>;
   if (!user) return <Navigate to="/login" replace />;
-  if (!user.isAdmin) return <Navigate to="/" replace />;
+  if (!user.isAdmin) return <Navigate to="/home" replace />;
 
   return children;
 }
@@ -41,9 +42,10 @@ export default function App() {
       <AppProvider>
         <Routes>
           <Route element={<AppShell />}>
-            <Route index element={<Home />} />
-            <Route path="/login" element={<Login />} />
+            <Route index element={<Start />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/about" element={<About />} />
+            <Route path="/login" element={<Login />} />
 
             <Route
               path="/favorites"

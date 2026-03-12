@@ -5,7 +5,6 @@ import { useState } from "react";
 import TopBarLeft from "./TopBarLeft.jsx";
 import TopBarRight from "./TopBarRight.jsx";
 import Sidebar from "./Sidebar.jsx";
-
 import backgroundImage from "../assets/bg.png";
 
 export default function AppShell() {
@@ -15,6 +14,7 @@ export default function AppShell() {
   const collapsed = loc.pathname.startsWith("/about")
     ? true
     : userCollapsed;
+  const hideTopBarRight = loc.pathname === "/";
 
   const sidebarW = collapsed
     ? "72px"
@@ -55,36 +55,44 @@ export default function AppShell() {
 
       {/* RIGHT COLUMN */}
       <Flex flex="1" direction="column" overflow="hidden">
-        {/* TopBarRight */}
-        <Box
-          h={headerH}
-          px="6"
-          display="flex"
-          alignItems="center"
-          bg="#4975BB"
-          flexShrink="0"
-        >
-          <TopBarRight />
-        </Box>
+        {!hideTopBarRight && (
+          <Box
+            h={headerH}
+            px="6"
+            display="flex"
+            alignItems="center"
+            bg="#4975BB"
+            flexShrink="0"
+          >
+            <TopBarRight />
+          </Box>
+        )}
 
         {/* Content Scroll */}
         <Box
           flex="1"
           overflowY="auto"
           position="relative"
-          bg="#E1EDFE"
+          bg="linear-gradient(180deg, #F8FAFF 0%, #EEF4FF 100%)"
         >
-          <Box
-            position="absolute"
-            inset="0"
-            bgImage={`url(${backgroundImage})`}
-            bgRepeat="repeat"
-            bgSize="320px"
-            opacity={0.38}
-            pointerEvents="none"
-          />
+          {!hideTopBarRight && (
+            <Box
+              position="absolute"
+              inset="0"
+              bgImage={`url(${backgroundImage})`}
+              bgRepeat="repeat"
+              bgSize="320px"
+              opacity={0.18}
+              pointerEvents="none"
+            />
+          )}
 
-          <Box position="relative" zIndex="1" p="1">
+          <Box
+            position="relative"
+            zIndex="1"
+            px={hideTopBarRight ? 0 : { base: 2, md: 3 }}
+            py={hideTopBarRight ? 0 : { base: 2, md: 3 }}
+          >
             <Outlet />
           </Box>
         </Box>

@@ -71,9 +71,9 @@ function IngredientChip({ item, selected, onClick }) {
 }
 
 const CATEGORY_ORDER = [
+  "Vegetables & Greens",
   "Pantry Essentials",
   "Meats",
-  "Vegetables & Greens",
   "Sauces & Condiments",
   "Noodles & Grains",
   "Seafood",
@@ -148,7 +148,7 @@ export default function Sidebar({ collapsed }) {
   // Collapsed sidebar (icon rail)
   if (collapsed) {
     const navItems = [
-      { to: "/", icon: <FiHome />, label: "Home" },
+      { to: "/home", icon: <FiHome />, label: "Home" },
       { to: "/favorites", icon: <FiHeart />, label: "Favorites" },
       { to: "/profile", icon: <FiUser />, label: "Profile" },
       { to: "/about", icon: <FiInfo />, label: "About" },

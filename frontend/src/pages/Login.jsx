@@ -17,7 +17,7 @@ export default function Login() {
 
   useEffect(() => {
     if (!user) return;
-    navigate(user.isAdmin ? "/admin/add-food" : "/", { replace: true });
+    navigate(user.isAdmin ? "/admin/add-food" : "/home", { replace: true });
   }, [user, navigate]);
 
   const handleGoogleSignIn = async () => {
@@ -29,7 +29,7 @@ export default function Login() {
     }
   };
 
-  const handleBackToMain = () => navigate("/");
+  const handleBackToMain = () => navigate("/home");
 
   return (
     <Box minH="85vh" display="flex" flexDirection="column" bg="transparent">

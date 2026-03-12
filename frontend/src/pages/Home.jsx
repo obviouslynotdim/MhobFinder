@@ -158,7 +158,7 @@ export default function Home() {
   if (foods.length === 0) return <HomeNoResults onClear={clearIngredients} />;
 
   return (
-    <Box p={{ base: 4, md: 6 }} position="relative">
+    <Box p={{ base: 4, md: 6 }} position="relative" maxW="1280px" mx="auto" w="full">
       <HStack justify="space-between" mb="4" align="start">
         <VStack align="start" gap="0">
           <Text
