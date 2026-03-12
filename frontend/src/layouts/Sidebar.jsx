@@ -3,7 +3,6 @@ import {
   HStack,
   IconButton,
   Image,
-  Spacer,
   Text,
   VStack,
   Wrap,
@@ -49,20 +48,23 @@ function IngredientChip({ item, selected, onClick }) {
     <Box
       px="3"
       py="1"
-      border="1px solid"
+      border="1.5px solid"
       borderColor={selected ? colors.primary : "transparent"}
       borderRadius="full"
       cursor="pointer"
-      fontSize="sm"
+      fontSize="xs"
+      fontWeight={selected ? "600" : "500"}
       bg={selected ? colors.primary : chipBg(item.color)}
       color={selected ? "white" : colors.darkest}
       _hover={{
         transform: "translateY(-1px)",
         bg: selected ? colors.dark : colors.chipHover,
         color: selected ? "white" : colors.darkest,
+        boxShadow: "sm",
       }}
+      transition="all 0.15s ease"
       onClick={onClick}
-      boxShadow="sm"
+      boxShadow={selected ? "0 2px 6px rgba(73,117,187,0.35)" : "none"}
       userSelect="none"
     >
       {item.name}
@@ -155,22 +157,39 @@ export default function Sidebar({ collapsed }) {
     ];
 
     return (
-      <VStack py="4" gap="3" align="center">
-        {navItems.map((n) => (
-          <IconButton
-            key={n.to}
-            as={Link}
-            to={n.to}
-            aria-label={n.label}
-            title={n.label}
-            variant="ghost"
-            color="white"
-            bg={loc.pathname === n.to ? "whiteAlpha.200" : "transparent"}
-            _hover={{ bg: "whiteAlpha.200" }}
-          >
-            {n.icon}
-          </IconButton>
-        ))}
+      <VStack py="4" gap="2" align="center">
+        {navItems.map((n) => {
+          const isActive = loc.pathname === n.to;
+          return (
+            <Box key={n.to} position="relative" w="100%" display="flex" justifyContent="center">
+              {isActive && (
+                <Box
+                  position="absolute"
+                  left="0"
+                  top="50%"
+                  transform="translateY(-50%)"
+                  h="22px"
+                  w="3px"
+                  bg="white"
+                  borderRadius="0 3px 3px 0"
+                />
+              )}
+              <IconButton
+                as={Link}
+                to={n.to}
+                aria-label={n.label}
+                title={n.label}
+                variant="ghost"
+                color="white"
+                fontSize="lg"
+                bg={isActive ? "whiteAlpha.200" : "transparent"}
+                _hover={{ bg: "whiteAlpha.200" }}
+              >
+                {n.icon}
+              </IconButton>
+            </Box>
+          );
+        })}
       </VStack>
     );
   }
@@ -179,7 +198,7 @@ export default function Sidebar({ collapsed }) {
   const grouped = groupByCategory(ingredients);
 
   return (
-    <Box p="5" color={colors.darkest}>
+    <Box px="4" py="5" color={colors.darkest}>
       {CATEGORY_ORDER.map((cat) => {
         const list = grouped.get(cat) || [];
         if (list.length === 0) return null;
@@ -193,49 +212,57 @@ export default function Sidebar({ collapsed }) {
           selectedIds.includes(x.ingredient_id),
         ).length;
 
+        const img = getCategoryImage(cat);
+
         return (
           <Box
             key={cat}
-            mt="4"
-            mb="7"
+            mb="4"
             borderRadius="2xl"
-            p="5"
+            p="4"
             bg="white"
             border="1px solid"
-            borderColor={`${colors.primary}22`}
-            boxShadow="0 8px 20px rgba(43,76,126,0.12)"
+            borderColor={selectedCount > 0 ? `${colors.primary}40` : `${colors.primary}18`}
+            boxShadow={selectedCount > 0 ? "0 4px 14px rgba(73,117,187,0.14)" : "0 2px 8px rgba(43,76,126,0.07)"}
+            transition="box-shadow 0.2s, border-color 0.2s"
           >
-            <HStack align="center" spacing="3" mb="5">
-              {(() => {
-                const img = getCategoryImage(cat);
-                return img ? (
-                  <Image
-                    src={img}
-                    alt={cat}
-                    boxSize="50px"
-                    objectFit="contain"
-                    flexShrink={0}
-                  />
-                ) : null;
-              })()}
+            {/* Category header */}
+            <HStack align="center" mb="3" gap="3">
+              {img && (
+                <Box
+                  bg="#f5f5f5"
+                  borderRadius="xl"
+                  p="2"
+                  flexShrink={0}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  boxSize="62px"
+                >
+                  <Image src={img} alt={cat} boxSize="46px" objectFit="contain" />
+                </Box>
+              )}
 
-              <VStack align="start" justify="center" spacing="1">
-                <Text fontWeight="bold" color={colors.darkest} lineHeight="1">
+              <Box flex="1" minW="0">
+                <Text fontWeight="700" fontSize="sm" color={colors.darkest} lineHeight="1.3">
                   {cat}
                 </Text>
-                <Text fontSize="xs" color={colors.dark} lineHeight="1">
+                <Text
+                  fontSize="xs"
+                  color={colors.dark}
+                  lineHeight="1.3"
+                >
                   {selectedCount}/{list.length} Ingredients
                 </Text>
-              </VStack>
-
-              <Spacer />
+              </Box>
 
               {hasOverflow && (
                 <IconButton
                   aria-label={isExpanded ? "Show less" : "Show more"}
-                  size="sm"
+                  size="xs"
                   variant="ghost"
                   color={colors.dark}
+                  _hover={{ bg: colors.pageBg }}
                   onClick={() => toggleCat(cat)}
                 >
                   {isExpanded ? <FiChevronUp /> : <FiChevronDown />}
@@ -243,47 +270,47 @@ export default function Sidebar({ collapsed }) {
               )}
             </HStack>
 
-            <Box
-              bg={colors.pageBg}
-              border="1px solid"
-              borderColor={`${colors.primary}26`}
-              borderRadius="2xl"
-              p="3"
-            >
-              <Wrap spacing="2" spacingY="2">
-                {visibleList.map((item) => (
-                  <WrapItem key={item.ingredient_id}>
-                    <IngredientChip
-                      item={item}
-                      selected={selectedIds.includes(item.ingredient_id)}
-                      onClick={() => toggleIngredient(item.ingredient_id)}
-                    />
-                  </WrapItem>
-                ))}
+            {/* Divider */}
+            <Box h="1px" bg={`${colors.primary}18`} mb="3" />
 
-                {hasOverflow && !isExpanded && (
-                  <WrapItem>
-                    <Box
-                      px="3"
-                      py="1"
-                      borderRadius="full"
-                      fontSize="sm"
-                      bg="gray.200"
-                      color={colors.dark}
-                      cursor="pointer"
-                      onClick={() => toggleCat(cat)}
-                    >
-                      +{hiddenCount} more
-                    </Box>
-                  </WrapItem>
-                )}
-              </Wrap>
-            </Box>
+            {/* Chips */}
+            <Wrap spacing="1.5" spacingY="1.5">
+              {visibleList.map((item) => (
+                <WrapItem key={item.ingredient_id}>
+                  <IngredientChip
+                    item={item}
+                    selected={selectedIds.includes(item.ingredient_id)}
+                    onClick={() => toggleIngredient(item.ingredient_id)}
+                  />
+                </WrapItem>
+              ))}
+
+              {hasOverflow && !isExpanded && (
+                <WrapItem>
+                  <Box
+                    px="3"
+                    py="1"
+                    borderRadius="full"
+                    fontSize="xs"
+                    fontWeight="500"
+                    border="1.5px dashed"
+                    borderColor={colors.dark}
+                    color={colors.dark}
+                    cursor="pointer"
+                    _hover={{ bg: colors.pageBg, borderStyle: "solid" }}
+                    transition="all 0.15s ease"
+                    onClick={() => toggleCat(cat)}
+                  >
+                    +{hiddenCount} more
+                  </Box>
+                </WrapItem>
+              )}
+            </Wrap>
           </Box>
         );
       })}
 
-      {/* Optional: render uncategorized ingredients */}
+      {/* Uncategorized ingredients */}
       {(() => {
         const other = grouped.get("Other") || [];
         if (!other.length) return null;
@@ -294,44 +321,40 @@ export default function Sidebar({ collapsed }) {
 
         return (
           <Box
-            mb="2"
+            mb="4"
             borderRadius="2xl"
-            p="3"
+            p="4"
             bg="white"
             border="1px solid"
-            borderColor={`${colors.primary}22`}
-            boxShadow="0 8px 20px rgba(43,76,126,0.12)"
+            borderColor={selectedCount > 0 ? `${colors.primary}40` : `${colors.primary}18`}
+            boxShadow="0 2px 8px rgba(43,76,126,0.07)"
           >
-            <HStack align="start" spacing="3" mb="5">
-              <VStack align="start" spacing="1">
-                <Text fontWeight="bold" color={colors.darkest} lineHeight="0.9">
+            <HStack align="center" mb="3" gap="3">
+              <Box flex="1" minW="0">
+                <Text fontWeight="700" fontSize="sm" color={colors.darkest} lineHeight="1.3">
                   Other
                 </Text>
-                <Text fontSize="xs" color={colors.dark} lineHeight="0.9">
+                <Text
+                  fontSize="xs"
+                  color={colors.dark}
+                  lineHeight="1.3"
+                >
                   {selectedCount}/{other.length} Ingredients
                 </Text>
-              </VStack>
+              </Box>
             </HStack>
-
-            <Box
-              bg={colors.pageBg}
-              border="1px solid"
-              borderColor={`${colors.primary}26`}
-              borderRadius="2xl"
-              p="3"
-            >
-              <Wrap spacing="2" spacingY="2">
-                {other.map((item) => (
-                  <WrapItem key={item.ingredient_id}>
-                    <IngredientChip
-                      item={item}
-                      selected={selectedIds.includes(item.ingredient_id)}
-                      onClick={() => toggleIngredient(item.ingredient_id)}
-                    />
-                  </WrapItem>
-                ))}
-              </Wrap>
-            </Box>
+            <Box h="1px" bg={`${colors.primary}18`} mb="3" />
+            <Wrap spacing="1.5" spacingY="1.5">
+              {other.map((item) => (
+                <WrapItem key={item.ingredient_id}>
+                  <IngredientChip
+                    item={item}
+                    selected={selectedIds.includes(item.ingredient_id)}
+                    onClick={() => toggleIngredient(item.ingredient_id)}
+                  />
+                </WrapItem>
+              ))}
+            </Wrap>
           </Box>
         );
       })()}
