@@ -31,10 +31,26 @@ const FALLBACK_CATEGORY_NAMES = [
 
 const FALLBACK_CATEGORY_KEYWORDS = {
   "Khmer Food": ["khmer", "cambodian"],
-  European: ["italian", "french", "spanish", "german", "greek", "british", "hungarian", "austrian"],
+  European: [
+    "italian",
+    "french",
+    "spanish",
+    "german",
+    "greek",
+    "british",
+    "hungarian",
+    "austrian",
+  ],
   Seafood: ["fish", "crab", "squid", "prawn", "shrimp", "seafood"],
   Dessert: ["dessert", "cake", "sweet", "pancake", "jelly", "rice balls"],
-  "Street Food": ["street", "sandwich", "skewers", "grilled", "stir-fried", "fried"],
+  "Street Food": [
+    "street",
+    "sandwich",
+    "skewers",
+    "grilled",
+    "stir-fried",
+    "fried",
+  ],
   Curry: ["curry"],
   Soup: ["soup", "samlor", "tom yum", "broth", "minestrone"],
 };
@@ -42,12 +58,7 @@ const FALLBACK_CATEGORY_KEYWORDS = {
 function HomeEmptyState() {
   return (
     <VStack h="full" justify="center" gap="4" textAlign="center" py="20">
-      <Image
-        src={chefImage}
-        alt="Chef"
-        boxSize="160px"
-        opacity="0.9"
-      />
+      <Image src={chefImage} alt="Chef" boxSize="160px" opacity="0.9" />
       <Text fontWeight="normal" fontSize="xl">
         Add your ingredients to get started
       </Text>
@@ -115,7 +126,8 @@ export default function Home() {
         const res = await fetch(`${API_BASE}/api/categories`, {
           credentials: "include",
         });
-        if (!res.ok) throw new Error(`Failed to load categories: ${res.status}`);
+        if (!res.ok)
+          throw new Error(`Failed to load categories: ${res.status}`);
 
         const data = await res.json();
         if (!mounted || !Array.isArray(data)) return;
@@ -137,16 +149,22 @@ export default function Home() {
     };
   }, []);
 
+  const location = window.location.pathname;
   const filteredFoods = useMemo(() => {
+    // On admin route, always show all foods
+    if (location.startsWith("/admin")) return foods;
     if (selectedCategory === "All") return foods;
-    const selected = categoryOptions.find((cat) => cat.name === selectedCategory);
+    const selected = categoryOptions.find(
+      (cat) => cat.name === selectedCategory,
+    );
     if (!selected) return foods;
     if (!selected.foodIds || selected.foodIds.size === 0) {
       const keywords = FALLBACK_CATEGORY_KEYWORDS[selectedCategory] || [];
       if (keywords.length === 0) return foods;
 
       return foods.filter((food) => {
-        const haystack = `${food.title || ""} ${food.description || ""}`.toLowerCase();
+        const haystack =
+          `${food.title || ""} ${food.description || ""}`.toLowerCase();
         return keywords.some((kw) => haystack.includes(kw));
       });
     }
@@ -158,7 +176,13 @@ export default function Home() {
   if (foods.length === 0) return <HomeNoResults onClear={clearIngredients} />;
 
   return (
-    <Box p={{ base: 4, md: 6 }} position="relative" maxW="1280px" mx="auto" w="full">
+    <Box
+      p={{ base: 4, md: 6 }}
+      position="relative"
+      maxW="1280px"
+      mx="auto"
+      w="full"
+    >
       <HStack justify="space-between" mb="4" align="start">
         <VStack align="start" gap="0">
           <Text
@@ -166,7 +190,8 @@ export default function Home() {
             fontSize={{ base: "lg", md: "2xl" }}
             color={colors.darkest}
           >
-            You can make {filteredFoods.length} recipe{filteredFoods.length > 1 ? "s" : ""}
+            You can make {filteredFoods.length} recipe
+            {filteredFoods.length > 1 ? "s" : ""}
           </Text>
           <Text fontSize="sm" color={colors.dark} opacity="0.85">
             Do you have?

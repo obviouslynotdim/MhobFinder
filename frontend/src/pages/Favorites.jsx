@@ -30,7 +30,10 @@ function FavoriteCard({ food, onToggleFavorite, onView }) {
       borderColor="gray.100"
       boxShadow="0 1px 4px rgba(0,0,0,0.06)"
       transition="box-shadow 0.15s, transform 0.15s"
-      _hover={{ boxShadow: "0 4px 16px rgba(73,117,187,0.13)", transform: "translateY(-2px)" }}
+      _hover={{
+        boxShadow: "0 4px 16px rgba(73,117,187,0.13)",
+        transform: "translateY(-2px)",
+      }}
       cursor="pointer"
       onClick={() => onView(food)}
       h="120px"
@@ -44,7 +47,13 @@ function FavoriteCard({ food, onToggleFavorite, onView }) {
           h="100%"
           objectFit="cover"
           fallback={
-            <Flex w="100%" h="100%" align="center" justify="center" bg={colors.chipBg}>
+            <Flex
+              w="100%"
+              h="100%"
+              align="center"
+              justify="center"
+              bg={colors.chipBg}
+            >
               <MdOutlineFoodBank size={32} color={colors.primary} />
             </Flex>
           }
@@ -52,7 +61,15 @@ function FavoriteCard({ food, onToggleFavorite, onView }) {
       </Box>
 
       {/* Content */}
-      <Flex flex="1" px="4" py="3" direction="column" justify="space-between" overflow="hidden" minW={0}>
+      <Flex
+        flex="1"
+        px="4"
+        py="3"
+        direction="column"
+        justify="space-between"
+        overflow="hidden"
+        minW={0}
+      >
         {/* Title */}
         <Text
           fontWeight="700"
@@ -134,30 +151,34 @@ function FavoriteCard({ food, onToggleFavorite, onView }) {
 
 export default function Favorites() {
   const nav = useNavigate();
-  const { favorites, allFoods, toggleFavorite } = useApp();
+  const { favorites, rawFoods, toggleFavorite } = useApp();
   const [query, setQuery] = useState("");
   const [selectedRecipe, setSelectedRecipe] = useState(null);
 
-  const favoriteFoods = allFoods.filter((f) => favorites.includes(f.food_id));
+  const favoriteFoods = rawFoods.filter((f) => favorites.includes(f.food_id));
 
   const displayedFoods = query.trim()
     ? favoriteFoods.filter((f) =>
-        (f.title || "").toLowerCase().includes(query.trim().toLowerCase())
+        (f.title || "").toLowerCase().includes(query.trim().toLowerCase()),
       )
     : favoriteFoods;
 
   return (
     <Box px={{ base: 4, md: 6 }} py={{ base: 4, md: 6 }}>
-
       {/* ── Page header ── */}
       <HStack gap="3" mb={6} align="center">
-
         <Box flex="1">
-          <Text fontSize={{ base: "xl", md: "2xl" }} fontWeight="800" color={colors.darkest} lineHeight="1.2">
+          <Text
+            fontSize={{ base: "xl", md: "2xl" }}
+            fontWeight="800"
+            color={colors.darkest}
+            lineHeight="1.2"
+          >
             My Favorites
           </Text>
           <Text fontSize="sm" color="gray.500" mt="0.5">
-            {favoriteFoods.length} saved recipe{favoriteFoods.length === 1 ? "" : "s"}
+            {favoriteFoods.length} saved recipe
+            {favoriteFoods.length === 1 ? "" : "s"}
           </Text>
         </Box>
       </HStack>

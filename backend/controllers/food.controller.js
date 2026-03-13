@@ -1,7 +1,26 @@
 import Food from "../models/Food.js";
 import Ingredient from "../models/Ingredient.js";
+import Category from "../models/Category.js";
 import { Op } from "sequelize";
 import cloudinary from "../config/cloudinary.js";
+
+// ---------------------------
+// Helper: Upload to Cloudinary
+// ---------------------------
+const uploadImage = async (file) => {
+  const fileStr = `data:${file.mimetype};base64,${file.buffer.toString(
+    "base64",
+  )}`;
+
+  const result = await cloudinary.uploader.upload(fileStr, {
+    folder: "foods",
+  });
+
+  return {
+    image_url: result.secure_url,
+    public_id: result.public_id,
+  };
+};
 
 // ---------------------------
 // Get all foods
@@ -13,6 +32,11 @@ export const getAllFoods = async (req, res, next) => {
         {
           model: Ingredient,
           as: "ingredients",
+          through: { attributes: [] },
+        },
+        {
+          model: Category,
+          as: "categories",
           through: { attributes: [] },
         },
       ],
@@ -37,6 +61,11 @@ export const getFoodById = async (req, res, next) => {
         {
           model: Ingredient,
           as: "ingredients",
+          through: { attributes: [] },
+        },
+        {
+          model: Category,
+          as: "categories",
           through: { attributes: [] },
         },
       ],
@@ -86,25 +115,42 @@ export const getMatchedFoods = async (req, res, next) => {
 };
 
 // ---------------------------
-// Create a new food with an image upload
+// Create Food
 // ---------------------------
 export const createFood = async (req, res, next) => {
   try {
     const { title, description, link_url } = req.body;
 
+    let { ingredientIds, categoryIds } = req.body;
+
+    // normalize arrays
+    const parseIds = (data) => {
+      if (!data) return [];
+
+      if (typeof data === "string") {
+        return data
+          .split(",")
+          .map((id) => parseInt(id))
+          .filter(Boolean);
+      }
+
+      if (Array.isArray(data)) {
+        return data.map((id) => parseInt(id)).filter(Boolean);
+      }
+
+      return [];
+    };
+
+    ingredientIds = parseIds(ingredientIds);
+    categoryIds = parseIds(categoryIds);
+
     let image_url = null;
     let public_id = null;
 
     if (req.file) {
-      // upload buffer to Cloudinary
-      const fileStr = `data:${req.file.mimetype};base64,${req.file.buffer.toString(
-        "base64",
-      )}`;
-      const result = await cloudinary.uploader.upload(fileStr, {
-        folder: "foods",
-      });
-      image_url = result.secure_url;
-      public_id = result.public_id;
+      const upload = await uploadImage(req.file);
+      image_url = upload.image_url;
+      public_id = upload.public_id;
     }
 
     const newFood = await Food.create({
@@ -115,14 +161,37 @@ export const createFood = async (req, res, next) => {
       link_url,
     });
 
-    res.status(201).json(newFood);
+    if (ingredientIds.length) {
+      await newFood.setIngredients(ingredientIds);
+    }
+
+    if (categoryIds.length) {
+      await newFood.setCategories(categoryIds);
+    }
+
+    const food = await Food.findByPk(newFood.id, {
+      include: [
+        {
+          model: Ingredient,
+          as: "ingredients",
+          through: { attributes: [] },
+        },
+        {
+          model: Category,
+          as: "categories",
+          through: { attributes: [] },
+        },
+      ],
+    });
+
+    res.status(201).json(food);
   } catch (err) {
     next(err);
   }
 };
 
 // ---------------------------
-// Update existing food (text fields and optionally image)
+// Update Food
 // ---------------------------
 export const updateFood = async (req, res, next) => {
   try {
@@ -130,29 +199,25 @@ export const updateFood = async (req, res, next) => {
     const { title, description, link_url } = req.body;
 
     const food = await Food.findByPk(id);
+
     if (!food) {
       return res.status(404).json({ message: "Food not found" });
     }
 
-    // if there is a new file, handle Cloudinary replacement
     if (req.file) {
       if (food.public_id) {
         await cloudinary.uploader.destroy(food.public_id);
       }
-      const fileStr = `data:${req.file.mimetype};base64,${req.file.buffer.toString(
-        "base64",
-      )}`;
-      const result = await cloudinary.uploader.upload(fileStr, {
-        folder: "foods",
-      });
-      food.image_url = result.secure_url;
-      food.public_id = result.public_id;
+
+      const upload = await uploadImage(req.file);
+
+      food.image_url = upload.image_url;
+      food.public_id = upload.public_id;
     }
 
-    food.title = title !== undefined ? title : food.title;
-    food.description =
-      description !== undefined ? description : food.description;
-    food.link_url = link_url !== undefined ? link_url : food.link_url;
+    food.title = title ?? food.title;
+    food.description = description ?? food.description;
+    food.link_url = link_url ?? food.link_url;
 
     await food.save();
 
@@ -163,13 +228,14 @@ export const updateFood = async (req, res, next) => {
 };
 
 // ---------------------------
-// Delete a food and its Cloudinary image
+// Delete Food
 // ---------------------------
 export const deleteFood = async (req, res, next) => {
   try {
     const { id } = req.params;
 
     const food = await Food.findByPk(id);
+
     if (!food) {
       return res.status(404).json({ message: "Food not found" });
     }
@@ -179,7 +245,8 @@ export const deleteFood = async (req, res, next) => {
     }
 
     await food.destroy();
-    res.json({ message: "Food deleted" });
+
+    res.json({ message: "Food deleted successfully" });
   } catch (err) {
     next(err);
   }

@@ -15,29 +15,34 @@ const AppCtx = createContext(null);
 
 export function AppProvider({ children }) {
   const { user } = useUser();
+
   const [ingredients, setIngredients] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]);
   const [foods, setFoods] = useState([]);
-  // allFoods is the complete unfiltered catalogue — never mutated by ingredient filtering.
-  const [allFoods, setAllFoods] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [foodsLoading, setFoodsLoading] = useState(false);
-  // Start empty; the effect below loads the correct user-scoped favorites.
+
+  // Favorites per user
   const [favorites, setFavorites] = useState([]);
+
   const foodsReqIdRef = useRef(0);
 
+  // -------------------------
+  // Initial Load
+  // -------------------------
   useEffect(() => {
     (async () => {
       try {
         setLoading(true);
+
         const [ingData, foodData] = await Promise.all([
           getAllIngredients(),
           getAllFoods(),
         ]);
+
         setIngredients(ingData);
         setFoods(foodData);
-        setAllFoods(foodData);
       } catch (e) {
         console.error(e);
       } finally {
@@ -46,11 +51,13 @@ export function AppProvider({ children }) {
     })();
   }, []);
 
-  // Load favorites scoped to the current user; clear when logged out.
+  // -------------------------
+  // Load Favorites for User
+  // -------------------------
   useEffect(() => {
     if (user?.id) {
       const stored = JSON.parse(
-        localStorage.getItem(`mhob:favorites:${user.id}`) || "[]",
+        localStorage.getItem(`mhob:favorites:${user.id}`) || "[]"
       );
       setFavorites(stored);
     } else {
@@ -58,69 +65,100 @@ export function AppProvider({ children }) {
     }
   }, [user?.id]);
 
-  // Persist favorites only for the logged-in user.
+  // -------------------------
+  // Save Favorites
+  // -------------------------
   useEffect(() => {
     if (user?.id) {
       localStorage.setItem(
         `mhob:favorites:${user.id}`,
-        JSON.stringify(favorites),
+        JSON.stringify(favorites)
       );
     }
   }, [favorites, user?.id]);
 
+  // -------------------------
+  // Refresh foods by ingredients
+  // -------------------------
   const refreshFoods = useCallback(async (ids) => {
     const reqId = ++foodsReqIdRef.current;
+
     setFoodsLoading(true);
+
     try {
       const matched = await getMatchedFoods(ids);
-      if (reqId === foodsReqIdRef.current) setFoods(matched);
+
+      if (reqId === foodsReqIdRef.current) {
+        setFoods(matched);
+      }
     } catch (e) {
       console.error(e);
     } finally {
-      if (reqId === foodsReqIdRef.current) setFoodsLoading(false);
+      if (reqId === foodsReqIdRef.current) {
+        setFoodsLoading(false);
+      }
     }
   }, []);
 
+  // -------------------------
+  // Toggle Ingredient
+  // -------------------------
   const toggleIngredient = useCallback(
     (id) => {
       setSelectedIds((prev) => {
         const next = prev.includes(id)
           ? prev.filter((x) => x !== id)
           : [...prev, id];
+
         refreshFoods(next);
+
         return next;
       });
     },
-    [refreshFoods],
+    [refreshFoods]
   );
 
+  // -------------------------
+  // Clear Ingredients
+  // -------------------------
   const clearIngredients = useCallback(() => {
     setSelectedIds([]);
     refreshFoods([]);
   }, [refreshFoods]);
 
+  // -------------------------
+  // Toggle Favorite
+  // -------------------------
   const toggleFavorite = useCallback((foodId) => {
     setFavorites((prev) =>
       prev.includes(foodId)
         ? prev.filter((x) => x !== foodId)
-        : [...prev, foodId],
+        : [...prev, foodId]
     );
   }, []);
 
+  // -------------------------
+  // Search Filter
+  // -------------------------
   const filteredFoods = useMemo(() => {
     const q = search.trim().toLowerCase();
+
     return !q
       ? foods
-      : foods.filter((f) => (f.title || "").toLowerCase().includes(q));
+      : foods.filter((f) =>
+          (f.title || "").toLowerCase().includes(q)
+        );
   }, [foods, search]);
 
+  // -------------------------
+  // Context Value
+  // -------------------------
   const value = useMemo(
     () => ({
       ingredients,
       selectedIds,
       foods: filteredFoods,
       rawFoods: foods,
-      allFoods,
       favorites,
       search,
       setSearch,
@@ -129,13 +167,13 @@ export function AppProvider({ children }) {
       toggleIngredient,
       clearIngredients,
       toggleFavorite,
+      refreshFoods,
     }),
     [
       ingredients,
       selectedIds,
       filteredFoods,
       foods,
-      allFoods,
       favorites,
       search,
       loading,
@@ -143,14 +181,22 @@ export function AppProvider({ children }) {
       toggleIngredient,
       clearIngredients,
       toggleFavorite,
-    ],
+      refreshFoods,
+    ]
   );
 
   return <AppCtx.Provider value={value}>{children}</AppCtx.Provider>;
 }
 
+// -------------------------
+// Hook
+// -------------------------
 export const useApp = () => {
   const ctx = useContext(AppCtx);
-  if (!ctx) throw new Error("useApp must be used inside AppProvider");
+
+  if (!ctx) {
+    throw new Error("useApp must be used inside AppProvider");
+  }
+
   return ctx;
 };
