@@ -18,6 +18,8 @@ export function AppProvider({ children }) {
   const [ingredients, setIngredients] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]);
   const [foods, setFoods] = useState([]);
+  // allFoods is the complete unfiltered catalogue — never mutated by ingredient filtering.
+  const [allFoods, setAllFoods] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [foodsLoading, setFoodsLoading] = useState(false);
@@ -35,6 +37,7 @@ export function AppProvider({ children }) {
         ]);
         setIngredients(ingData);
         setFoods(foodData);
+        setAllFoods(foodData);
       } catch (e) {
         console.error(e);
       } finally {
@@ -117,6 +120,7 @@ export function AppProvider({ children }) {
       selectedIds,
       foods: filteredFoods,
       rawFoods: foods,
+      allFoods,
       favorites,
       search,
       setSearch,
@@ -131,6 +135,7 @@ export function AppProvider({ children }) {
       selectedIds,
       filteredFoods,
       foods,
+      allFoods,
       favorites,
       search,
       loading,

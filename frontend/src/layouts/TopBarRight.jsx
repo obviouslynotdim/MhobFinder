@@ -6,8 +6,8 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { FiHeart, FiUser, FiSearch } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import { FiArrowLeft, FiHeart, FiUser, FiSearch } from "react-icons/fi";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useApp } from "../context/AppProvider.jsx";
 import { useUser } from "../context/UserProvider.jsx";
 import { MdTranslate } from "react-icons/md";
@@ -16,16 +16,37 @@ export default function TopBarRight() {
   const { search, setSearch } = useApp();
   const { user } = useUser();
   const nav = useNavigate();
+  const loc = useLocation();
+  const isFavoritesPage = loc.pathname === "/favorites";
+  const isProfilePage = loc.pathname === "/profile";
+  const useCustomTitle = isFavoritesPage || isProfilePage;
 
   return (
     <VStack w="full" gap="4" align="stretch">
-      {/* Row 1: MhobFinder centered, icons pinned to the right */}
-      <HStack w="full" position="relative" justify="center">
-        <Text fontWeight="bold" color="white" fontSize="2xl" letterSpacing="wider" onClick={() => nav("/home")} cursor="pointer">
-          MhobFinder
-        </Text>
+      {/* Row 1: Route-aware title and actions */}
+      <HStack w="full" justify="space-between">
+        {useCustomTitle ? (
+          <HStack gap="2">
+            <IconButton
+              aria-label="Back to home"
+              variant="ghost"
+              color="white"
+              _hover={{ bg: "whiteAlpha.200" }}
+              onClick={() => nav("/home")}
+            >
+              <FiArrowLeft />
+            </IconButton>
+            <Text fontWeight="bold" color="white" fontSize="2xl">
+              {isFavoritesPage ? "Favorite Page" : "Profile Page"}
+            </Text>
+          </HStack>
+        ) : (
+          <Text fontWeight="bold" color="white" fontSize="2xl" letterSpacing="wider" onClick={() => nav("/home")} cursor="pointer">
+            MhobFinder
+          </Text>
+        )}
 
-        <HStack position="absolute" right="0">
+        <HStack>
           {user && (
             <IconButton
               aria-label="Favorites"
@@ -33,6 +54,7 @@ export default function TopBarRight() {
               color="white"
               _hover={{ bg: "whiteAlpha.200" }}
               onClick={() => nav("/favorites")}
+              isDisabled={isFavoritesPage}
             >
               <FiHeart />
             </IconButton>
@@ -44,6 +66,7 @@ export default function TopBarRight() {
             color="white"
             _hover={{ bg: "whiteAlpha.200" }}
             onClick={() => nav("/profile")}
+            isDisabled={isProfilePage}
           >
             <FiUser />
           </IconButton>

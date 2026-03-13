@@ -33,7 +33,7 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
     <>
     <Flex
       direction={{ base: "column", md: "row" }}
-      bg={colors.chipBg}
+      bg={"white"}
       borderRadius="xl"
       boxShadow="sm"
       overflow="hidden"
