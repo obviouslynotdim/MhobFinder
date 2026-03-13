@@ -1,5 +1,6 @@
 import {
   Box,
+  Flex,
   HStack,
   IconButton,
   Image,
@@ -149,48 +150,68 @@ export default function Sidebar({ collapsed }) {
 
   // Collapsed sidebar (icon rail)
   if (collapsed) {
-    const navItems = [
+    const mainNavItems = [
       { to: "/home", icon: <FiHome />, label: "Home" },
       { to: "/favorites", icon: <FiHeart />, label: "Favorites" },
       { to: "/profile", icon: <FiUser />, label: "Profile" },
-      { to: "/about", icon: <FiInfo />, label: "About" },
     ];
 
+    const aboutItem = { to: "/about", icon: <FiInfo />, label: "About" };
+
+    function RailItem({ item }) {
+      const isActive = loc.pathname === item.to;
+
+      return (
+        <Box key={item.to} position="relative" w="100%" display="flex" justifyContent="center">
+          {isActive && (
+            <Box
+              position="absolute"
+              left="-4"
+              top="50%"
+              transform="translateY(-50%)"
+              h="22px"
+              w="3px"
+              bg="white"
+              borderRadius="0 3px 3px 0"
+            />
+          )}
+          <IconButton
+            as={Link}
+            to={item.to}
+            aria-label={item.label}
+            title={item.label}
+            variant="ghost"
+            color="white"
+            fontSize="lg"
+            bg={isActive ? "whiteAlpha.200" : "transparent"}
+            _hover={{ bg: "whiteAlpha.200" }}
+          >
+            {item.icon}
+          </IconButton>
+        </Box>
+      );
+    }
+
     return (
-      <VStack py="4" gap="2" align="center">
-        {navItems.map((n) => {
-          const isActive = loc.pathname === n.to;
-          return (
-            <Box key={n.to} position="relative" w="100%" display="flex" justifyContent="center">
-              {isActive && (
-                <Box
-                  position="absolute"
-                  left="0"
-                  top="50%"
-                  transform="translateY(-50%)"
-                  h="22px"
-                  w="3px"
-                  bg="white"
-                  borderRadius="0 3px 3px 0"
-                />
-              )}
-              <IconButton
-                as={Link}
-                to={n.to}
-                aria-label={n.label}
-                title={n.label}
-                variant="ghost"
-                color="white"
-                fontSize="lg"
-                bg={isActive ? "whiteAlpha.200" : "transparent"}
-                _hover={{ bg: "whiteAlpha.200" }}
-              >
-                {n.icon}
-              </IconButton>
-            </Box>
-          );
-        })}
-      </VStack>
+      <Box position="relative" h="calc(100vh - 120px)" px="4">
+        <VStack
+          w="full"
+          gap="2"
+          align="center"
+          position="absolute"
+          top="50%"
+          left="0"
+          transform="translateY(calc(-50% - 48px))"
+        >
+          {mainNavItems.map((item) => (
+            <RailItem key={item.to} item={item} />
+          ))}
+        </VStack>
+
+        <Box position="absolute" left="0" right="0" bottom="16px" mb="8">
+          <RailItem item={aboutItem} />
+        </Box>
+      </Box>
     );
   }
 

@@ -19,6 +19,7 @@ export default function TopBarRight() {
   const loc = useLocation();
   const isFavoritesPage = loc.pathname === "/favorites";
   const isProfilePage = loc.pathname === "/profile";
+  const activeNavBg = "whiteAlpha.200";
   const useCustomTitle = isFavoritesPage || isProfilePage;
 
   return (
@@ -52,9 +53,11 @@ export default function TopBarRight() {
               aria-label="Favorites"
               variant="ghost"
               color="white"
+              bg={isFavoritesPage ? activeNavBg : "transparent"}
               _hover={{ bg: "whiteAlpha.200" }}
-              onClick={() => nav("/favorites")}
-              isDisabled={isFavoritesPage}
+              onClick={() => {
+                if (!isFavoritesPage) nav("/favorites");
+              }}
             >
               <FiHeart />
             </IconButton>
@@ -64,9 +67,11 @@ export default function TopBarRight() {
             aria-label="User"
             variant="ghost"
             color="white"
+            bg={isProfilePage ? activeNavBg : "transparent"}
             _hover={{ bg: "whiteAlpha.200" }}
-            onClick={() => nav("/profile")}
-            isDisabled={isProfilePage}
+            onClick={() => {
+              if (!isProfilePage) nav("/profile");
+            }}
           >
             <FiUser />
           </IconButton>

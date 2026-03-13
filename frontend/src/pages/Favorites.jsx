@@ -1,5 +1,4 @@
 import {
-  Badge,
   Box,
   Button,
   Center,
@@ -12,7 +11,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { FiArrowLeft, FiHeart, FiSearch } from "react-icons/fi";
+import { FiExternalLink, FiHeart, FiSearch } from "react-icons/fi";
 import { MdOutlineFoodBank } from "react-icons/md";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -20,9 +19,28 @@ import { useApp } from "../context/AppProvider.jsx";
 import { colors } from "../theme/tokens.js";
 import FullRecipe from "./fullRecipePage/FullRecipe.jsx";
 
-function FavoriteCard({ food, onToggleFavorite, onView }) {
+function formatDomain(url) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
+}
+
+function FavoriteCard({ food, selectedIds, onToggleFavorite, onView }) {
+  const ingredientIds = (food.ingredients || []).map((ing) => ing.ingredient_id);
+  const matchedCount = ingredientIds.filter((id) => selectedIds.includes(id)).length;
+  const totalCount = ingredientIds.length;
+  const metaColor = "gray.500";
+
+  let matchLabel = "No ingredient data";
+  if (totalCount > 0) {
+    matchLabel = `You have matched ${matchedCount} ingredient${matchedCount === 1 ? "" : "s"}`;
+  }
+
   return (
     <Flex
+      direction={{ base: "column", md: "row" }}
       bg="white"
       borderRadius="2xl"
       overflow="hidden"
@@ -36,10 +54,15 @@ function FavoriteCard({ food, onToggleFavorite, onView }) {
       }}
       cursor="pointer"
       onClick={() => onView(food)}
-      h="120px"
+      h={{ base: "auto", md: "120px" }}
     >
-      {/* Image */}
-      <Box w="120px" flexShrink={0} overflow="hidden" position="relative">
+      <Box
+        w={{ base: "100%", md: "120px" }}
+        h={{ base: "160px", md: "120px" }}
+        flexShrink={0}
+        overflow="hidden"
+        position="relative"
+      >
         <Image
           src={food.image_url}
           alt={food.title}
@@ -60,7 +83,6 @@ function FavoriteCard({ food, onToggleFavorite, onView }) {
         />
       </Box>
 
-      {/* Content */}
       <Flex
         flex="1"
         px="4"
@@ -70,7 +92,6 @@ function FavoriteCard({ food, onToggleFavorite, onView }) {
         overflow="hidden"
         minW={0}
       >
-        {/* Title */}
         <Text
           fontWeight="700"
           fontSize="sm"
@@ -81,55 +102,38 @@ function FavoriteCard({ food, onToggleFavorite, onView }) {
           {food.title}
         </Text>
 
-        {/* Meta row */}
-        <HStack gap="1.5" flexWrap="wrap" mt="auto">
-          {food.category && (
-            <Badge
-              fontSize="10px"
-              px="2"
-              py="0.5"
-              borderRadius="full"
-              bg={colors.chipBg}
-              color={colors.dark}
-              fontWeight="600"
-              textTransform="none"
-            >
-              {food.category}
-            </Badge>
-          )}
-          {food.time && (
-            <Badge
-              fontSize="10px"
-              px="2"
-              py="0.5"
-              borderRadius="full"
-              bg="#ECFDF5"
-              color="#065F46"
-              fontWeight="600"
-              textTransform="none"
-            >
-              {food.time}
-            </Badge>
-          )}
-          {food.difficulty && (
-            <Badge
-              fontSize="10px"
-              px="2"
-              py="0.5"
-              borderRadius="full"
-              bg="#FFF7ED"
-              color="#9A3412"
-              fontWeight="600"
-              textTransform="none"
-            >
-              {food.difficulty}
-            </Badge>
-          )}
-        </HStack>
+        {food.link_url && (
+          <HStack
+            as="a"
+            href={food.link_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            gap="1"
+            color={metaColor}
+            _hover={{ textDecoration: "underline", color: colors.darkest }}
+            maxW="full"
+            overflow="hidden"
+          >
+            <Text fontSize="xs" isTruncated>
+              {formatDomain(food.link_url)}
+            </Text>
+          </HStack>
+        )}
+
+        <Text fontSize="xs" color={metaColor} mt="auto">
+          {matchLabel}
+        </Text>
       </Flex>
 
-      {/* Remove button */}
-      <Flex align="center" pr="3">
+      <Flex
+        align="center"
+        justify={{ base: "flex-end", md: "center" }}
+        pr="3"
+        pb={{ base: "3", md: "0" }}
+        gap="1.5"
+        flexShrink={0}
+      >
         <IconButton
           aria-label="Remove from favorites"
           size="sm"
@@ -144,6 +148,24 @@ function FavoriteCard({ food, onToggleFavorite, onView }) {
         >
           <FiHeart />
         </IconButton>
+        {food.link_url && (
+          <IconButton
+            as="a"
+            href={food.link_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Open recipe source"
+            size="sm"
+            borderRadius="full"
+            variant="ghost"
+            color="gray.900"
+            _hover={{ bg: colors.chipBg, color: colors.darkest }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <FiExternalLink />
+          </IconButton>
+        )}
+        
       </Flex>
     </Flex>
   );
@@ -151,7 +173,7 @@ function FavoriteCard({ food, onToggleFavorite, onView }) {
 
 export default function Favorites() {
   const nav = useNavigate();
-  const { favorites, rawFoods, toggleFavorite } = useApp();
+  const { favorites, rawFoods, selectedIds, toggleFavorite } = useApp();
   const [query, setQuery] = useState("");
   const [selectedRecipe, setSelectedRecipe] = useState(null);
 
@@ -261,11 +283,12 @@ export default function Favorites() {
           </VStack>
         </Center>
       ) : (
-        <SimpleGrid columns={{ base: 1, md: 2 }} gap={{ base: 3, md: 4 }}>
+        <SimpleGrid columns={{ base: 1, lg: 2 }} gap={{ base: 3, md: 4 }}>
           {displayedFoods.map((food) => (
             <FavoriteCard
               key={food.food_id}
               food={food}
+              selectedIds={selectedIds}
               onToggleFavorite={toggleFavorite}
               onView={setSelectedRecipe}
             />
