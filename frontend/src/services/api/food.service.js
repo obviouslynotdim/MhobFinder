@@ -85,3 +85,57 @@ export const addFood = async ({
 
   return handleResponse(res);
 };
+
+// ---------------------------
+// Get food by ID
+// ---------------------------
+export const getFoodById = async (foodId) => {
+  const res = await fetch(`${API_BASE}/api/foods/${foodId}`, {
+    credentials: "include",
+  });
+  return handleResponse(res);
+};
+
+// ---------------------------
+// Update food
+// ---------------------------
+export const updateFood = async (foodId, data) => {
+  const formData = new FormData();
+  formData.append("title", data.title);
+  formData.append("description", data.description);
+  if (Array.isArray(data.ingredientIds)) {
+    data.ingredientIds.forEach((id) => {
+      formData.append("ingredientIds", id);
+    });
+  }
+  if (Array.isArray(data.categoryIds) && data.categoryIds.length > 0) {
+    data.categoryIds.forEach((id) => {
+      formData.append("categoryIds", id);
+    });
+  }
+  if (data.link_url) {
+    formData.append("link_url", data.link_url);
+  }
+  if (data.imageFile) {
+    formData.append("image", data.imageFile);
+  }
+  formData.append("status", data.status);
+
+  const res = await fetch(`${API_BASE}/api/foods/${foodId}`, {
+    method: "PUT",
+    credentials: "include",
+    body: formData,
+  });
+  return handleResponse(res);
+};
+
+// ---------------------------
+// Delete food
+// ---------------------------
+export const deleteFood = async (foodId) => {
+  const res = await fetch(`${API_BASE}/api/foods/${foodId}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+  return handleResponse(res);
+};
