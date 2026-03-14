@@ -158,7 +158,7 @@ function FavoriteCard({ food, selectedIds, onToggleFavorite, onView }) {
             size="sm"
             borderRadius="full"
             variant="ghost"
-            color="gray.900"
+            color={colors.darkest}
             _hover={{ bg: colors.chipBg, color: colors.darkest }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -186,19 +186,19 @@ export default function Favorites() {
     : favoriteFoods;
 
   return (
-    <Box px={{ base: 4, md: 6 }} py={{ base: 4, md: 6 }}>
+    <Box px={{ base: 4, md: 6 }} py={{ base: 4, md: 6 }} maxW="1280px" mx="auto" w="full">
       {/* ── Page header ── */}
-      <HStack gap="3" mb={6} align="center">
+      <HStack justify="space-between" mb="4" align="start">
         <Box flex="1">
           <Text
-            fontSize={{ base: "xl", md: "2xl" }}
-            fontWeight="800"
+            fontWeight="bold"
+            fontSize={{ base: "lg", md: "2xl" }}
             color={colors.darkest}
-            lineHeight="1.2"
+            lineHeight="1.3"
           >
             My Favorites
           </Text>
-          <Text fontSize="sm" color="gray.500" mt="0.5">
+          <Text fontSize="sm" color={colors.dark} opacity="0.85">
             {favoriteFoods.length} saved recipe
             {favoriteFoods.length === 1 ? "" : "s"}
           </Text>

@@ -43,11 +43,12 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
       _hover={{ boxShadow: "md", transform: "translateY(-2px)" }}
       cursor="pointer"
       onClick={() => onView(food)}
-      h={{ base: "auto", md: "190px" }}
+      h={{ base: "auto", md: "170px" }}
+      mt={2}
     >
       {/* Image */}
       <Box
-        w={{ base: "full", md: "190px" }}
+        w={{ base: "full", md: "170px" }}
         h={{ base: "160px", md: "full" }}
         flexShrink="0"
         overflow="hidden"
@@ -111,7 +112,7 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
 
         {/* Description */}
         {food.description && (
-          <Text fontSize={{ base: "xs", md: "sm" }} color="gray.500" lineClamp={3} lineHeight="1.5">
+          <Text fontSize={{ base: "xs", md: "xs" }} color="gray.500" lineClamp={3} lineHeight="1.5">
             {food.description}
           </Text>
         )}

@@ -4,7 +4,7 @@ import MayLikeCard from "./MayLikeCard";
 import { getAllFoods } from "../../../services/api/food.service";
 import colors from "../../../theme/tokens";
 
-const MayLike = ({ currentFoodId, currentIngredients = [] }) => {
+const MayLike = ({ currentFoodId, currentIngredients = [], onSelectFood }) => {
   const [suggestedFoods, setSuggestedFoods] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showMore, setShowMore] = useState(false);
@@ -57,6 +57,7 @@ const MayLike = ({ currentFoodId, currentIngredients = [] }) => {
             image={food.image_url}
             sharedIngredients={food.sharedCount}
             totalIngredients={food.ingredients?.length || 0}
+            onClick={() => onSelectFood?.(food.food_id)}
           />
         ))}
       </Box>

@@ -1,5 +1,10 @@
 import express from "express";
-import { getCommentsByFood, addComment } from "../controllers/comment.controller.js";
+import {
+	getCommentsByFood,
+	addComment,
+	updateComment,
+	deleteComment,
+} from "../controllers/comment.controller.js";
 import { verifyFirebaseToken } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -55,5 +60,7 @@ router.get("/foods/:foodId", getCommentsByFood);
  *         description: Comment added successfully
  */
 router.post("/foods/:foodId", verifyFirebaseToken, addComment);
+router.put("/:commentId", verifyFirebaseToken, updateComment);
+router.delete("/:commentId", verifyFirebaseToken, deleteComment);
 
 export default router;

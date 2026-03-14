@@ -5,7 +5,8 @@ const MayLikeCard = ({
   title = "ABC Chicken Soup",
   image = "https://images.unsplash.com/photo-1667489022797-ab608913feeb",
   sharedIngredients = 3,
-  totalIngredients = 8
+  totalIngredients = 8,
+  onClick,
 }) => {
   const matchPercentage = Math.round((sharedIngredients / totalIngredients) * 100);
 
@@ -25,6 +26,7 @@ const MayLikeCard = ({
       }}
       transition="all 0.2s"
       cursor="pointer"
+      onClick={onClick}
     >
       {/* Image Container */}
       <Box width="100px" height="100%" flexShrink="0">
