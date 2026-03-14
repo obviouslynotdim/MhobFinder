@@ -1,5 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database.js";
+import Comment from "./Comment.js";
+import Favorite from "./Favorite.js";
 
 const User = sequelize.define(
   "User",
@@ -16,5 +18,8 @@ const User = sequelize.define(
     updatedAt: "updatedAt",
   },
 );
+
+User.hasMany(Comment, { foreignKey: "user_id", onDelete: "CASCADE" });
+User.hasMany(Favorite, { foreignKey: "user_id", onDelete: "CASCADE" });
 
 export default User;

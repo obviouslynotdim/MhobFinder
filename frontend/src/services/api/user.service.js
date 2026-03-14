@@ -1,11 +1,20 @@
-export const mockUsers = [
-  { id: 1, name: "Dim Dom", email: "dimdom@example.com", password: "123456" },
-  { id: 2, name: "Jane Doe", email: "jane@example.com", password: "abcdef" },
-];
+export const fetchAllUsers = async () => {
+  const response = await apiClient.get("/users");
+  return response.data;
+};
+import apiClient from "./client.js";
 
-export const loginUser = async (email, password) => {
-  await new Promise(res => setTimeout(res, 500)); // simulate network
-  const user = mockUsers.find(u => u.email === email && u.password === password);
-  if (!user) throw new Error("Invalid credentials");
-  return { id: user.id, name: user.name, email: user.email };
+export const fetchUserById = async (userId) => {
+  const response = await apiClient.get(`/users/${userId}`);
+  return response.data;
+};
+
+export const deleteUser = async (userId) => {
+  const response = await apiClient.delete(`/users/${userId}`);
+  return response.data;
+};
+
+export const registerUser = async (userData) => {
+  const response = await apiClient.post("/users/register", userData);
+  return response.data;
 };

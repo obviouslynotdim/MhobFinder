@@ -54,4 +54,24 @@ router.post("/register", register);
  */
 router.post("/login", login);
 
+/**
+ * @swagger
+ * /api/users/{userId}:
+ *   delete:
+ *     summary: Delete a user and related data
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: User and related data deleted
+ */
+import { deleteUser, getUserById, getAllUsers } from "../controllers/user.controller.js";
+router.get("/", getAllUsers);
+router.get("/:userId", getUserById);
+router.delete("/:userId", deleteUser);
+
 export default router;
