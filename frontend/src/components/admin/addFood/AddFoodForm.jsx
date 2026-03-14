@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
-import { useApp } from "../../context/AppProvider.jsx";
+import { useApp } from "../../../context/AppProvider.jsx";
 import {
   Box,
   Button,
@@ -14,9 +14,9 @@ import {
 } from "@chakra-ui/react";
 import { FiPlusSquare, FiX, FiImage } from "react-icons/fi";
 
-import { getAllCategories } from "../../services/api/category.service.js";
-import { getAllIngredients } from "../../services/api/ingredient.service.js";
-import { addFood } from "../../services/api/food.service.js";
+import { getAllCategories } from "../../../services/api/category.service.js";
+import { getAllIngredients } from "../../../services/api/ingredient.service.js";
+import { addFood } from "../../../services/api/food.service.js";
 
 export default function AddFoodForm() {
   const { refreshFoods, selectedIds } = useApp();

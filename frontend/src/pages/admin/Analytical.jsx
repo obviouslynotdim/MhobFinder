@@ -1,9 +1,9 @@
 import { Box, Grid, Heading } from "@chakra-ui/react";
 
-import VisitorsCard from "../../components/analytical/VisitorsCard";
-import TopRecipesCard from "../../components/analytical/TopRecipesCard";
-import PopularIngredientCard from "../../components/analytical/PopularIngredientCard";
-import VisitDurationCard from "../../components/analytical/VisitDurationCard";
+import VisitorsCard from "../../components/admin/analytical/VisitorsCard";
+import TopRecipesCard from "../../components/admin/analytical/TopRecipesCard";
+import PopularIngredientCard from "../../components/admin/analytical/PopularIngredientCard";
+import VisitDurationCard from "../../components/admin/analytical/VisitDurationCard";
 
 export default function Analytical() {
     return (

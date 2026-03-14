@@ -1,15 +1,15 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import AppShell from "./layouts/AppShell.jsx";
-import AdminLayout from "./layouts/AdminLayout.jsx";
+import AppShell from "./layouts/user/AppShell.jsx";
+import AdminLayout from "./layouts/admin/AdminLayout.jsx";
 import { AppProvider } from "./context/AppProvider.jsx";
 import { UserProvider, useUser } from "./context/UserProvider.jsx";
 
-import Start from "./pages/Start.jsx";
-import Home from "./pages/Home.jsx";
-import Favorites from "./pages/Favorites.jsx";
-import About from "./pages/About.jsx";
-import Login from "./pages/Login.jsx";
-import Profile from "./pages/Profile.jsx";
+import Start from "./pages/user/Start.jsx";
+import Home from "./pages/user/Home.jsx";
+import Favorites from "./pages/user/Favorites.jsx";
+import About from "./pages/user/About.jsx";
+import Login from "./pages/user/Login.jsx";
+import Profile from "./pages/user/Profile.jsx";
 
 import AdminHomePage from "./pages/admin/AdminHomePage.jsx";
 import AdminFoodPage from "./pages/admin/AdminFoodPage.jsx";

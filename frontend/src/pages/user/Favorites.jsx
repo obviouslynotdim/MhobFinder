@@ -15,9 +15,9 @@ import { FiExternalLink, FiHeart, FiSearch } from "react-icons/fi";
 import { MdOutlineFoodBank } from "react-icons/md";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useApp } from "../context/AppProvider.jsx";
-import { colors } from "../theme/tokens.js";
-import FullRecipe from "./fullRecipePage/FullRecipe.jsx";
+import { useApp } from "../../context/AppProvider.jsx";
+import { colors } from "../../theme/tokens.js";
+import FullRecipe from "../fullRecipePage/FullRecipe.jsx";
 
 function formatDomain(url) {
   try {
@@ -28,8 +28,12 @@ function formatDomain(url) {
 }
 
 function FavoriteCard({ food, selectedIds, onToggleFavorite, onView }) {
-  const ingredientIds = (food.ingredients || []).map((ing) => ing.ingredient_id);
-  const matchedCount = ingredientIds.filter((id) => selectedIds.includes(id)).length;
+  const ingredientIds = (food.ingredients || []).map(
+    (ing) => ing.ingredient_id,
+  );
+  const matchedCount = ingredientIds.filter((id) =>
+    selectedIds.includes(id),
+  ).length;
   const totalCount = ingredientIds.length;
   const metaColor = "gray.500";
 
@@ -165,7 +169,6 @@ function FavoriteCard({ food, selectedIds, onToggleFavorite, onView }) {
             <FiExternalLink />
           </IconButton>
         )}
-        
       </Flex>
     </Flex>
   );
@@ -186,7 +189,13 @@ export default function Favorites() {
     : favoriteFoods;
 
   return (
-    <Box px={{ base: 4, md: 6 }} py={{ base: 4, md: 6 }} maxW="1280px" mx="auto" w="full">
+    <Box
+      px={{ base: 4, md: 6 }}
+      py={{ base: 4, md: 6 }}
+      maxW="1280px"
+      mx="auto"
+      w="full"
+    >
       {/* ── Page header ── */}
       <HStack justify="space-between" mb="4" align="start">
         <Box flex="1">

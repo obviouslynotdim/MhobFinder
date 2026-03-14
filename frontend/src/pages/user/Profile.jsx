@@ -1,7 +1,15 @@
-import { Avatar, Box, Button, HStack, Spinner, Text, VStack } from "@chakra-ui/react";
+import {
+  Avatar,
+  Box,
+  Button,
+  HStack,
+  Spinner,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../context/UserProvider.jsx";
-import { colors } from "../theme/tokens.js";
+import { useUser } from "../../context/UserProvider.jsx";
+import { colors } from "../../theme/tokens.js";
 
 export default function Profile() {
   const { user, logout, loading } = useUser();
@@ -62,7 +70,11 @@ export default function Profile() {
 
           <Avatar.Root size="2xl">
             <Avatar.Image src={user.photoURL} />
-            <Avatar.Fallback name={user.name} bg={colors.primary} color="white" />
+            <Avatar.Fallback
+              name={user.name}
+              bg={colors.primary}
+              color="white"
+            />
           </Avatar.Root>
 
           <VStack gap="1" textAlign="center">
@@ -120,4 +132,3 @@ export default function Profile() {
     </Box>
   );
 }
-

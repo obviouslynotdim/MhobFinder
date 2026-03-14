@@ -19,9 +19,9 @@ import {
   getFoodById,
   updateFood,
   deleteFood,
-} from "../../services/api/food.service";
-import { getAllCategories } from "../../services/api/category.service";
-import { getAllIngredients } from "../../services/api/ingredient.service";
+} from "../../../services/api/food.service";
+import { getAllCategories } from "../../../services/api/category.service";
+import { getAllIngredients } from "../../../services/api/ingredient.service";
 
 export default function EditFoodForm({ foodId }) {
   const navigate = useNavigate();
@@ -49,11 +49,7 @@ export default function EditFoodForm({ foodId }) {
 
   useEffect(() => {
     setLoading(true);
-    Promise.all([
-      getFoodById(foodId),
-      getAllCategories(),
-      getAllIngredients(),
-    ])
+    Promise.all([getFoodById(foodId), getAllCategories(), getAllIngredients()])
       .then(([foodData, categoryData, ingredientData]) => {
         setFood(foodData);
         setTitle(foodData.title);
@@ -89,7 +85,7 @@ export default function EditFoodForm({ foodId }) {
           (sel) =>
             sel.ingredient_id === ing.ingredient_id ||
             sel === ing.ingredient_id ||
-            sel === name
+            sel === name,
         )
       );
     });
@@ -118,8 +114,9 @@ export default function EditFoodForm({ foodId }) {
         (item) =>
           item !== ingredient &&
           item.ingredient_id !== ingredient.ingredient_id &&
-          (item.name || item.ingredient_name) !== (ingredient.name || ingredient.ingredient_name)
-      )
+          (item.name || item.ingredient_name) !==
+            (ingredient.name || ingredient.ingredient_name),
+      ),
     );
   };
 
@@ -302,9 +299,18 @@ export default function EditFoodForm({ foodId }) {
               </Box>
             )}
           {selectedCategory && (
-            <Box mt={2} px={4} py={2} bg="#e3eafc" borderRadius="md" display="inline-block">
+            <Box
+              mt={2}
+              px={4}
+              py={2}
+              bg="#e3eafc"
+              borderRadius="md"
+              display="inline-block"
+            >
               <Text fontSize="md" color="#4f79bd">
-                {selectedCategory.name || selectedCategory.category_name || selectedCategory}
+                {selectedCategory.name ||
+                  selectedCategory.category_name ||
+                  selectedCategory}
               </Text>
             </Box>
           )}
@@ -345,14 +351,20 @@ export default function EditFoodForm({ foodId }) {
               >
                 {filteredIngredients.map((ingredient) => (
                   <Box
-                    key={ingredient.ingredient_id || ingredient.id || ingredient.name}
+                    key={
+                      ingredient.ingredient_id ||
+                      ingredient.id ||
+                      ingredient.name
+                    }
                     px={4}
                     py={3}
                     cursor="pointer"
                     _hover={{ bg: "gray.100" }}
                     onMouseDown={() => handleAddIngredient(ingredient)}
                   >
-                    {ingredient.name || ingredient.ingredient_name || ingredient}
+                    {ingredient.name ||
+                      ingredient.ingredient_name ||
+                      ingredient}
                   </Box>
                 ))}
               </Box>
@@ -362,7 +374,13 @@ export default function EditFoodForm({ foodId }) {
             <>
               <Wrap mt={4} spacing={3}>
                 {selectedIngredients.map((ingredient) => (
-                  <WrapItem key={ingredient.ingredient_id || ingredient.id || ingredient.name}>
+                  <WrapItem
+                    key={
+                      ingredient.ingredient_id ||
+                      ingredient.id ||
+                      ingredient.name
+                    }
+                  >
                     <HStack
                       bg="#4f79bd"
                       color="white"
@@ -370,7 +388,11 @@ export default function EditFoodForm({ foodId }) {
                       py={2}
                       borderRadius="full"
                     >
-                      <Text fontSize="sm">{ingredient.name || ingredient.ingredient_name || ingredient}</Text>
+                      <Text fontSize="sm">
+                        {ingredient.name ||
+                          ingredient.ingredient_name ||
+                          ingredient}
+                      </Text>
                       <Box
                         as="button"
                         onClick={() => handleRemoveIngredient(ingredient)}

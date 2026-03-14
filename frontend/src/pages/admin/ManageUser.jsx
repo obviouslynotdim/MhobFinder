@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Box, Separator } from "@chakra-ui/react";
-import ManageUserHeader from "../../components/manageUser/ManageUserHeader";
-import UserTable from "../../components/manageUser/UserTable";
+import ManageUserHeader from "../../components/admin/manageUser/ManageUserHeader";
+import UserTable from "../../components/admin/manageUser/UserTable";
 
 export default function ManageUser() {
     const [search, setSearch] = useState("");

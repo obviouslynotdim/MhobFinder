@@ -1,5 +1,5 @@
 import { Box, Separator } from "@chakra-ui/react";
-import EditFoodForm from "../../components/editFood/EditFoodForm.jsx";
+import EditFoodForm from "../../components/admin/editFood/EditFoodForm.jsx";
 import { useParams } from "react-router-dom";
 
 export default function EditFood() {

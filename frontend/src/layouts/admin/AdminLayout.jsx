@@ -1,9 +1,9 @@
 import { Box, Flex, useDisclosure } from "@chakra-ui/react";
 import { Outlet } from "react-router-dom";
-import TopBarLeft from "./TopBarLeft.jsx";
-import TopBarRight from "./TopBarRight.jsx";
+import TopBarLeft from "../TopBarLeft.jsx";
+import TopBarRight from "../TopBarRight.jsx";
 import AdminSidebar from "./AdminSidebar.jsx";
-import bgPattern from "../assets/mhob-background.png";
+import bgPattern from "../../assets/mhob-background.png";
 
 export default function AdminLayout() {
   const { open, onToggle } = useDisclosure({ defaultOpen: true });

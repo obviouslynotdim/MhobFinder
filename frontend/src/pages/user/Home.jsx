@@ -10,14 +10,14 @@ import {
   Wrap,
   WrapItem,
 } from "@chakra-ui/react";
-import { useApp } from "../context/AppProvider.jsx";
-import RecipeCard from "../components/RecipeCard.jsx";
-import IngredientChip from "../components/IngredientChip.jsx";
-import CategoryDropdown from "../components/CategoryDropdown.jsx";
-import FullRecipe from "./fullRecipePage/FullRecipe.jsx";
-import { colors } from "../theme/tokens.js";
+import { useApp } from "../../context/AppProvider.jsx";
+import RecipeCard from "../../components/RecipeCard.jsx";
+import IngredientChip from "../../components/IngredientChip.jsx";
+import CategoryDropdown from "../../components/CategoryDropdown.jsx";
+import FullRecipe from "../fullRecipePage/FullRecipe.jsx";
+import { colors } from "../../theme/tokens.js";
 
-import chefImage from "../assets/chef-serving.png";
+import chefImage from "../../assets/chef-serving.png";
 
 const FALLBACK_CATEGORY_NAMES = [
   "Khmer Food",

@@ -25,7 +25,13 @@ const TEAM = [
 
 function TeamCard({ name, role, img }) {
   return (
-    <Box borderRadius="2xl" overflow="hidden" boxShadow="lg" bg="white" position="relative">
+    <Box
+      borderRadius="2xl"
+      overflow="hidden"
+      boxShadow="lg"
+      bg="white"
+      position="relative"
+    >
       <Image src={img} alt={name} w="full" h="280px" objectFit="cover" />
       <Box position="absolute" left="0" right="0" bottom="0" bg="#C78B6B" p="4">
         <Text color="white" fontWeight="bold" fontSize="lg">

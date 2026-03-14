@@ -11,21 +11,28 @@ import {
 } from "@chakra-ui/react";
 
 import { Link, useLocation } from "react-router-dom";
-import { FiChevronDown, FiChevronUp, FiHeart, FiHome, FiInfo, FiUser } from "react-icons/fi";
+import {
+  FiChevronDown,
+  FiChevronUp,
+  FiHeart,
+  FiHome,
+  FiInfo,
+  FiUser,
+} from "react-icons/fi";
 import { useState } from "react";
-import { useApp } from "../context/AppProvider.jsx";
-import { colors } from "../theme/tokens.js";
+import { useApp } from "../../context/AppProvider.jsx";
+import { colors } from "../../theme/tokens.js";
 
 // Import ingredient type images
-import pantryImg from "../assets/type/cuisine.png";
-import dairyImg from "../assets/type/dairy.png";
-import meatsImg from "../assets/type/meats.png";
-import vegetablesImg from "../assets/type/vegetables.png";
-import seafoodImg from "../assets/type/seafood.png";
-import fruitsImg from "../assets/type/fruits.png";
-import spicesImg from "../assets/type/spices.png";
-import saucesImg from "../assets/type/sauces.png";
-import grainsImg from "../assets/type/grains.png";
+import pantryImg from "../../assets/type/cuisine.png";
+import dairyImg from "../../assets/type/dairy.png";
+import meatsImg from "../../assets/type/meats.png";
+import vegetablesImg from "../../assets/type/vegetables.png";
+import seafoodImg from "../../assets/type/seafood.png";
+import fruitsImg from "../../assets/type/fruits.png";
+import spicesImg from "../../assets/type/spices.png";
+import saucesImg from "../../assets/type/sauces.png";
+import grainsImg from "../../assets/type/grains.png";
 
 function chipBg(color) {
   // Muted palette to keep chips readable and consistent with the blue brand theme.
@@ -162,7 +169,13 @@ export default function Sidebar({ collapsed }) {
       const isActive = loc.pathname === item.to;
 
       return (
-        <Box key={item.to} position="relative" w="100%" display="flex" justifyContent="center">
+        <Box
+          key={item.to}
+          position="relative"
+          w="100%"
+          display="flex"
+          justifyContent="center"
+        >
           {isActive && (
             <Box
               position="absolute"
@@ -226,7 +239,8 @@ export default function Sidebar({ collapsed }) {
 
         const hasOverflow = list.length > CACHE_LIMIT;
         const isExpanded = expandedCats.has(cat);
-        const visibleList = hasOverflow && !isExpanded ? list.slice(0, CACHE_LIMIT) : list;
+        const visibleList =
+          hasOverflow && !isExpanded ? list.slice(0, CACHE_LIMIT) : list;
         const hiddenCount = list.length - CACHE_LIMIT;
 
         const selectedCount = list.filter((x) =>
@@ -243,8 +257,14 @@ export default function Sidebar({ collapsed }) {
             p="4"
             bg="white"
             border="1px solid"
-            borderColor={selectedCount > 0 ? `${colors.primary}40` : `${colors.primary}18`}
-            boxShadow={selectedCount > 0 ? "0 4px 14px rgba(73,117,187,0.14)" : "0 2px 8px rgba(43,76,126,0.07)"}
+            borderColor={
+              selectedCount > 0 ? `${colors.primary}40` : `${colors.primary}18`
+            }
+            boxShadow={
+              selectedCount > 0
+                ? "0 4px 14px rgba(73,117,187,0.14)"
+                : "0 2px 8px rgba(43,76,126,0.07)"
+            }
             transition="box-shadow 0.2s, border-color 0.2s"
           >
             {/* Category header */}
@@ -260,19 +280,25 @@ export default function Sidebar({ collapsed }) {
                   justifyContent="center"
                   boxSize="62px"
                 >
-                  <Image src={img} alt={cat} boxSize="46px" objectFit="contain" />
+                  <Image
+                    src={img}
+                    alt={cat}
+                    boxSize="46px"
+                    objectFit="contain"
+                  />
                 </Box>
               )}
 
               <Box flex="1" minW="0">
-                <Text fontWeight="700" fontSize="sm" color={colors.darkest} lineHeight="1.3">
-                  {cat}
-                </Text>
                 <Text
-                  fontSize="xs"
-                  color={colors.dark}
+                  fontWeight="700"
+                  fontSize="sm"
+                  color={colors.darkest}
                   lineHeight="1.3"
                 >
+                  {cat}
+                </Text>
+                <Text fontSize="xs" color={colors.dark} lineHeight="1.3">
                   {selectedCount}/{list.length} Ingredients
                 </Text>
               </Box>
@@ -347,19 +373,22 @@ export default function Sidebar({ collapsed }) {
             p="4"
             bg="white"
             border="1px solid"
-            borderColor={selectedCount > 0 ? `${colors.primary}40` : `${colors.primary}18`}
+            borderColor={
+              selectedCount > 0 ? `${colors.primary}40` : `${colors.primary}18`
+            }
             boxShadow="0 2px 8px rgba(43,76,126,0.07)"
           >
             <HStack align="center" mb="3" gap="3">
               <Box flex="1" minW="0">
-                <Text fontWeight="700" fontSize="sm" color={colors.darkest} lineHeight="1.3">
-                  Other
-                </Text>
                 <Text
-                  fontSize="xs"
-                  color={colors.dark}
+                  fontWeight="700"
+                  fontSize="sm"
+                  color={colors.darkest}
                   lineHeight="1.3"
                 >
+                  Other
+                </Text>
+                <Text fontSize="xs" color={colors.dark} lineHeight="1.3">
                   {selectedCount}/{other.length} Ingredients
                 </Text>
               </Box>

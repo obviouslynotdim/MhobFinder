@@ -2,18 +2,16 @@ import { Box, Flex } from "@chakra-ui/react";
 import { Outlet, useLocation } from "react-router-dom";
 import { useState } from "react";
 
-import TopBarLeft from "./TopBarLeft.jsx";
-import TopBarRight from "./TopBarRight.jsx";
+import TopBarLeft from "../TopBarLeft.jsx";
+import TopBarRight from "../TopBarRight.jsx";
 import Sidebar from "./Sidebar.jsx";
-import backgroundImage from "../assets/bg.png";
+import backgroundImage from "../../assets/bg.png";
 
 export default function AppShell() {
   const [userCollapsed, setUserCollapsed] = useState(false);
   const loc = useLocation();
 
-  const collapsed = loc.pathname.startsWith("/about")
-    ? true
-    : userCollapsed;
+  const collapsed = loc.pathname.startsWith("/about") ? true : userCollapsed;
   const hideTopBarRight = loc.pathname === "/";
 
   const sidebarW = collapsed
@@ -28,22 +26,14 @@ export default function AppShell() {
       <Box
         w={sidebarW}
         bg={collapsed ? "#4975BB" : "#E1EDFE"}
-        overflowY="auto"     // scroll here
+        overflowY="auto" // scroll here
         transition="width 0.2s ease"
       >
         {/* TopBarLeft */}
-        <Box
-          h={headerH}
-          px="4"
-          display="flex"
-          alignItems="center"
-          bg="#4975BB"
-        >
+        <Box h={headerH} px="4" display="flex" alignItems="center" bg="#4975BB">
           <TopBarLeft
             collapsed={collapsed}
-            onToggleCollapse={() =>
-              setUserCollapsed((v) => !v)
-            }
+            onToggleCollapse={() => setUserCollapsed((v) => !v)}
           />
         </Box>
 

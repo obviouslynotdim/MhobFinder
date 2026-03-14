@@ -1,5 +1,16 @@
 import { useEffect, useState } from "react";
-import { Box, Image, Text, Spinner, Center, Flex, Icon, Button, Separator, IconButton } from "@chakra-ui/react";
+import {
+  Box,
+  Image,
+  Text,
+  Spinner,
+  Center,
+  Flex,
+  Icon,
+  Button,
+  Separator,
+  IconButton,
+} from "@chakra-ui/react";
 import { FiCheck, FiHeart, FiMoreHorizontal } from "react-icons/fi";
 import { AiOutlineClose } from "react-icons/ai";
 import { FaStar } from "react-icons/fa";
@@ -28,7 +39,9 @@ const FullRecipe = ({ foodId, onClose }) => {
 
   useEffect(() => {
     if (!activeFoodId) return;
-    const isFav = (favorites || []).some((id) => Number(id) === Number(activeFoodId));
+    const isFav = (favorites || []).some(
+      (id) => Number(id) === Number(activeFoodId),
+    );
     setIsFavorite(isFav);
   }, [favorites, activeFoodId]);
 
@@ -49,16 +62,16 @@ const FullRecipe = ({ foodId, onClose }) => {
 
   useEffect(() => {
     if (!activeFoodId) return;
-    
+
     Promise.all([
       getRatingsByFood(activeFoodId).catch(() => []),
-      getCommentsByFood(activeFoodId).catch(() => [])
+      getCommentsByFood(activeFoodId).catch(() => []),
     ])
-    .then(([ratingData, commentData]) => {
-      setRatings(ratingData || []);
-      setComments(commentData || []);
-    })
-    .catch((e) => console.error("Error loading ratings/comments:", e));
+      .then(([ratingData, commentData]) => {
+        setRatings(ratingData || []);
+        setComments(commentData || []);
+      })
+      .catch((e) => console.error("Error loading ratings/comments:", e));
   }, [activeFoodId]);
 
   const handleFavoriteClick = async (e) => {
@@ -83,9 +96,12 @@ const FullRecipe = ({ foodId, onClose }) => {
   if (!food) return null;
 
   const ingredientList = food.ingredients || [];
-  const avgRating = ratings.length > 0 
-    ? (ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length).toFixed(1)
-    : 0;
+  const avgRating =
+    ratings.length > 0
+      ? (
+          ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length
+        ).toFixed(1)
+      : 0;
   const filledStars = Math.round(Number(avgRating) || 0);
   const matchedCount = ingredientList.filter((ing) =>
     selectedIds.includes(ing.ingredient_id),
@@ -129,7 +145,7 @@ const FullRecipe = ({ foodId, onClose }) => {
           height="100%"
           objectFit="cover"
         />
-        
+
         <IconButton
           aria-label="Close"
           position="absolute"
@@ -188,7 +204,9 @@ const FullRecipe = ({ foodId, onClose }) => {
               </Box>
 
               <IconButton
-                aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+                aria-label={
+                  isFavorite ? "Remove from favorites" : "Add to favorites"
+                }
                 onClick={handleFavoriteClick}
                 bg={isFavorite ? "red.500" : "white"}
                 color={isFavorite ? "white" : "red.500"}
@@ -229,10 +247,15 @@ const FullRecipe = ({ foodId, onClose }) => {
 
       {/* Content Section */}
       <Box p={{ base: "4", md: "5" }} pt={{ base: "14", md: "18" }}>
-
         {/* Ingredients */}
         <Box mb="5">
-          <Text fontSize="lg" fontWeight="bold" color={colors.darkest} mb="4" mt="12">
+          <Text
+            fontSize="lg"
+            fontWeight="bold"
+            color={colors.darkest}
+            mb="4"
+            mt="12"
+          >
             Ingredients
           </Text>
 
@@ -246,7 +269,10 @@ const FullRecipe = ({ foodId, onClose }) => {
                     justify="space-between"
                     gap="3"
                     pb="3"
-                    _notLast={{ borderBottom: "1px solid", borderColor: "gray.200" }}
+                    _notLast={{
+                      borderBottom: "1px solid",
+                      borderColor: "gray.200",
+                    }}
                   >
                     <Flex align="center" gap="3" minW="0" flex="1">
                       <Box
@@ -263,7 +289,11 @@ const FullRecipe = ({ foodId, onClose }) => {
                     <Center
                       boxSize="7"
                       borderRadius="full"
-                      bg={selectedIds.includes(ingredient.ingredient_id) ? "blue.400" : "gray.200"}
+                      bg={
+                        selectedIds.includes(ingredient.ingredient_id)
+                          ? "blue.400"
+                          : "gray.200"
+                      }
                       color="white"
                       flexShrink={0}
                     >
@@ -300,7 +330,12 @@ const FullRecipe = ({ foodId, onClose }) => {
           >
             <Flex direction="column" align="center" lineHeight="1.15">
               <Text fontWeight="bold">View Full Recipe</Text>
-              <Text fontSize="xs" color="whiteAlpha.900" fontWeight="400" mt="1">
+              <Text
+                fontSize="xs"
+                color="whiteAlpha.900"
+                fontWeight="400"
+                mt="1"
+              >
                 ( {sourceDomainLabel} )
               </Text>
             </Flex>
@@ -318,7 +353,11 @@ const FullRecipe = ({ foodId, onClose }) => {
 
         {/* Reviews Section */}
         <Box>
-          <CommentSection foodId={food.food_id} comments={comments} ratings={ratings} />
+          <CommentSection
+            foodId={food.food_id}
+            comments={comments}
+            ratings={ratings}
+          />
         </Box>
       </Box>
     </Box>

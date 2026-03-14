@@ -1,9 +1,9 @@
 import { Box, Heading, Separator } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 
-import UserDetailHeader from "../../components/userDetail/UserDetailHeader";
-import UserProfile from "../../components/userDetail/UserProfile";
-import UserInfoFields from "../../components/userDetail/UserInfoFields";
+import UserDetailHeader from "../../components/admin/userDetail/UserDetailHeader";
+import UserProfile from "../../components/admin/userDetail/UserProfile";
+import UserInfoFields from "../../components/admin/userDetail/UserInfoFields";
 
 export default function UserDetail() {
     const { id } = useParams();
