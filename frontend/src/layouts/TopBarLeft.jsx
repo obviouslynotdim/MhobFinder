@@ -11,9 +11,11 @@ import {
 import { useRef, useState } from "react";
 import { FiMenu, FiMoreVertical, FiSearch, FiTrash2 } from "react-icons/fi";
 import { useApp } from "../context/AppProvider.jsx";
+import { useTranslation } from "../context/useTranslation.js";
 import { colors } from "../theme/tokens.js";
 
 export default function TopBarLeft({ collapsed, onToggleCollapse }) {
+  const { language } = useTranslation();
   const { ingredients, selectedIds, toggleIngredient, clearIngredients } =
     useApp();
 
@@ -81,11 +83,12 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
         {/* Center: Pantry + count */}
         <VStack gap="0" align="center">
           <Text fontSize="2xl" fontWeight="bold" color="white" lineHeight="1">
-            Pantry
+            {language === "kh" ? "ទូរគ្រឿងផ្សំ" : "Pantry"}
           </Text>
           <Text fontSize="xs" color="whiteAlpha.800">
-            You have {selectedIds.length} ingredient
-            {selectedIds.length !== 1 ? "s" : ""}
+            {language === "kh"
+              ? `អ្នកមាន ${selectedIds.length} គ្រឿងផ្សំ`
+              : `You have ${selectedIds.length} ingredient${selectedIds.length !== 1 ? "s" : ""}`}
           </Text>
         </VStack>
 
@@ -127,7 +130,9 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
               >
                 <HStack gap="2">
                   <FiTrash2 size={13} />
-                  <Text fontSize={12}>Clear all ingredients</Text>
+                  <Text fontSize={12}>
+                    {language === "kh" ? "សម្អាតគ្រឿងផ្សំទាំងអស់" : "Clear all ingredients"}
+                  </Text>
                 </HStack>
               </Box>
             </Box>
@@ -160,10 +165,12 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
             p="5"
           >
             <Text fontWeight="bold" fontSize="lg" color={colors.darkest} mb="2">
-              Remove all ingredients?
+              {language === "kh" ? "លុបគ្រឿងផ្សំទាំងអស់?" : "Remove all ingredients?"}
             </Text>
             <Text fontSize="sm" color={colors.dark} mb="5">
-              Are you sure you want to remove all selected ingredients?
+              {language === "kh"
+                ? "តើអ្នកប្រាកដថាចង់លុបគ្រឿងផ្សំដែលបានជ្រើសទាំងអស់មែនទេ?"
+                : "Are you sure you want to remove all selected ingredients?"}
             </Text>
 
             <HStack justify="flex-end" gap="2">
@@ -174,10 +181,10 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
                 _hover={{ bg: colors.chipHover }}
                 onClick={() => setConfirmOpen(false)}
               >
-                Cancel
+                {language === "kh" ? "បោះបង់" : "Cancel"}
               </Button>
               <Button bg={colors.primary} color="white" _hover={{ bg: colors.dark }} onClick={handleConfirmClearAll}>
-                OK
+                {language === "kh" ? "យល់ព្រម" : "OK"}
               </Button>
             </HStack>
           </Box>
@@ -197,7 +204,7 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
             onChange={handleIngSearchChange}
             onFocus={() => ingSearch.length > 0 && setDrawerOpen(true)}
             onBlur={() => setTimeout(() => setDrawerOpen(false), 150)}
-            placeholder="Add ingredient..."
+            placeholder={language === "kh" ? "បន្ថែមគ្រឿងផ្សំ..." : "Add ingredient..."}
             bg="white"
             borderRadius="md"
             h="40px"
@@ -237,7 +244,7 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
                   </Text>
                   {isSelected && (
                     <Text fontSize="xs" color="blue.500">
-                      ✓ added
+                      {language === "kh" ? "✓ បានបន្ថែម" : "✓ added"}
                     </Text>
                   )}
                 </HStack>

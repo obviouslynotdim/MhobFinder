@@ -10,20 +10,22 @@ import { FiArrowLeft, FiHeart, FiUser, FiSearch } from "react-icons/fi";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useApp } from "../context/AppProvider.jsx";
 import { useUser } from "../context/UserProvider.jsx";
-import { MdTranslate } from "react-icons/md";
+import { useTranslation } from "../context/useTranslation.js";
+import LanguageSwitcher from "../components/common/LanguageSwitcher.jsx";
 
-function getAdminTitle(pathname) {
-  if (pathname.includes("/admin/manage-user")) return "User Management";
-  if (pathname.includes("/admin/analytical")) return "Analytics";
-  if (pathname.includes("/admin/add-food")) return "Add Food";
-  if (pathname.includes("/admin/edit-food")) return "Edit Food";
-  if (pathname.includes("/admin/foods")) return "Food Library";
-  return "Admin Dashboard";
+function getAdminTitle(pathname, t) {
+  if (pathname.includes("/admin/manage-user")) return t("topBar.adminTitles.manageUser");
+  if (pathname.includes("/admin/analytical")) return t("topBar.adminTitles.analytical");
+  if (pathname.includes("/admin/add-food")) return t("topBar.adminTitles.addFood");
+  if (pathname.includes("/admin/edit-food")) return t("topBar.adminTitles.editFood");
+  if (pathname.includes("/admin/foods")) return t("topBar.adminTitles.foods");
+  return t("topBar.adminTitles.default");
 }
 
 export default function TopBarRight() {
   const { search, setSearch } = useApp();
   const { user } = useUser();
+  const { t } = useTranslation();
   const nav = useNavigate();
   const loc = useLocation();
   const isAdminPage = loc.pathname.startsWith("/admin");
@@ -37,10 +39,10 @@ export default function TopBarRight() {
       <HStack w="full" justify="space-between" gap={{ base: 3, md: 5 }}>
         <Box minW="fit-content">
           <Text fontWeight="800" color="white" fontSize={{ base: "xl", md: "2xl" }} lineHeight="1.1">
-            {getAdminTitle(loc.pathname)}
+            {getAdminTitle(loc.pathname, t)}
           </Text>
           <Text fontSize="xs" color="whiteAlpha.800" mt={0.5}>
-            MhobFinder Admin
+            {t("topBar.adminBrand")}
           </Text>
         </Box>
 
@@ -53,7 +55,7 @@ export default function TopBarRight() {
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search recipes or users"
+            placeholder={t("topBar.searchRecipesOrUsers")}
             bg="white"
             color="gray.700"
             _placeholder={{ color: "gray.500" }}
@@ -75,14 +77,7 @@ export default function TopBarRight() {
             <FiUser />
           </IconButton>
 
-          <IconButton
-            aria-label="Translations"
-            variant="ghost"
-            color="white"
-            _hover={{ bg: "whiteAlpha.200" }}
-          >
-            <MdTranslate />
-          </IconButton>
+          <LanguageSwitcher iconColor="white" hoverBg="whiteAlpha.200" />
         </HStack>
       </HStack>
     );
@@ -104,7 +99,7 @@ export default function TopBarRight() {
               <FiArrowLeft />
             </IconButton>
             <Text fontWeight="bold" color="white" fontSize="2xl">
-              {isFavoritesPage ? "Favorite Page" : "Profile Page"}
+              {isFavoritesPage ? t("topBar.favoritesPage") : t("topBar.profilePage")}
             </Text>
           </HStack>
         ) : (
@@ -142,14 +137,7 @@ export default function TopBarRight() {
             <FiUser />
           </IconButton>
 
-          <IconButton
-            aria-label="Translations"
-            variant="ghost"
-            color="white"
-            _hover={{ bg: "whiteAlpha.200" }}
-          >
-            <MdTranslate />
-          </IconButton>
+          <LanguageSwitcher iconColor="white" hoverBg="whiteAlpha.200" />
         </HStack>
       </HStack>
 
@@ -158,7 +146,7 @@ export default function TopBarRight() {
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Find..."
+          placeholder={t("common.searchPlaceholder")}
           bg="white"
           color="gray.700"
           _placeholder={{ color: "gray.500" }}

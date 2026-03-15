@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Box, Button, Text } from "@chakra-ui/react";
+import { Box, Button } from "@chakra-ui/react";
 import { FiChevronDown } from "react-icons/fi";
 import { colors } from "../theme/tokens.js";
 
@@ -11,7 +11,13 @@ import { colors } from "../theme/tokens.js";
  *   selectedCategory {string}
  *   onChange         {function(name: string)}
  */
-export default function CategoryDropdown({ options, selectedCategory, onChange }) {
+export default function CategoryDropdown({
+  options,
+  selectedCategory,
+  onChange,
+  label = "Category",
+  renderOptionLabel,
+}) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -38,7 +44,7 @@ export default function CategoryDropdown({ options, selectedCategory, onChange }
         onClick={() => setOpen((v) => !v)}
         size="sm"
       >
-        Category: {selectedCategory}
+        {label}: {renderOptionLabel ? renderOptionLabel(selectedCategory) : selectedCategory}
       </Button>
 
       {open && (
@@ -73,7 +79,7 @@ export default function CategoryDropdown({ options, selectedCategory, onChange }
                   setOpen(false);
                 }}
               >
-                {cat.name}
+                {renderOptionLabel ? renderOptionLabel(cat.name) : cat.name}
               </Box>
             );
           })}

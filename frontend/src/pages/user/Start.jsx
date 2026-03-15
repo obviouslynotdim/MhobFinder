@@ -12,10 +12,11 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiArrowRight } from "react-icons/fi";
 import { colors } from "../../theme/tokens.js";
+import { useTranslation } from "../../context/useTranslation.js";
+import LanguageSwitcher from "../../components/common/LanguageSwitcher.jsx";
 
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(24px); }
@@ -23,9 +24,9 @@ const fadeIn = keyframes`
 `;
 
 const quickStats = [
-  { label: "Active recipes", value: "1,200+" },
-  { label: "Pantry ingredients", value: "250+" },
-  { label: "Average setup", value: "< 30 s" },
+  { key: "activeRecipes", value: "1,200+" },
+  { key: "pantryIngredients", value: "250+" },
+  { key: "averageSetup", value: "< 30 s" },
 ];
 
 const sampleIngredients = [
@@ -47,7 +48,7 @@ const sampleRecipes = [
 
 export default function Start() {
   const navigate = useNavigate();
-  const [lang, setLang] = useState("EN");
+  const { t } = useTranslation();
 
   return (
     <Box
@@ -78,32 +79,12 @@ export default function Start() {
         </Text>
 
         <HStack gap="3">
-          {/* Language toggle */}
-          <HStack
-            gap="0"
-            bg="white"
-            p="1"
-            borderRadius="full"
-            border="1px solid #D2DEF5"
-            boxShadow="0 1px 4px rgba(0,0,0,0.06)"
-          >
-            {["EN", "KH"].map((l) => (
-              <Button
-                key={l}
-                size="sm"
-                borderRadius="full"
-                fontWeight="700"
-                fontSize="xs"
-                px="4"
-                bg={lang === l ? colors.primary : "transparent"}
-                color={lang === l ? "white" : colors.dark}
-                _hover={{ bg: lang === l ? colors.dark : "#EDF3FF" }}
-                onClick={() => setLang(l)}
-              >
-                {l}
-              </Button>
-            ))}
-          </HStack>
+          <LanguageSwitcher
+            iconColor={colors.darkest}
+            hoverBg="white"
+            compact
+            showLabel
+          />
 
           <Button
             size="sm"
@@ -115,7 +96,7 @@ export default function Start() {
             _hover={{ bg: "white" }}
             onClick={() => navigate("/login")}
           >
-            Register
+            {t("start.register")}
           </Button>
         </HStack>
       </Flex>
@@ -154,7 +135,7 @@ export default function Start() {
                   fontWeight="700"
                   fontSize="xs"
                 >
-                  100 % free — no ads, no sign-up walls
+                  {t("start.badge")}
                 </Badge>
 
                 <Text
@@ -164,9 +145,9 @@ export default function Start() {
                   color={colors.darkest}
                   letterSpacing="-0.025em"
                 >
-                  Cook with what
+                  {t("start.heroLine1")}
                   <Box as="span" color={colors.primary} display="block">
-                    you already have.
+                    {t("start.heroLine2")}
                   </Box>
                 </Text>
 
@@ -176,8 +157,7 @@ export default function Start() {
                   fontSize={{ base: "md", md: "lg" }}
                   lineHeight="1.7"
                 >
-                  Pick the ingredients sitting in your kitchen and MhobFinder
-                  instantly shows recipes you can make — no shopping required.
+                  {t("start.subtitle")}
                 </Text>
 
                 <HStack gap="3" pt="1" flexWrap="wrap">
@@ -192,7 +172,7 @@ export default function Start() {
                     transition="all 0.2s"
                     onClick={() => navigate("/home")}
                   >
-                    Get Started
+                    {t("start.getStarted")}
                     <Icon as={FiArrowRight} ml="2" />
                   </Button>
                   <Button
@@ -207,7 +187,7 @@ export default function Start() {
                     transition="all 0.2s"
                     onClick={() => navigate("/login")}
                   >
-                    Login
+                    {t("start.login")}
                   </Button>
                 </HStack>
 
@@ -215,7 +195,7 @@ export default function Start() {
                 <SimpleGrid columns={3} gap="3" pt="3" w="full" maxW="480px">
                   {quickStats.map((s) => (
                     <Box
-                      key={s.label}
+                      key={s.key}
                       bg="whiteAlpha.900"
                       border="1px solid #CFE0FA"
                       p="3.5"
@@ -230,7 +210,7 @@ export default function Start() {
                         {s.value}
                       </Text>
                       <Text fontSize="xs" color={colors.dark} fontWeight="600">
-                        {s.label}
+                        {t(`start.quickStats.${s.key}`)}
                       </Text>
                     </Box>
                   ))}
@@ -258,7 +238,7 @@ export default function Start() {
                     fontWeight="700"
                     color={colors.dark}
                   >
-                    MhobFinder — Preview
+                    {t("start.previewTitle")}
                   </Text>
                 </HStack>
 
@@ -268,7 +248,7 @@ export default function Start() {
                   color={colors.darkest}
                   mb="3"
                 >
-                  Your ingredients
+                  {t("start.yourIngredients")}
                 </Text>
 
                 <Flex gap="2" flexWrap="wrap" mb="5">
@@ -295,7 +275,7 @@ export default function Start() {
                   color={colors.darkest}
                   mb="2"
                 >
-                  Matching recipes
+                  {t("start.matchingRecipes")}
                 </Text>
 
                 <VStack align="stretch" gap="2">
@@ -329,7 +309,7 @@ export default function Start() {
                           fontSize="2xs"
                           fontWeight="700"
                         >
-                          Best match
+                          {t("start.bestMatch")}
                         </Badge>
                       )}
                     </HStack>

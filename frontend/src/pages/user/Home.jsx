@@ -11,6 +11,7 @@ import {
   WrapItem,
 } from "@chakra-ui/react";
 import { useApp } from "../../context/AppProvider.jsx";
+import { useTranslation } from "../../context/useTranslation.js";
 import RecipeCard from "../../components/RecipeCard.jsx";
 import IngredientChip from "../../components/IngredientChip.jsx";
 import CategoryDropdown from "../../components/CategoryDropdown.jsx";
@@ -55,46 +56,58 @@ const FALLBACK_CATEGORY_KEYWORDS = {
   Soup: ["soup", "samlor", "tom yum", "broth", "minestrone"],
 };
 
-function HomeEmptyState() {
+const CATEGORY_TRANSLATION_KEYS = {
+  All: "all",
+  "Khmer Food": "khmerFood",
+  European: "european",
+  Seafood: "seafood",
+  Dessert: "dessert",
+  "Street Food": "streetFood",
+  Curry: "curry",
+  Soup: "soup",
+};
+
+function HomeEmptyState({ t }) {
   return (
     <VStack h="full" justify="center" gap="4" textAlign="center" py="20">
       <Image src={chefImage} alt="Chef" boxSize="160px" opacity="0.9" />
       <Text fontWeight="normal" fontSize="xl">
-        Add your ingredients to get started
+        {t("home.emptyTitle")}
       </Text>
       <Text fontWeight="normal" fontSize="xl">
-        Every ingredient you add will unlock more recipes
+        {t("home.emptySubtitle")}
       </Text>
     </VStack>
   );
 }
 
-function HomeNoResults({ onClear }) {
+function HomeNoResults({ onClear, t }) {
   return (
     <VStack h="full" justify="center" gap="3" textAlign="center" py="20">
       <Text fontWeight="bold" fontSize="xl">
-        No recipes found
+        {t("home.noRecipesFound")}
       </Text>
       <Text opacity="0.75">
-        Try adding more ingredients, or clear your selection.
+        {t("home.noRecipesHint")}
       </Text>
       <Button variant="outline" onClick={onClear}>
-        Clear ingredients
+        {t("home.clearIngredients")}
       </Button>
     </VStack>
   );
 }
 
-function HomeLoading() {
+function HomeLoading({ t }) {
   return (
     <VStack h="full" justify="center" gap="3" textAlign="center" py="20">
-      <Text fontWeight="bold">Loading recipes…</Text>
-      <Text opacity="0.75">Matching recipes to your ingredients.</Text>
+      <Text fontWeight="bold">{t("home.loadingRecipes")}</Text>
+      <Text opacity="0.75">{t("home.loadingHint")}</Text>
     </VStack>
   );
 }
 
 export default function Home() {
+  const { t } = useTranslation();
   const {
     ingredients,
     selectedIds,
@@ -116,6 +129,16 @@ export default function Home() {
     { name: "All", foodIds: null },
     ...FALLBACK_CATEGORY_NAMES.map((name) => ({ name, foodIds: null })),
   ]);
+
+  const getCategoryLabel = useMemo(
+    () =>
+      (name) => {
+        const key = CATEGORY_TRANSLATION_KEYS[name];
+        if (!key) return name;
+        return t(`home.categories.${key}`);
+      },
+    [t],
+  );
 
   useEffect(() => {
     let mounted = true;
@@ -169,11 +192,11 @@ export default function Home() {
       });
     }
     return foods.filter((food) => selected.foodIds.has(food.food_id));
-  }, [foods, categoryOptions, selectedCategory]);
+  }, [foods, categoryOptions, selectedCategory, location]);
 
-  if (selectedIds.length === 0) return <HomeEmptyState />;
-  if (foodsLoading) return <HomeLoading />;
-  if (foods.length === 0) return <HomeNoResults onClear={clearIngredients} />;
+  if (selectedIds.length === 0) return <HomeEmptyState t={t} />;
+  if (foodsLoading) return <HomeLoading t={t} />;
+  if (foods.length === 0) return <HomeNoResults onClear={clearIngredients} t={t} />;
 
   return (
     <Box
@@ -190,11 +213,13 @@ export default function Home() {
             fontSize={{ base: "lg", md: "2xl" }}
             color={colors.darkest}
           >
-            You can make {filteredFoods.length} recipe
-            {filteredFoods.length > 1 ? "s" : ""}
+            {t("home.recipesYouCanMake", {
+              count: filteredFoods.length,
+              suffix: filteredFoods.length > 1 ? "s" : "",
+            })}
           </Text>
           <Text fontSize="sm" color={colors.dark} opacity="0.85">
-            Do you have?
+            {t("home.doYouHave")}
           </Text>
 
           {/* Selected ingredient chips */}
@@ -216,15 +241,19 @@ export default function Home() {
           options={categoryOptions}
           selectedCategory={selectedCategory}
           onChange={setSelectedCategory}
+          label={t("common.categoryLabel")}
+          renderOptionLabel={getCategoryLabel}
         />
       </HStack>
 
       {filteredFoods.length === 0 && (
         <VStack h="full" justify="center" gap="3" textAlign="center" py="20">
           <Text fontWeight="bold" fontSize="xl">
-            No recipes in {selectedCategory}
+            {t("home.noRecipesInCategory", {
+              category: getCategoryLabel(selectedCategory),
+            })}
           </Text>
-          <Text opacity="0.75">Try another category.</Text>
+          <Text opacity="0.75">{t("home.tryAnotherCategory")}</Text>
         </VStack>
       )}
 
