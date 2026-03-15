@@ -1,6 +1,6 @@
-import Food from "../models/Food.js";
-import Ingredient from "../models/Ingredient.js";
-import Category from "../models/Category.js";
+import Food from "../models/food.js";
+import Ingredient from "../models/ingredient.js";
+import Category from "../models/category.js";
 import { Op } from "sequelize";
 import cloudinary from "../config/cloudinary.js";
 

@@ -1,5 +1,5 @@
-import Category from "../models/Category.js";
-import Food from "../models/Food.js";
+import Category from "../models/category.js";
+import Food from "../models/food.js";
 
 // Get all categories with foods
 export const getAllCategories = async (req, res, next) => {

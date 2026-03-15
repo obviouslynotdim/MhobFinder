@@ -50,6 +50,7 @@ export default function EditFoodForm({ foodId }) {
   const [ingredients, setIngredients] = useState([]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     Promise.all([getFoodById(foodId), getAllCategories(), getAllIngredients()])
       .then(([foodData, categoryData, ingredientData]) => {
@@ -62,7 +63,7 @@ export default function EditFoodForm({ foodId }) {
         setIngredients(ingredientData);
         setLoading(false);
       })
-      .catch((err) => {
+      .catch(() => {
         setError("Failed to load food or options.");
         setLoading(false);
       });
@@ -145,7 +146,7 @@ export default function EditFoodForm({ foodId }) {
       navigate("/admin/foods", {
         state: { updatedFood },
       });
-    } catch (err) {
+    } catch {
       setError("Failed to update food.");
     }
     setLoading(false);
@@ -167,7 +168,7 @@ export default function EditFoodForm({ foodId }) {
       await refreshFoods(selectedIds);
       alert("Food deleted successfully!");
       navigate("/admin/foods");
-    } catch (err) {
+    } catch {
       setError("Failed to delete food.");
     }
     setLoading(false);

@@ -12,6 +12,7 @@ const MayLike = ({ currentFoodId, currentIngredients = [], onSelectFood }) => {
   useEffect(() => {
     if (!currentFoodId) return;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     getAllFoods()
       .then((foods) => {

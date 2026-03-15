@@ -1,6 +1,6 @@
 // middleware/auth.js
 import admin from "../config/firebase.js";
-import User from "../models/User.js";
+import User from "../models/user.js";
 import crypto from "crypto";
 
 const normalizeEmailList = (value = "") =>

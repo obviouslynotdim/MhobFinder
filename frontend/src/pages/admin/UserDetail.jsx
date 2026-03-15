@@ -17,7 +17,7 @@ export default function UserDetail() {
       try {
         const data = await fetchAllUsers();
         if (!didCancel) setUsers(data);
-      } catch (err) {
+      } catch {
         if (!didCancel) setUsers([]);
       } finally {
         if (!didCancel) {
@@ -37,7 +37,7 @@ export default function UserDetail() {
     try {
       await deleteUser(userId);
       setUsers((prev) => prev.filter((u) => u.user_id !== userId));
-    } catch (err) {
+    } catch {
       // Optionally show error
     } finally {
       setLoading(false);

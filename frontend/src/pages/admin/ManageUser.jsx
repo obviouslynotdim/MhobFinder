@@ -25,7 +25,7 @@ export default function ManageUser() {
       try {
         const data = await fetchAllUsers();
         if (!didCancel) setUsers(data);
-      } catch (err) {
+      } catch {
         if (!didCancel) setUsers([]);
       } finally {
         if (!didCancel) setLoading(false);
@@ -95,7 +95,7 @@ export default function ManageUser() {
         .sort((a, b) => b.comments.length - a.comments.length);
 
       setModerationGroups(groups);
-    } catch (error) {
+    } catch {
       setModerationGroups([]);
     } finally {
       setModerationLoading(false);
@@ -141,7 +141,7 @@ export default function ManageUser() {
       setUsers((prevUsers) =>
         prevUsers.filter((user) => user.user_id !== userId),
       );
-    } catch (err) {
+    } catch {
       // Optionally show error
     } finally {
       setLoading(false);

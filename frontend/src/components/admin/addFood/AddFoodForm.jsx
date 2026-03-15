@@ -92,12 +92,6 @@ export default function AddFoodForm() {
     );
   };
 
-  const handleClearAllIngredients = () => {
-    setSelectedIngredients([]);
-    setIngredientSearch("");
-    setShowIngredientDropdown(false);
-  };
-
   const handleSubmit = async () => {
     setError("");
 
@@ -137,7 +131,7 @@ export default function AddFoodForm() {
       setCategorySearch("");
       setSelectedIngredients([]);
       setImageFile(null);
-    } catch (err) {
+    } catch {
       setError("Failed to add food to database.");
     }
 

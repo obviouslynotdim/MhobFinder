@@ -74,7 +74,7 @@ export default function AdminFoodPage() {
       await deleteFood(foodId);
       setFoods((prev) => prev.filter((food) => food.food_id !== foodId));
       setSelectedFoodIds((prev) => prev.filter((id) => id !== foodId));
-    } catch (e) {
+    } catch {
       alert("Failed to delete food.");
     }
   };
@@ -100,7 +100,7 @@ export default function AdminFoodPage() {
       );
       setSelectedFoodIds([]);
       setSelectionMode(false);
-    } catch (e) {
+    } catch {
       alert("Failed to delete selected foods.");
     }
   };

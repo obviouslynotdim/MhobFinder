@@ -1,11 +1,11 @@
 import sequelize from "../config/database.js";
-import User from "./User.js";
-import Food from "./Food.js";
-import Ingredient from "./Ingredient.js";
-import Category from "./Category.js";
-import Comment from "./Comment.js";
-import Rating from "./Rating.js";
-import Favorite from "./Favorite.js";
+import User from "./user.js";
+import Food from "./food.js";
+import Ingredient from "./ingredient.js";
+import Category from "./category.js";
+import Comment from "./comment.js";
+import Rating from "./rating.js";
+import Favorite from "./favorite.js";
 import IngredientType from "./ingredientType.js";
 
 // ---------------------------

@@ -1,4 +1,4 @@
-import Rating from "../models/Rating.js";
+import Rating from "../models/rating.js";
 
 export const getRatingsByFood = async (req, res, next) => {
   try {

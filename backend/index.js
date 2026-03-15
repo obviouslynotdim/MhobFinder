@@ -17,7 +17,7 @@ import favoriteRoutes from "./routes/favorite.routes.js";
 import ratingRoutes from "./routes/rating.routes.js";
 import categoriesRoutes from "./routes/categories.routes.js";
 import ingredientTypeRoutes from "./routes/ingredientType.routes.js";
-import usersRoutes from "./routes/user.routes.js"
+import usersRoutes from "./routes/user.routes.js";
 
 const app = express();
 
@@ -44,10 +44,21 @@ requiredEnvs.forEach((env) => {
 // MIDDLEWARE
 // ---------------------------
 
+const corsOrigins = (process.env.CORS_ORIGINS || "http://localhost:5173")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 // CORS
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin(origin, callback) {
+      if (!origin || corsOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   }),
 );
@@ -86,6 +97,11 @@ app.use(passport.session());
 app.get("/", (req, res) => {
   res.send("Backend is working");
 });
+
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
 // API routes
 app.use("/api/foods", foodRoutes);
 app.use("/api/ingredients", ingredientRoutes);
@@ -121,7 +137,13 @@ app.get("/auth/google/callback", (req, res, next) => {
 // ---------------------------
 app.use((err, req, res, next) => {
   console.error(err);
-  res.status(500).json({ error: err.message || "Internal server error" });
+  const statusCode = err.status || 500;
+  const message =
+    process.env.NODE_ENV === "production" && statusCode >= 500
+      ? "Internal server error"
+      : err.message || "Internal server error";
+
+  res.status(statusCode).json({ error: message });
 });
 
 // ---------------------------
@@ -166,6 +188,7 @@ async function startServer() {
     });
   } catch (err) {
     console.error("❌ Startup failed:", err);
+    process.exit(1);
   }
 }
 

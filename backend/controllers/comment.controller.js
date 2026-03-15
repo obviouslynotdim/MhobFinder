@@ -1,5 +1,5 @@
-import Comment from "../models/Comment.js";
-import User from "../models/User.js";
+import Comment from "../models/comment.js";
+import User from "../models/user.js";
 
 export const getCommentsByFood = async (req, res, next) => {
   try {

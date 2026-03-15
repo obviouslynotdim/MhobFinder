@@ -33,7 +33,7 @@ export default function Login() {
     try {
       setError("");
       await loginWithGoogle();
-    } catch (err) {
+    } catch {
       setError("Google sign in failed. Please try again.");
     }
   };

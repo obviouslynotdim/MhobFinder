@@ -96,10 +96,6 @@ const CommentSection = ({ foodId, comments = [], ratings = [] }) => {
     }
   };
 
-  const avgRating = localRatings.length > 0
-    ? (localRatings.reduce((sum, r) => sum + Number(r.rating || 0), 0) / localRatings.length).toFixed(1)
-    : 0;
-
   const ratingByUser = localRatings.reduce((acc, rating) => {
     acc[rating.user_id] = Number(rating.rating || 0);
     return acc;

@@ -94,7 +94,6 @@ const CATEGORY_ORDER = [
 
 function groupByCategory(ingredients) {
   const map = new Map();
-  const allowed = new Set(CATEGORY_ORDER);
 
   // Mapping from ingredient type to category
   const typeToCategory = {
@@ -122,6 +121,44 @@ function groupByCategory(ingredients) {
   }
 
   return map;
+}
+
+function RailItem({ item, isActive }) {
+  return (
+    <Box
+      key={item.to}
+      position="relative"
+      w="100%"
+      display="flex"
+      justifyContent="center"
+    >
+      {isActive && (
+        <Box
+          position="absolute"
+          left="-4"
+          top="50%"
+          transform="translateY(-50%)"
+          h="22px"
+          w="3px"
+          bg="white"
+          borderRadius="0 3px 3px 0"
+        />
+      )}
+      <IconButton
+        as={Link}
+        to={item.to}
+        aria-label={item.label}
+        title={item.label}
+        variant="ghost"
+        color="white"
+        fontSize="lg"
+        bg={isActive ? "whiteAlpha.200" : "transparent"}
+        _hover={{ bg: "whiteAlpha.200" }}
+      >
+        {item.icon}
+      </IconButton>
+    </Box>
+  );
 }
 
 function getCategoryImage(category) {
@@ -165,46 +202,6 @@ export default function Sidebar({ collapsed }) {
 
     const aboutItem = { to: "/about", icon: <FiInfo />, label: "About" };
 
-    function RailItem({ item }) {
-      const isActive = loc.pathname === item.to;
-
-      return (
-        <Box
-          key={item.to}
-          position="relative"
-          w="100%"
-          display="flex"
-          justifyContent="center"
-        >
-          {isActive && (
-            <Box
-              position="absolute"
-              left="-4"
-              top="50%"
-              transform="translateY(-50%)"
-              h="22px"
-              w="3px"
-              bg="white"
-              borderRadius="0 3px 3px 0"
-            />
-          )}
-          <IconButton
-            as={Link}
-            to={item.to}
-            aria-label={item.label}
-            title={item.label}
-            variant="ghost"
-            color="white"
-            fontSize="lg"
-            bg={isActive ? "whiteAlpha.200" : "transparent"}
-            _hover={{ bg: "whiteAlpha.200" }}
-          >
-            {item.icon}
-          </IconButton>
-        </Box>
-      );
-    }
-
     return (
       <Box position="relative" h="calc(100vh - 120px)" px="4">
         <VStack
@@ -217,12 +214,16 @@ export default function Sidebar({ collapsed }) {
           transform="translateY(calc(-50% - 48px))"
         >
           {mainNavItems.map((item) => (
-            <RailItem key={item.to} item={item} />
+            <RailItem
+              key={item.to}
+              item={item}
+              isActive={loc.pathname === item.to}
+            />
           ))}
         </VStack>
 
         <Box position="absolute" left="0" right="0" bottom="16px" mb="8">
-          <RailItem item={aboutItem} />
+          <RailItem item={aboutItem} isActive={loc.pathname === aboutItem.to} />
         </Box>
       </Box>
     );
