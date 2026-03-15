@@ -35,6 +35,7 @@ const CommentSection = ({ foodId, comments = [], ratings = [] }) => {
   const [hoveredEditRating, setHoveredEditRating] = useState(0);
   const [actionMenuForCommentId, setActionMenuForCommentId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [hasReviewed, setHasReviewed] = useState(false);
 
   useEffect(() => {
     setLocalComments(comments || []);
@@ -57,6 +58,10 @@ const CommentSection = ({ foodId, comments = [], ratings = [] }) => {
   const handleSubmitComment = async () => {
     if (!user) {
       alert("Please login to comment");
+      return;
+    }
+    if (hasReviewed) {
+      alert("You already reviewed this recipe. Please edit your existing review.");
       return;
     }
 
@@ -104,6 +109,16 @@ const CommentSection = ({ foodId, comments = [], ratings = [] }) => {
     if (!user?.email || !comment?.user?.email) return false;
     return user.email.toLowerCase() === String(comment.user.email).toLowerCase();
   };
+
+  useEffect(() => {
+    const currentEmail = String(user?.email || "").toLowerCase();
+    const reviewed = (localComments || []).some((comment) => {
+      if (comment?.parent_id != null) return false;
+      const commentEmail = String(comment?.user?.email || "").toLowerCase();
+      return Boolean(currentEmail) && currentEmail === commentEmail;
+    });
+    setHasReviewed(reviewed);
+  }, [localComments, user]);
 
   const getDisplayName = (comment) => comment.user?.name || comment.userName || "Anonymous";
 
@@ -286,10 +301,17 @@ const CommentSection = ({ foodId, comments = [], ratings = [] }) => {
             width="100%"
             onClick={handleSubmitComment}
             isLoading={loading}
+            isDisabled={loading || hasReviewed}
             _hover={{ bg: colors.dark }}
           >
-            Post Comment
+            {hasReviewed ? "You already reviewed (Edit below)" : "Post Comment"}
           </Button>
+
+          {hasReviewed && (
+            <Text mt="3" fontSize="sm" color="gray.600">
+              Only one review is allowed per recipe to reduce spam. Edit your existing review from the options menu on your comment.
+            </Text>
+          )}
         </Box>
       ) : (
         <Text color="gray.500" fontSize="sm" mb="6" textAlign="center">

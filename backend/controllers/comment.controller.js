@@ -27,6 +27,25 @@ export const addComment = async (req, res, next) => {
       return res.status(400).json({ message: "comment_text is required" });
     }
 
+    // Prevent spam: allow only one top-level review per user per food.
+    // Users can still edit that review via updateComment.
+    if (parent_id == null) {
+      const existingReview = await Comment.findOne({
+        where: {
+          user_id: req.user.user_id,
+          food_id: foodId,
+          parent_id: null,
+        },
+      });
+
+      if (existingReview) {
+        return res.status(409).json({
+          message: "You already reviewed this recipe. Please edit your existing review.",
+          commentId: existingReview.comment_id,
+        });
+      }
+    }
+
     const comment = await Comment.create({
       user_id: req.user.user_id,
       food_id: foodId,
