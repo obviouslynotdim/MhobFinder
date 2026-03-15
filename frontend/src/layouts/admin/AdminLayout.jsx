@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import TopBarRight from "../TopBarRight.jsx";
 import AdminSidebar from "./AdminSidebar.jsx";
+import bgPattern from "../../assets/mhob-background.png";
 
 export default function AdminLayout() {
   const expandedByDefault = useBreakpointValue({ base: false, md: true });
@@ -41,7 +42,10 @@ export default function AdminLayout() {
           minW={0}
           minH={0}
           overflow="hidden"
-          bg="linear-gradient(180deg, #f4f8ff 0%, #e7eefb 100%)"
+          bg="#e7eefb"
+          bgImage={`url(${bgPattern})`}
+          bgRepeat="repeat"
+          bgSize="420px"
           p={{ base: 2, md: 4 }}
         >
           <Outlet />

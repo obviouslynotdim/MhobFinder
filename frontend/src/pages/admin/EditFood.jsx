@@ -1,4 +1,4 @@
-import { Box, Separator } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import EditFoodForm from "../../components/admin/editFood/EditFoodForm.jsx";
 import { useParams } from "react-router-dom";
 
@@ -14,8 +14,11 @@ export default function EditFood() {
       h="100%"
       overflow="auto"
     >
-      <Box w="100%" maxW="760px" bg="#cfdaf0" borderRadius={{ base: "16px", md: "20px" }} p={{ base: 4, md: 6 }}>
-        <Separator mb={4} borderColor="gray.300" />
+      <Box
+        w="100%"
+        maxW="900px"
+        minW={0}
+      >
         <EditFoodForm foodId={id} />
       </Box>
     </Box>

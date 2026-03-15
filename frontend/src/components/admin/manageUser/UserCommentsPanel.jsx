@@ -11,6 +11,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { FiTrash2, FiX } from "react-icons/fi";
+import { colors } from "../../../theme/tokens.js";
 
 function formatDate(value) {
   if (!value) return "Unknown date";
@@ -44,7 +45,7 @@ export default function UserCommentsPanel({
         bg="#fbfdff"
         border="1px solid"
         borderColor="#dbe5f4"
-        borderRadius="20px"
+        borderRadius="22px"
         boxShadow="2xl"
         w="100%"
         maxW="980px"
@@ -56,7 +57,7 @@ export default function UserCommentsPanel({
           align="start"
           p={{ base: 4, md: 6 }}
           bg="#f4f8ff"
-          color="#1f3d66"
+          color={colors.darkest}
           borderBottom="1px solid"
           borderColor="#dbe5f4"
         >
@@ -70,9 +71,10 @@ export default function UserCommentsPanel({
           </Box>
 
           <Button
-            variant="ghost"
-            color="#2b4c7e"
-            _hover={{ bg: "#e6eefb" }}
+            bg="gray.100"
+            color="gray.700"
+            borderRadius="full"
+            _hover={{ bg: "gray.200" }}
             onClick={onClose}
             aria-label="Close comments panel"
           >
@@ -105,8 +107,8 @@ export default function UserCommentsPanel({
                 <Box
                   key={group.foodId}
                   border="1px solid"
-                  borderColor="gray.200"
-                  borderRadius="14px"
+                  borderColor="#dbe5f4"
+                  borderRadius="16px"
                   overflow="hidden"
                 >
                   <Flex
@@ -117,23 +119,24 @@ export default function UserCommentsPanel({
                     bg="#edf4ff"
                     direction={{ base: "column", md: "row" }}
                   >
-                    <Heading size="sm" color="#2b4c7e" lineHeight="1.4">
+                    <Heading size="sm" color={colors.darkest} lineHeight="1.4">
                       {group.foodTitle}
                     </Heading>
-                    <Badge bg="#4f79bd" color="white" px={3} py={1} borderRadius="full">
+                    <Badge bg={colors.primary} color="white" px={3} py={1} borderRadius="full">
                       {group.comments.length} comment{group.comments.length > 1 ? "s" : ""}
                     </Badge>
                   </Flex>
 
-                  <Separator borderColor="gray.200" />
+                  <Separator borderColor="#dbe5f4" />
 
                   <Stack p={4} gap={4}>
                     {group.comments.map((comment) => (
                       <Box
                         key={comment.comment_id}
                         border="1px solid"
-                        borderColor="gray.200"
-                        borderRadius="10px"
+                        borderColor="#dbe5f4"
+                        borderRadius="12px"
+                        bg="white"
                         p={4}
                       >
                         <HStack justify="space-between" align="start" gap={3}>
@@ -150,6 +153,7 @@ export default function UserCommentsPanel({
                             size="sm"
                             bg="red.50"
                             color="red.600"
+                            borderRadius="full"
                             _hover={{ bg: "red.100" }}
                             onClick={() => onDeleteComment(group.foodId, comment.comment_id)}
                             loading={deletingCommentId === comment.comment_id}

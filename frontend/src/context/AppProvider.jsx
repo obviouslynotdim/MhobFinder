@@ -86,10 +86,12 @@ export function AppProvider({ children }) {
     setFoodsLoading(true);
 
     try {
-      const matched = await getMatchedFoods(ids);
+      const nextFoods = Array.isArray(ids) && ids.length > 0
+        ? await getMatchedFoods(ids)
+        : await getAllFoods();
 
       if (reqId === foodsReqIdRef.current) {
-        setFoods(matched);
+        setFoods(nextFoods);
       }
     } catch (e) {
       console.error(e);

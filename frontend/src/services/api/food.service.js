@@ -119,7 +119,6 @@ export const updateFood = async (foodId, data) => {
   if (data.imageFile) {
     formData.append("image", data.imageFile);
   }
-  formData.append("status", data.status);
 
   const res = await fetch(`${API_BASE}/api/foods/${foodId}`, {
     method: "PUT",

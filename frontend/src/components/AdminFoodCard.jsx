@@ -1,7 +1,6 @@
 import {
     Badge,
     Box,
-    Button,
     Flex,
     HStack,
     IconButton,
@@ -49,7 +48,7 @@ function makeFallbackImage(label = "Food") {
     return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 
-export default function AdminFoodCard({
+function AdminFoodCard({
     food = {},
     onEdit,
     onDelete,
@@ -203,31 +202,35 @@ export default function AdminFoodCard({
                 )}
 
                 {!selectionMode && (
-                    <HStack spacing={3} pt={1} flexWrap="wrap" w="100%" minW={0}>
+                    <HStack spacing={2} pt={2} w="100%" justify="flex-end" mt="auto">
                         <IconButton
                             aria-label="Edit food"
                             size="sm"
-                            icon={<FiEdit2 />}
                             bg={colors.primary}
                             color="white"
                             borderRadius="10px"
                             _hover={{ bg: colors.dark }}
                             onClick={() => onEdit(food)}
-                        />
+                        >
+                            <FiEdit2 />
+                        </IconButton>
 
                         <IconButton
                             aria-label="Delete food"
                             size="sm"
-                            icon={<FiTrash2 />}
                             bg="red.50"
                             color="red.600"
                             borderRadius="10px"
                             _hover={{ bg: "red.100" }}
                             onClick={() => onDelete(food_id)}
-                        />
+                        >
+                            <FiTrash2 />
+                        </IconButton>
                     </HStack>
                 )}
             </VStack>
         </Flex>
     );
 }
+
+export default AdminFoodCard;

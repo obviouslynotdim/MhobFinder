@@ -1,11 +1,12 @@
 import { useMemo, useState, useEffect } from "react";
-import { Badge, Box, Flex, HStack, Separator, Spinner, Text } from "@chakra-ui/react";
+import { Badge, Box, Flex, HStack, Spinner, Text } from "@chakra-ui/react";
 import ManageUserHeader from "../../components/admin/manageUser/ManageUserHeader";
 import UserTable from "../../components/admin/manageUser/UserTable";
 import UserCommentsPanel from "../../components/admin/manageUser/UserCommentsPanel";
 import { fetchAllUsers, deleteUser } from "../../services/api/user.service";
 import { getAllFoods } from "../../services/api/food.service";
 import { deleteComment, getCommentsByFood } from "../../services/api/comment.service";
+import { colors } from "../../theme/tokens.js";
 
 export default function ManageUser() {
   const [search, setSearch] = useState("");
@@ -149,25 +150,25 @@ export default function ManageUser() {
 
   if (loading) {
     return (
-      <Flex h="calc(100vh - 90px - 48px)" justify="center" align="center" direction="column" gap={3}>
-        <Spinner color="#4f79bd" size="lg" />
+      <Flex h="100%" minH={0} justify="center" align="center" direction="column" gap={3}>
+        <Spinner color={colors.primary} size="lg" />
         <Text color="gray.600">Loading users...</Text>
       </Flex>
     );
   }
 
   return (
-    <Box h="calc(100vh - 90px - 48px)" overflow="auto" pr={1}>
+    <Box h="100%" minH={0} overflow="auto" overflowX="hidden" pr={1}>
       <Box
         w="100%"
         maxW="1180px"
         mx="auto"
-        bg="whiteAlpha.880"
+        bg="whiteAlpha.900"
         border="1px solid"
         borderColor="#dbe5f4"
         boxShadow="0 10px 30px rgba(79,121,189,0.08)"
         borderRadius={{ base: "16px", md: "24px" }}
-        p={{ base: 4, md: 7 }}
+        p={{ base: 4, md: 6 }}
         minH="100%"
       >
         <ManageUserHeader search={search} setSearch={setSearch} />
@@ -180,8 +181,6 @@ export default function ManageUser() {
             Showing: {filteredCount}
           </Badge>
         </HStack>
-
-        <Separator mb={6} borderColor="gray.300" />
 
         <Box>
           <UserTable

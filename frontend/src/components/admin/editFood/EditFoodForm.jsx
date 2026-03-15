@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect } from "react";
 import {
   Box,
   Button,
+  Flex,
   Heading,
   HStack,
   Input,
@@ -15,6 +16,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { FiSave, FiTrash2, FiX } from "react-icons/fi";
 import ImageUploadButton from "../addFood/ImageUploadButton";
+import { useApp } from "../../../context/AppProvider.jsx";
 import {
   getFoodById,
   updateFood,
@@ -22,11 +24,12 @@ import {
 } from "../../../services/api/food.service";
 import { getAllCategories } from "../../../services/api/category.service";
 import { getAllIngredients } from "../../../services/api/ingredient.service";
+import { colors } from "../../../theme/tokens.js";
 
 export default function EditFoodForm({ foodId }) {
   const navigate = useNavigate();
+  const { refreshFoods, selectedIds } = useApp();
 
-  const [food, setFood] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -34,7 +37,6 @@ export default function EditFoodForm({ foodId }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
-  const [status, setStatus] = useState("Published");
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categorySearch, setCategorySearch] = useState("");
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
@@ -51,11 +53,9 @@ export default function EditFoodForm({ foodId }) {
     setLoading(true);
     Promise.all([getFoodById(foodId), getAllCategories(), getAllIngredients()])
       .then(([foodData, categoryData, ingredientData]) => {
-        setFood(foodData);
         setTitle(foodData.title);
         setDescription(foodData.description);
         setLinkUrl(foodData.link_url);
-        setStatus(foodData.status || "Published");
         setSelectedCategory(foodData.categories?.[0] || null);
         setSelectedIngredients(foodData.ingredients || []);
         setCategories(categoryData);
@@ -130,7 +130,7 @@ export default function EditFoodForm({ foodId }) {
     setError("");
     setLoading(true);
     try {
-      await updateFood(foodId, {
+      const updatedFood = await updateFood(foodId, {
         title,
         description,
         ingredientIds: selectedIngredients.map((i) => i.ingredient_id || i),
@@ -139,14 +139,21 @@ export default function EditFoodForm({ foodId }) {
           : [],
         link_url: linkUrl,
         imageFile,
-        status,
       });
+      await refreshFoods(selectedIds);
       alert("Food updated successfully!");
-      navigate("/admin/foods");
+      navigate("/admin/foods", {
+        state: { updatedFood },
+      });
     } catch (err) {
       setError("Failed to update food.");
     }
     setLoading(false);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    handleSave();
   };
 
   const handleDelete = async () => {
@@ -157,6 +164,7 @@ export default function EditFoodForm({ foodId }) {
     setLoading(true);
     try {
       await deleteFood(foodId);
+      await refreshFoods(selectedIds);
       alert("Food deleted successfully!");
       navigate("/admin/foods");
     } catch (err) {
@@ -170,28 +178,41 @@ export default function EditFoodForm({ foodId }) {
 
   return (
     <Box
-      border="2px solid"
-      borderColor="gray.300"
-      bg="#c8d4ea"
-      maxH={{ base: "none", md: "80vh" }}
-      overflowY="auto"
-      borderRadius="16px"
+      border="1px solid"
+      borderColor="#dbe5f4"
+      bg="#fbfdff"
+      borderRadius="18px"
+      boxShadow="0 8px 24px rgba(79,121,189,0.08)"
+      overflow="hidden"
     >
-      <Box bg="#4f79bd" px={{ base: 4, md: 6 }} py={{ base: 4, md: 5 }} position="sticky" top={0} zIndex={10}>
+      <Box
+        px={{ base: 4, md: 6 }}
+        py={{ base: 4, md: 5 }}
+        bg="#fbfdff"
+        borderBottom="1px solid"
+        borderColor="#dbe5f4"
+      >
         <HStack justify="space-between" align={{ base: "stretch", md: "center" }} flexDirection={{ base: "column", md: "row" }} gap={3}>
-          <Heading size="lg" color="white">
-            Edit Food
-          </Heading>
+          <Box>
+            <Heading size="lg" color={colors.darkest}>
+              Edit Food
+            </Heading>
+            <Text fontSize="sm" color="gray.600" mt={1}>
+              Update recipe details with a clean, structured form.
+            </Text>
+          </Box>
+
           <Button
-            onClick={handleSave}
-            bg="#4f79bd"
+            type="submit"
+            form="edit-food-form"
+            bg={colors.primary}
             color="white"
-            borderRadius="18px"
-            px={{ base: 5, md: 8 }}
-            py={{ base: 6, md: 7 }}
-            fontSize={{ base: "md", md: "lg" }}
+            borderRadius="full"
+            px={{ base: 5, md: 7 }}
+            py={{ base: 5, md: 6 }}
+            fontSize={{ base: "sm", md: "md" }}
             fontWeight="700"
-            _hover={{ bg: "#4269a8" }}
+            _hover={{ bg: colors.dark }}
             leftIcon={<FiSave />}
             w={{ base: "100%", md: "auto" }}
           >
@@ -200,61 +221,64 @@ export default function EditFoodForm({ foodId }) {
         </HStack>
       </Box>
 
-      <VStack spacing={6} align="stretch" px={{ base: 4, md: 10 }} py={{ base: 5, md: 8 }}>
-        <HStack justify="space-between" align="start" flexWrap="wrap">
+      <VStack
+        as="form"
+        id="edit-food-form"
+        onSubmit={handleSubmit}
+        spacing={5}
+        align="stretch"
+        px={{ base: 4, md: 8 }}
+        py={{ base: 5, md: 6 }}
+      >
+        <Flex justify="start" align="start" wrap="wrap" gap={3}>
           <Box>
             <Text fontSize="sm" color="gray.600">
               Food ID
             </Text>
-            <Text fontSize="lg" fontWeight="700" color="gray.700">
+            <Text fontSize="lg" fontWeight="700" color={colors.darkest}>
               {foodId}
             </Text>
           </Box>
+        </Flex>
 
-          <Box>
-            <Text fontSize="sm" color="gray.600">
-              Status
-            </Text>
-            <Text fontSize="lg" fontWeight="700" color="gray.700">
-              {status}
-            </Text>
-          </Box>
-        </HStack>
-
-        <Separator borderColor="gray.300" />
+        <Separator borderColor="#dbe5f4" />
 
         <Box>
-          <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="700" color="gray.500" mb={2}>
+          <Text fontSize={{ base: "sm", md: "md" }} fontWeight="700" color={colors.darkest} mb={2}>
             Title
           </Text>
           <Input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Edit title ..."
+            placeholder="Edit title"
             bg="white"
-            borderRadius="18px"
-            h="52px"
-            border="none"
+            borderRadius="12px"
+            h="46px"
+            border="1px solid"
+            borderColor="#dbe5f4"
+            _focusVisible={{ borderColor: colors.primary, boxShadow: `0 0 0 1px ${colors.primary}` }}
           />
         </Box>
 
         <Box>
-          <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="700" color="gray.500" mb={2}>
+          <Text fontSize={{ base: "sm", md: "md" }} fontWeight="700" color={colors.darkest} mb={2}>
             Description
           </Text>
           <Textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Edit description ..."
+            placeholder="Edit description"
             bg="white"
-            borderRadius="18px"
+            borderRadius="12px"
             minH="120px"
-            border="none"
+            border="1px solid"
+            borderColor="#dbe5f4"
+            _focusVisible={{ borderColor: colors.primary, boxShadow: `0 0 0 1px ${colors.primary}` }}
           />
         </Box>
 
         <Box position="relative">
-          <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="700" color="gray.500" mb={2}>
+          <Text fontSize={{ base: "sm", md: "md" }} fontWeight="700" color={colors.darkest} mb={2}>
             Category
           </Text>
 
@@ -265,11 +289,13 @@ export default function EditFoodForm({ foodId }) {
               setCategorySearch(e.target.value);
               setShowCategoryDropdown(true);
             }}
-            placeholder="Search category..."
+            placeholder="Search category"
             bg="white"
-            borderRadius="18px"
-            h="52px"
-            border="none"
+            borderRadius="12px"
+            h="46px"
+            border="1px solid"
+            borderColor="#dbe5f4"
+            _focusVisible={{ borderColor: colors.primary, boxShadow: `0 0 0 1px ${colors.primary}` }}
           />
 
           {showCategoryDropdown &&
@@ -278,7 +304,9 @@ export default function EditFoodForm({ foodId }) {
               <Box
                 mt={2}
                 bg="white"
-                borderRadius="14px"
+                borderRadius="12px"
+                border="1px solid"
+                borderColor="#dbe5f4"
                 boxShadow="md"
                 maxH="180px"
                 overflowY="auto"
@@ -305,11 +333,11 @@ export default function EditFoodForm({ foodId }) {
               mt={2}
               px={4}
               py={2}
-              bg="#e3eafc"
+              bg={colors.chipBg}
               borderRadius="md"
               display="inline-block"
             >
-              <Text fontSize="md" color="#4f79bd">
+              <Text fontSize="sm" color={colors.darkest}>
                 {selectedCategory.name ||
                   selectedCategory.category_name ||
                   selectedCategory}
@@ -319,8 +347,8 @@ export default function EditFoodForm({ foodId }) {
         </Box>
 
         <Box position="relative">
-          <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="700" color="gray.500" mb={2}>
-            Ingredient list
+          <Text fontSize={{ base: "sm", md: "md" }} fontWeight="700" color={colors.darkest} mb={2}>
+            Ingredient List
           </Text>
 
           <Input
@@ -330,11 +358,13 @@ export default function EditFoodForm({ foodId }) {
               setIngredientSearch(e.target.value);
               setShowIngredientDropdown(true);
             }}
-            placeholder="Search ingredients..."
+            placeholder="Search ingredients"
             bg="white"
-            borderRadius="18px"
-            h="52px"
-            border="none"
+            borderRadius="12px"
+            h="46px"
+            border="1px solid"
+            borderColor="#dbe5f4"
+            _focusVisible={{ borderColor: colors.primary, boxShadow: `0 0 0 1px ${colors.primary}` }}
           />
 
           {showIngredientDropdown &&
@@ -343,7 +373,9 @@ export default function EditFoodForm({ foodId }) {
               <Box
                 mt={2}
                 bg="white"
-                borderRadius="14px"
+                borderRadius="12px"
+                border="1px solid"
+                borderColor="#dbe5f4"
                 boxShadow="md"
                 maxH="180px"
                 overflowY="auto"
@@ -384,11 +416,13 @@ export default function EditFoodForm({ foodId }) {
                     }
                   >
                     <HStack
-                      bg="#4f79bd"
-                      color="white"
+                      bg={colors.chipBg}
+                      color={colors.darkest}
                       px={4}
                       py={2}
                       borderRadius="full"
+                      border="1px solid"
+                      borderColor="#dbe5f4"
                     >
                       <Text fontSize="sm">
                         {ingredient.name ||
@@ -409,10 +443,10 @@ export default function EditFoodForm({ foodId }) {
               <Button
                 mt={3}
                 size="xs"
-                bg="red.100"
+                bg="red.50"
                 color="red.600"
                 borderRadius="full"
-                _hover={{ bg: "red.200" }}
+                _hover={{ bg: "red.100" }}
                 onClick={handleClearAllIngredients}
               >
                 Clear ingredients
@@ -422,57 +456,39 @@ export default function EditFoodForm({ foodId }) {
         </Box>
 
         <Box>
-          <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="700" color="gray.500" mb={2}>
+          <Text fontSize={{ base: "sm", md: "md" }} fontWeight="700" color={colors.darkest} mb={2}>
             Link URL
           </Text>
           <Input
             value={linkUrl}
             onChange={(e) => setLinkUrl(e.target.value)}
-            placeholder="Edit link URL ..."
+            placeholder="Edit link URL"
             bg="white"
-            borderRadius="18px"
-            h="52px"
-            border="none"
+            borderRadius="12px"
+            h="46px"
+            border="1px solid"
+            borderColor="#dbe5f4"
+            _focusVisible={{ borderColor: colors.primary, boxShadow: `0 0 0 1px ${colors.primary}` }}
           />
         </Box>
 
-        <Box>
-          <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="700" color="gray.500" mb={2}>
-            Status
-          </Text>
-          <Box
-            as="select"
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            bg="white"
-            borderRadius="18px"
-            h="52px"
-            border="none"
-            px={4}
-            w="100%"
-          >
-            <option value="Published">Published</option>
-            <option value="Draft">Draft</option>
-            <option value="Hidden">Hidden</option>
-          </Box>
-        </Box>
-
-        <HStack justify="space-between" pt={2} flexWrap="wrap" gap={4} align="stretch">
+        <HStack justify="space-between" pt={2} flexWrap="wrap" gap={3} align="stretch">
           <ImageUploadButton onChange={handleImageChange} />
           <Button
             onClick={handleDelete}
-            bg="red.500"
-            color="white"
-            borderRadius="18px"
-            px={{ base: 5, md: 8 }}
-            py={{ base: 6, md: 7 }}
-            fontSize={{ base: "md", md: "lg" }}
+            bg="red.50"
+            color="red.600"
+            borderRadius="full"
+            px={{ base: 5, md: 7 }}
+            py={{ base: 5, md: 6 }}
+            fontSize={{ base: "sm", md: "md" }}
             fontWeight="700"
-            _hover={{ bg: "red.600" }}
+            _hover={{ bg: "red.100" }}
             leftIcon={<FiTrash2 />}
             w={{ base: "100%", md: "auto" }}
+            type="button"
           >
-            Delete
+            Delete Food
           </Button>
         </HStack>
 

@@ -22,6 +22,23 @@ const uploadImage = async (file) => {
   };
 };
 
+const parseIds = (data) => {
+  if (!data) return [];
+
+  if (typeof data === "string") {
+    return data
+      .split(",")
+      .map((id) => parseInt(id, 10))
+      .filter(Boolean);
+  }
+
+  if (Array.isArray(data)) {
+    return data.map((id) => parseInt(id, 10)).filter(Boolean);
+  }
+
+  return [];
+};
+
 // ---------------------------
 // Get all foods
 // ---------------------------
@@ -123,24 +140,6 @@ export const createFood = async (req, res, next) => {
 
     let { ingredientIds, categoryIds } = req.body;
 
-    // normalize arrays
-    const parseIds = (data) => {
-      if (!data) return [];
-
-      if (typeof data === "string") {
-        return data
-          .split(",")
-          .map((id) => parseInt(id))
-          .filter(Boolean);
-      }
-
-      if (Array.isArray(data)) {
-        return data.map((id) => parseInt(id)).filter(Boolean);
-      }
-
-      return [];
-    };
-
     ingredientIds = parseIds(ingredientIds);
     categoryIds = parseIds(categoryIds);
 
@@ -197,6 +196,7 @@ export const updateFood = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { title, description, link_url } = req.body;
+    let { ingredientIds, categoryIds } = req.body;
 
     const food = await Food.findByPk(id);
 
@@ -221,7 +221,28 @@ export const updateFood = async (req, res, next) => {
 
     await food.save();
 
-    res.json(food);
+    ingredientIds = parseIds(ingredientIds);
+    categoryIds = parseIds(categoryIds);
+
+    await food.setIngredients(ingredientIds);
+    await food.setCategories(categoryIds);
+
+    const updatedFood = await Food.findByPk(id, {
+      include: [
+        {
+          model: Ingredient,
+          as: "ingredients",
+          through: { attributes: [] },
+        },
+        {
+          model: Category,
+          as: "categories",
+          through: { attributes: [] },
+        },
+      ],
+    });
+
+    res.json(updatedFood);
   } catch (err) {
     next(err);
   }

@@ -1,11 +1,9 @@
 import { useMemo, useState, useEffect } from "react";
 import { useApp } from "../../../context/AppProvider.jsx";
 import {
-  Badge,
   Box,
   Button,
   Flex,
-  Heading,
   HStack,
   Input,
   Text,
@@ -149,29 +147,14 @@ export default function AddFoodForm() {
   return (
     <Box
       w="100%"
-      maxW="760px"
+      maxW="980px"
       mx="auto"
-      bg="#ffffff"
+      bg="#fbfdff"
       borderRadius={{ base: "16px", md: "22px" }}
-      boxShadow="0 10px 30px rgba(79,121,189,0.08)"
+      boxShadow="0 8px 22px rgba(79,121,189,0.08)"
       border="1px solid #dbe5f4"
       overflow="visible"
     >
-      <Box
-        px={{ base: 5, md: 8 }}
-        py={{ base: 5, md: 6 }}
-        borderTopRadius={{ base: "16px", md: "22px" }}
-        borderBottom="1px solid"
-        borderColor="#dbe5f4"
-      >
-        <Heading size="lg" color={colors.darkest} textAlign="left">
-          Add New Food
-        </Heading>
-        <Text color="gray.600" mt={1}>
-          Create a recipe card with category, ingredients, and image.
-        </Text>
-      </Box>
-
       <VStack spacing={5} px={{ base: 4, md: 8 }} py={{ base: 5, md: 6 }} align="stretch">
         {error && (
           <Box bg="red.50" color="red.600" p={3} borderRadius="md" border="1px solid" borderColor="red.100">
@@ -180,9 +163,9 @@ export default function AddFoodForm() {
         )}
 
         <Flex direction={{ base: "column", md: "row" }} gap={3}>
-          <Badge bg="#edf4ff" color={colors.darkest} px={3} py={1.5} borderRadius="full">
-            Required: Title, Description, Category, Ingredients, Image
-          </Badge>
+          <Text fontSize="sm" color="gray.600">
+            Fill in recipe details and save once all required fields are complete.
+          </Text>
         </Flex>
 
         {/* Title */}
@@ -190,8 +173,9 @@ export default function AddFoodForm() {
           placeholder="Food title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          borderRadius="12px"
-          h="46px"
+          borderRadius="full"
+          h="48px"
+          bg="white"
           borderColor="#dbe5f4"
           _focusVisible={{ borderColor: colors.primary, boxShadow: `0 0 0 1px ${colors.primary}` }}
         />
@@ -201,8 +185,9 @@ export default function AddFoodForm() {
           placeholder="Food description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          borderRadius="12px"
-          minH="110px"
+          borderRadius="16px"
+          minH="120px"
+          bg="white"
           borderColor="#dbe5f4"
           _focusVisible={{ borderColor: colors.primary, boxShadow: `0 0 0 1px ${colors.primary}` }}
         />
@@ -217,21 +202,22 @@ export default function AddFoodForm() {
               setCategorySearch(e.target.value);
               setShowCategoryDropdown(true);
             }}
-            borderRadius="12px"
-            h="46px"
+            borderRadius="full"
+            h="48px"
+            bg="white"
             borderColor="#dbe5f4"
             _focusVisible={{ borderColor: colors.primary, boxShadow: `0 0 0 1px ${colors.primary}` }}
           />
 
           {showCategoryDropdown && (
-            <Box bg="white" border="1px solid #dbe5f4" mt={2} borderRadius="12px" maxH="220px" overflowY="auto" position="absolute" w="100%" zIndex={10} boxShadow="md">
+            <Box bg="white" border="1px solid #dbe5f4" mt={2} borderRadius="14px" maxH="220px" overflowY="auto" position="absolute" w="100%" zIndex={10} boxShadow="md">
               {filteredCategories.map((category) => (
                 <Box
                   key={category.category_id}
                   px={3}
                   py={2}
                   cursor="pointer"
-                  _hover={{ bg: "gray.100" }}
+                  _hover={{ bg: "#f8fbff" }}
                   onMouseDown={() => handleSelectCategory(category)}
                 >
                   {category.name}
@@ -251,21 +237,22 @@ export default function AddFoodForm() {
               setIngredientSearch(e.target.value);
               setShowIngredientDropdown(true);
             }}
-            borderRadius="12px"
-            h="46px"
+            borderRadius="full"
+            h="48px"
+            bg="white"
             borderColor="#dbe5f4"
             _focusVisible={{ borderColor: colors.primary, boxShadow: `0 0 0 1px ${colors.primary}` }}
           />
 
           {showIngredientDropdown && (
-            <Box bg="white" border="1px solid #dbe5f4" mt={2} borderRadius="12px" maxH="220px" overflowY="auto" position="absolute" w="100%" zIndex={10} boxShadow="md">
+            <Box bg="white" border="1px solid #dbe5f4" mt={2} borderRadius="14px" maxH="220px" overflowY="auto" position="absolute" w="100%" zIndex={10} boxShadow="md">
               {filteredIngredients.map((ingredient) => (
                 <Box
                   key={ingredient.ingredient_id}
                   px={3}
                   py={2}
                   cursor="pointer"
-                  _hover={{ bg: "gray.100" }}
+                  _hover={{ bg: "#f8fbff" }}
                   onMouseDown={() => handleAddIngredient(ingredient)}
                 >
                   {ingredient.name}
@@ -304,8 +291,9 @@ export default function AddFoodForm() {
           placeholder="Recipe link (optional)"
           value={linkUrl}
           onChange={(e) => setLinkUrl(e.target.value)}
-          borderRadius="12px"
-          h="46px"
+          borderRadius="full"
+          h="48px"
+          bg="white"
           borderColor="#dbe5f4"
           _focusVisible={{ borderColor: colors.primary, boxShadow: `0 0 0 1px ${colors.primary}` }}
         />
