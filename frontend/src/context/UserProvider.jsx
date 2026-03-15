@@ -1,7 +1,16 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { auth, googleProvider } from "../firebase.js";
-import { signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
-import { registerUser } from "../services/api/user.service";
+import {
+  signInWithPopup,
+  signOut,
+  onAuthStateChanged,
+  updateProfile,
+} from "firebase/auth";
+import {
+  fetchMyProfile,
+  registerUser,
+  updateMyProfile,
+} from "../services/api/user.service";
 
 const UserContext = createContext();
 
@@ -17,7 +26,7 @@ export function UserProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         const adminEmails = normalizeEmailList(
           import.meta.env.VITE_ADMIN_EMAILS || "",
@@ -25,11 +34,20 @@ export function UserProvider({ children }) {
         const email = firebaseUser.email || "";
         const isAdmin = adminEmails.includes(email.toLowerCase());
 
+        let dbProfile = null;
+        try {
+          const result = await fetchMyProfile();
+          dbProfile = result?.user || null;
+        } catch (error) {
+          // Fallback to Firebase values if backend profile fetch fails.
+          console.warn("Failed to load backend profile, using Firebase profile.", error);
+        }
+
         const userData = {
           id: firebaseUser.uid,
-          name: firebaseUser.displayName || "User",
+          name: dbProfile?.name || firebaseUser.displayName || "User",
           email,
-          photoURL: firebaseUser.photoURL || "",
+          photoURL: dbProfile?.image_url || firebaseUser.photoURL || "",
           isAdmin,
         };
 
@@ -80,9 +98,56 @@ export function UserProvider({ children }) {
     throw new Error("Please use Google sign in");
   };
 
+  const updateUserProfile = async ({ name, imageFile }) => {
+    if (!auth.currentUser) {
+      throw new Error("Not logged in");
+    }
+
+    const nextName = String(name || "").trim();
+    const formData = new FormData();
+
+    if (nextName) {
+      formData.append("name", nextName);
+    }
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
+
+    if (!nextName && !imageFile) {
+      throw new Error("Please provide a new name or image");
+    }
+
+    const apiResult = await updateMyProfile(formData);
+    const savedName = apiResult?.user?.name || auth.currentUser.displayName || "User";
+    const savedPhotoURL =
+      apiResult?.user?.image_url || auth.currentUser.photoURL || "";
+
+    await updateProfile(auth.currentUser, {
+      displayName: savedName,
+      photoURL: savedPhotoURL,
+    });
+
+    setUser((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        name: savedName,
+        photoURL: savedPhotoURL,
+      };
+    });
+  };
+
   return (
     <UserContext.Provider
-      value={{ user, login, signup, loginWithGoogle, logout, loading }}
+      value={{
+        user,
+        login,
+        signup,
+        loginWithGoogle,
+        logout,
+        loading,
+        updateUserProfile,
+      }}
     >
       {children}
     </UserContext.Provider>

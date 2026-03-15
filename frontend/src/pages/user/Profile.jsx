@@ -2,11 +2,12 @@ import {
   Avatar,
   Box,
   Button,
-  HStack,
+  IconButton,
   Spinner,
   Text,
   VStack,
 } from "@chakra-ui/react";
+import { FiEdit2 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../context/UserProvider.jsx";
 import { colors } from "../../theme/tokens.js";
@@ -60,9 +61,25 @@ export default function Profile() {
         border="1px solid"
         borderColor="#CFE0FA"
         borderRadius="2xl"
+        position="relative"
         p="8"
         boxShadow="0 14px 35px rgba(43,76,126,0.12)"
       >
+        <IconButton
+          aria-label="Edit profile"
+          position="absolute"
+          top="4"
+          right="4"
+          size="sm"
+          variant="outline"
+          borderColor="#CFE0FA"
+          color={colors.dark}
+          _hover={{ bg: colors.chipBg }}
+          onClick={() => navigate("/profile/edit")}
+        >
+          <FiEdit2 />
+        </IconButton>
+
         <VStack gap="5" align="center">
           <Text fontWeight="800" fontSize="2xl" color={colors.darkest}>
             My Profile

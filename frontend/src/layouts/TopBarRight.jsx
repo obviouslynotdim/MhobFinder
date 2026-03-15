@@ -6,7 +6,7 @@ import {
   InputGroup,
   Text,
 } from "@chakra-ui/react";
-import { FiArrowLeft, FiHeart, FiUser, FiSearch } from "react-icons/fi";
+import { FiArrowLeft, FiHeart, FiUser, FiSearch, FiEdit2 } from "react-icons/fi";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useApp } from "../context/AppProvider.jsx";
 import { useUser } from "../context/UserProvider.jsx";
@@ -31,8 +31,10 @@ export default function TopBarRight() {
   const isAdminPage = loc.pathname.startsWith("/admin");
   const isFavoritesPage = loc.pathname === "/favorites";
   const isProfilePage = loc.pathname === "/profile";
+  const isEditProfilePage = loc.pathname === "/profile/edit";
+  const isProfileSection = isProfilePage || isEditProfilePage;
   const activeNavBg = "whiteAlpha.200";
-  const useCustomTitle = isFavoritesPage || isProfilePage;
+  const useCustomTitle = isFavoritesPage || isProfileSection;
 
   if (isAdminPage) {
     return (
@@ -128,14 +130,26 @@ export default function TopBarRight() {
             aria-label="User"
             variant="ghost"
             color="white"
-            bg={isProfilePage ? activeNavBg : "transparent"}
+            bg={isProfileSection ? activeNavBg : "transparent"}
             _hover={{ bg: "whiteAlpha.200" }}
             onClick={() => {
-              if (!isProfilePage) nav("/profile");
+              if (!isProfileSection) nav("/profile");
             }}
           >
             <FiUser />
           </IconButton>
+
+          {isProfilePage && (
+            <IconButton
+              aria-label="Edit profile"
+              variant="ghost"
+              color="white"
+              _hover={{ bg: "whiteAlpha.200" }}
+              onClick={() => nav("/profile/edit")}
+            >
+              <FiEdit2 />
+            </IconButton>
+          )}
 
           <LanguageSwitcher iconColor="white" hoverBg="whiteAlpha.200" />
         </HStack>

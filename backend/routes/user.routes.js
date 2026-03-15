@@ -1,5 +1,15 @@
 import express from "express";
-import { register, login } from "../controllers/user.controller.js";
+import {
+	register,
+	login,
+	deleteUser,
+	getUserById,
+	getAllUsers,
+	getMyProfile,
+	updateMyProfile,
+} from "../controllers/user.controller.js";
+import { verifyFirebaseToken } from "../middleware/auth.js";
+import upload from "../middleware/upload.js";
 
 const router = express.Router();
 
@@ -69,7 +79,8 @@ router.post("/login", login);
  *       200:
  *         description: User and related data deleted
  */
-import { deleteUser, getUserById, getAllUsers } from "../controllers/user.controller.js";
+router.get("/me", verifyFirebaseToken, getMyProfile);
+router.patch("/me/profile", verifyFirebaseToken, upload.single("image"), updateMyProfile);
 router.get("/", getAllUsers);
 router.get("/:userId", getUserById);
 router.delete("/:userId", deleteUser);

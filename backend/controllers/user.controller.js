@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import cloudinary from "../config/cloudinary.js";
 // ---------------------------
 // GET ALL USERS
 // ---------------------------
@@ -102,5 +103,76 @@ export const deleteUser = async (req, res, next) => {
     res.status(200).json({ message: "User and related data deleted" });
   } catch (err) {
     next(err);
+  }
+};
+
+// ---------------------------
+// GET LOGGED-IN USER PROFILE
+// ---------------------------
+export const getMyProfile = async (req, res, next) => {
+  try {
+    return res.status(200).json({
+      user: {
+        user_id: req.user.user_id,
+        name: req.user.name,
+        email: req.user.email,
+        image_url: req.user.image_url || null,
+      },
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+// ---------------------------
+// UPDATE LOGGED-IN USER PROFILE
+// ---------------------------
+export const updateMyProfile = async (req, res, next) => {
+  try {
+    const incomingName = String(req.body?.name || "").trim();
+    const hasNameUpdate = incomingName.length > 0;
+    const hasImageUpdate = Boolean(req.file);
+
+    if (!hasNameUpdate && !hasImageUpdate) {
+      return res.status(400).json({
+        error: "Please provide a name or an image file to update profile",
+      });
+    }
+
+    if (hasNameUpdate) {
+      if (incomingName.length > 100) {
+        return res.status(400).json({ error: "name is too long" });
+      }
+      req.user.name = incomingName;
+    }
+
+    let image_url = null;
+    if (req.file) {
+      if (req.user.image_public_id) {
+        await cloudinary.uploader.destroy(req.user.image_public_id);
+      }
+
+      const fileStr = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
+      const uploadResult = await cloudinary.uploader.upload(fileStr, {
+        folder: "user_profiles",
+      });
+      image_url = uploadResult.secure_url;
+      req.user.image_url = uploadResult.secure_url;
+      req.user.image_public_id = uploadResult.public_id;
+    }
+
+    await req.user.save();
+
+    return res.status(200).json({
+      message: "Profile updated successfully",
+      user: {
+        user_id: req.user.user_id,
+        name: req.user.name,
+        email: req.user.email,
+        image_url: req.user.image_url || image_url,
+      },
+    });
+  } catch (err) {
+    return next(err);
   }
 };

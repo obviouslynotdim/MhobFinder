@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database.js";
-import Comment from "./Comment.js";
-import Favorite from "./Favorite.js";
+import Comment from "./comment.js";
+import Favorite from "./favorite.js";
 
 const User = sequelize.define(
   "User",
@@ -10,6 +10,8 @@ const User = sequelize.define(
     name: { type: DataTypes.STRING, allowNull: false },
     email: { type: DataTypes.STRING, allowNull: false, unique: true },
     password: { type: DataTypes.STRING, allowNull: false },
+    image_url: { type: DataTypes.STRING, allowNull: true },
+    image_public_id: { type: DataTypes.STRING, allowNull: true },
   },
   {
     tableName: "users",

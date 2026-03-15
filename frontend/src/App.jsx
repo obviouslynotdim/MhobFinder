@@ -11,6 +11,7 @@ import Favorites from "./pages/user/Favorites.jsx";
 import About from "./pages/user/About.jsx";
 import Login from "./pages/user/Login.jsx";
 import Profile from "./pages/user/Profile.jsx";
+import EditProfile from "./pages/user/EditProfile.jsx";
 
 import AdminHomePage from "./pages/admin/AdminHomePage.jsx";
 import AdminFoodPage from "./pages/admin/AdminFoodPage.jsx";
@@ -63,6 +64,15 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <Profile />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/profile/edit"
+                element={
+                  <ProtectedRoute>
+                    <EditProfile />
                   </ProtectedRoute>
                 }
               />

@@ -122,6 +122,13 @@ const CommentSection = ({ foodId, comments = [], ratings = [] }) => {
 
   const getDisplayName = (comment) => comment.user?.name || comment.userName || "Anonymous";
 
+  const getCommentAvatarSrc = (comment) => {
+    const commentImage = comment?.user?.image_url;
+    if (commentImage) return commentImage;
+    if (isOwnComment(comment)) return user?.photoURL || undefined;
+    return undefined;
+  };
+
   const getAvatarFallback = (name) => (name?.trim()?.charAt(0) || "A").toUpperCase();
 
   const formatRelativeTime = (dateValue) => {
@@ -332,7 +339,7 @@ const CommentSection = ({ foodId, comments = [], ratings = [] }) => {
                 <Flex justify="space-between" align="flex-start" mb="2">
                   <Flex gap="3" align="flex-start">
                     <Avatar.Root shape="full" size="md">
-                      <Avatar.Image src={isOwnComment(comment) ? user.photoURL : undefined} />
+                      <Avatar.Image src={getCommentAvatarSrc(comment)} />
                       <Avatar.Fallback>{getAvatarFallback(getDisplayName(comment))}</Avatar.Fallback>
                     </Avatar.Root>
                     <Box>

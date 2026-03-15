@@ -7,7 +7,11 @@ export const getCommentsByFood = async (req, res, next) => {
     const comments = await Comment.findAll({
       where: { food_id: foodId },
       include: [
-        { model: User, as: "user", attributes: ["user_id", "name", "email"] },
+        {
+          model: User,
+          as: "user",
+          attributes: ["user_id", "name", "email", "image_url"],
+        },
         { model: Comment, as: "replies" }, // optional: include replies
       ],
       order: [["createdAt", "DESC"]],

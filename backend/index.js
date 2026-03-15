@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import session from "express-session";
 import passport from "passport";
+import { DataTypes } from "sequelize";
 import "./config/passport.js";
 import "./config/firebase.js"; // Initialize Firebase Admin
 import sequelize from "./config/database.js";
@@ -128,11 +129,34 @@ app.use((err, req, res, next) => {
 // ---------------------------
 const PORT = process.env.PORT || 5000;
 
+async function ensureUserProfileColumns() {
+  const queryInterface = sequelize.getQueryInterface();
+  const usersTable = await queryInterface.describeTable("users");
+
+  if (!usersTable.image_url) {
+    await queryInterface.addColumn("users", "image_url", {
+      type: DataTypes.STRING,
+      allowNull: true,
+    });
+    console.log("✅ Added users.image_url column");
+  }
+
+  if (!usersTable.image_public_id) {
+    await queryInterface.addColumn("users", "image_public_id", {
+      type: DataTypes.STRING,
+      allowNull: true,
+    });
+    console.log("✅ Added users.image_public_id column");
+  }
+}
+
 
 async function startServer() {
   try {
     await sequelize.authenticate();
     console.log("✅ Database connected successfully");
+
+    await ensureUserProfileColumns();
 
     await sequelize.sync();
     console.log("✅ Tables synced successfully");
