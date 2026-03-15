@@ -76,7 +76,8 @@ export const deleteComment = async (req, res, next) => {
       return res.status(404).json({ message: "Comment not found" });
     }
 
-    if (comment.user_id !== req.user.user_id) {
+    const isOwner = comment.user_id === req.user.user_id;
+    if (!isOwner && !req.userIsAdmin) {
       return res.status(403).json({ message: "You can only delete your own comment" });
     }
 

@@ -1,8 +1,10 @@
+import apiClient from "./client.js";
+
 export const fetchAllUsers = async () => {
   const response = await apiClient.get("/users");
-  return response.data;
+  const users = Array.isArray(response.data) ? response.data : [];
+  return users;
 };
-import apiClient from "./client.js";
 
 export const fetchUserById = async (userId) => {
   const response = await apiClient.get(`/users/${userId}`);

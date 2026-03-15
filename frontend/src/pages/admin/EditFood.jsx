@@ -6,13 +6,15 @@ export default function EditFood() {
   const { id } = useParams();
   return (
     <Box
-      px={4}
-      py={6}
+      px={{ base: 0, md: 4 }}
+      py={{ base: 0, md: 6 }}
       display="flex"
       justifyContent="center"
       alignItems="flex-start"
+      h="100%"
+      overflow="auto"
     >
-      <Box w="100%" maxW="760px" bg="#cfdaf0" borderRadius="20px" p={6}>
+      <Box w="100%" maxW="760px" bg="#cfdaf0" borderRadius={{ base: "16px", md: "20px" }} p={{ base: 4, md: 6 }}>
         <Separator mb={4} borderColor="gray.300" />
         <EditFoodForm foodId={id} />
       </Box>

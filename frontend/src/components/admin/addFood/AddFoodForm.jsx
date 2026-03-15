@@ -1,8 +1,10 @@
 import { useMemo, useState, useEffect } from "react";
 import { useApp } from "../../../context/AppProvider.jsx";
 import {
+  Badge,
   Box,
   Button,
+  Flex,
   Heading,
   HStack,
   Input,
@@ -13,13 +15,14 @@ import {
   WrapItem,
 } from "@chakra-ui/react";
 import { FiPlusSquare, FiX, FiImage } from "react-icons/fi";
+import { colors } from "../../../theme/tokens.js";
 
 import { getAllCategories } from "../../../services/api/category.service.js";
 import { getAllIngredients } from "../../../services/api/ingredient.service.js";
 import { addFood } from "../../../services/api/food.service.js";
 
 export default function AddFoodForm() {
-  const { refreshFoods, selectedIds } = useApp();
+  const { refreshFoods } = useApp();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -146,38 +149,51 @@ export default function AddFoodForm() {
   return (
     <Box
       w="100%"
-      maxW="540px"
+      maxW="760px"
       mx="auto"
-      bg="#f8fafc"
-      borderRadius="2xl"
-      boxShadow="2xl"
-      border="1px solid #e2e8f0"
-      overflowY="auto"
-      maxHeight="92vh"
+      bg="#ffffff"
+      borderRadius={{ base: "16px", md: "22px" }}
+      boxShadow="0 10px 30px rgba(79,121,189,0.08)"
+      border="1px solid #dbe5f4"
+      overflow="visible"
     >
       <Box
-        bgGradient="linear(to-r, #4f79bd, #6fa8dc)"
-        px={10}
-        py={7}
-        borderTopRadius="2xl"
+        px={{ base: 5, md: 8 }}
+        py={{ base: 5, md: 6 }}
+        borderTopRadius={{ base: "16px", md: "22px" }}
+        borderBottom="1px solid"
+        borderColor="#dbe5f4"
       >
-        <Heading size="lg" color="white" textAlign="center">
+        <Heading size="lg" color={colors.darkest} textAlign="left">
           Add New Food
         </Heading>
+        <Text color="gray.600" mt={1}>
+          Create a recipe card with category, ingredients, and image.
+        </Text>
       </Box>
 
-      <VStack spacing={6} px={10} py={8} align="stretch">
+      <VStack spacing={5} px={{ base: 4, md: 8 }} py={{ base: 5, md: 6 }} align="stretch">
         {error && (
-          <Box bg="red.50" color="red.600" p={3} borderRadius="md">
+          <Box bg="red.50" color="red.600" p={3} borderRadius="md" border="1px solid" borderColor="red.100">
             {error}
           </Box>
         )}
+
+        <Flex direction={{ base: "column", md: "row" }} gap={3}>
+          <Badge bg="#edf4ff" color={colors.darkest} px={3} py={1.5} borderRadius="full">
+            Required: Title, Description, Category, Ingredients, Image
+          </Badge>
+        </Flex>
 
         {/* Title */}
         <Input
           placeholder="Food title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          borderRadius="12px"
+          h="46px"
+          borderColor="#dbe5f4"
+          _focusVisible={{ borderColor: colors.primary, boxShadow: `0 0 0 1px ${colors.primary}` }}
         />
 
         {/* Description */}
@@ -185,6 +201,10 @@ export default function AddFoodForm() {
           placeholder="Food description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          borderRadius="12px"
+          minH="110px"
+          borderColor="#dbe5f4"
+          _focusVisible={{ borderColor: colors.primary, boxShadow: `0 0 0 1px ${colors.primary}` }}
         />
 
         {/* Category */}
@@ -197,10 +217,14 @@ export default function AddFoodForm() {
               setCategorySearch(e.target.value);
               setShowCategoryDropdown(true);
             }}
+            borderRadius="12px"
+            h="46px"
+            borderColor="#dbe5f4"
+            _focusVisible={{ borderColor: colors.primary, boxShadow: `0 0 0 1px ${colors.primary}` }}
           />
 
           {showCategoryDropdown && (
-            <Box bg="white" border="1px solid #eee" mt={2}>
+            <Box bg="white" border="1px solid #dbe5f4" mt={2} borderRadius="12px" maxH="220px" overflowY="auto" position="absolute" w="100%" zIndex={10} boxShadow="md">
               {filteredCategories.map((category) => (
                 <Box
                   key={category.category_id}
@@ -227,10 +251,14 @@ export default function AddFoodForm() {
               setIngredientSearch(e.target.value);
               setShowIngredientDropdown(true);
             }}
+            borderRadius="12px"
+            h="46px"
+            borderColor="#dbe5f4"
+            _focusVisible={{ borderColor: colors.primary, boxShadow: `0 0 0 1px ${colors.primary}` }}
           />
 
           {showIngredientDropdown && (
-            <Box bg="white" border="1px solid #eee" mt={2}>
+            <Box bg="white" border="1px solid #dbe5f4" mt={2} borderRadius="12px" maxH="220px" overflowY="auto" position="absolute" w="100%" zIndex={10} boxShadow="md">
               {filteredIngredients.map((ingredient) => (
                 <Box
                   key={ingredient.ingredient_id}
@@ -250,11 +278,13 @@ export default function AddFoodForm() {
             {selectedIngredients.map((ingredient) => (
               <WrapItem key={ingredient.ingredient_id}>
                 <HStack
-                  bg="blue.500"
-                  color="white"
+                  bg="#edf4ff"
+                  color={colors.darkest}
                   px={3}
                   py={1}
                   borderRadius="full"
+                  border="1px solid"
+                  borderColor="#dbe5f4"
                 >
                   <Text>{ingredient.name}</Text>
                   <Box
@@ -274,26 +304,48 @@ export default function AddFoodForm() {
           placeholder="Recipe link (optional)"
           value={linkUrl}
           onChange={(e) => setLinkUrl(e.target.value)}
+          borderRadius="12px"
+          h="46px"
+          borderColor="#dbe5f4"
+          _focusVisible={{ borderColor: colors.primary, boxShadow: `0 0 0 1px ${colors.primary}` }}
         />
 
         {/* Image */}
-        <Button as="label" leftIcon={<FiImage />}>
-          Choose Image
-          <Input
-            type="file"
-            hidden
-            accept="image/*"
-            onChange={handleImageChange}
-          />
-        </Button>
+        <HStack gap={3} flexWrap="wrap">
+          <Button
+            as="label"
+            leftIcon={<FiImage />}
+            bg="#edf4ff"
+            color={colors.darkest}
+            borderRadius="full"
+            border="1px solid"
+            borderColor="#dbe5f4"
+            _hover={{ bg: colors.chipHover }}
+          >
+            Choose Image
+            <Input
+              type="file"
+              hidden
+              accept="image/*"
+              onChange={handleImageChange}
+            />
+          </Button>
 
-        {imageFile && <Text>{imageFile.name}</Text>}
+          {imageFile && (
+            <Text fontSize="sm" color="gray.600" noOfLines={1}>
+              {imageFile.name}
+            </Text>
+          )}
+        </HStack>
 
         <Button
           onClick={handleSubmit}
           leftIcon={<FiPlusSquare />}
-          colorScheme="blue"
-          isLoading={loading}
+          bg={colors.primary}
+          color="white"
+          borderRadius="full"
+          _hover={{ bg: colors.dark }}
+          loading={loading}
         >
           Add Food
         </Button>

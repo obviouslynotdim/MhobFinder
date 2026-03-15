@@ -1,34 +1,30 @@
 import { Button, HStack } from "@chakra-ui/react";
-import { FiList, FiTrash2 } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import { FiTrash2 } from "react-icons/fi";
 
-export default function UserActionButtons({ user, onDelete }) {
-  const navigate = useNavigate();
+export default function UserActionButtons({ user, onModerate, onDelete }) {
+  const userId = user.user_id || user.id;
 
   return (
-    <HStack gap={3}>
+    <HStack gap={2} flexWrap="wrap">
       <Button
-        variant="outline"
-        borderColor="#3b82f6"
-        color="#3b82f6"
-        bg="white"
+        size="sm"
+        bg="#edf4ff"
+        color="#2b4c7e"
         borderRadius="8px"
-        minW="46px"
-        h="46px"
-        onClick={() => navigate(`/admin/manage-user/${user.id}`)}
+        _hover={{ bg: "#dfeafb" }}
+        onClick={() => onModerate(user)}
       >
-        <FiList />
+        Comments
       </Button>
 
       <Button
+        size="sm"
         variant="outline"
         borderColor="#ef4444"
         color="#ef4444"
         bg="white"
         borderRadius="8px"
-        minW="46px"
-        h="46px"
-        onClick={() => onDelete(user.user_id)}
+        onClick={() => onDelete(userId)}
       >
         <FiTrash2 />
       </Button>

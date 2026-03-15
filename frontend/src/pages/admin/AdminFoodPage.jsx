@@ -1,14 +1,28 @@
-import { Box, Grid, GridItem, Text, HStack, Button } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import {
+  Badge,
+  Box,
+  Button,
+  Flex,
+  Grid,
+  GridItem,
+  HStack,
+  Input,
+  InputGroup,
+  Spinner,
+  Text,
+} from "@chakra-ui/react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FiCheckSquare, FiTrash2, FiX } from "react-icons/fi";
+import { FiCheckSquare, FiPlus, FiSearch, FiTrash2, FiX } from "react-icons/fi";
 import AdminFoodCard from "../../components/AdminFoodCard.jsx";
 import { getAllFoods, deleteFood } from "../../services/api/food.service.js";
+import { colors } from "../../theme/tokens.js";
 
 export default function AdminFoodPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [foods, setFoods] = useState([]);
+  const [search, setSearch] = useState("");
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedFoodIds, setSelectedFoodIds] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -96,77 +110,185 @@ export default function AdminFoodPage() {
     setSelectedFoodIds([]);
   };
 
+  const filteredFoods = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    if (!query) return foods;
+
+    return foods.filter((food) => {
+      const title = String(food.title || "").toLowerCase();
+      const description = String(food.description || "").toLowerCase();
+      const categories = Array.isArray(food.categories)
+        ? food.categories.map((category) => String(category.name || "").toLowerCase())
+        : [];
+
+      return (
+        title.includes(query) ||
+        description.includes(query) ||
+        categories.some((name) => name.includes(query))
+      );
+    });
+  }, [foods, search]);
+
+  const linkedFoodsCount = foods.filter((food) => Boolean(food.link_url)).length;
+
   return (
-    <Box px={6} py={6} minHeight="100vh" maxHeight="100vh" overflowY="auto">
-      <HStack justify="space-between" mb={6} flexWrap="wrap" gap={3}>
-        <Text fontSize="2xl" fontWeight="bold">
-          Manage Foods
-        </Text>
-        <HStack spacing={3}>
-          {!selectionMode ? (
+    <Box h="100%" minH={0} overflow="auto" overflowX="hidden" pr={1}>
+      <Box
+        w="100%"
+        maxW="1180px"
+        mx="auto"
+        bg="whiteAlpha.900"
+        border="1px solid"
+        borderColor="#dbe5f4"
+        boxShadow="0 10px 30px rgba(79,121,189,0.08)"
+        borderRadius={{ base: "16px", md: "24px" }}
+        p={{ base: 4, md: 6 }}
+        minH="100%"
+      >
+        <Flex justify="space-between" align={{ base: "stretch", lg: "center" }} mb={5} gap={4} direction={{ base: "column", lg: "row" }}>
+          <Box>
+            <Text fontSize={{ base: "2xl", md: "3xl" }} fontWeight="800" color={colors.darkest}>
+              Food Management
+            </Text>
+            <Text color="gray.600" mt={1}>
+              Organize recipes, review content, and keep the catalog clean.
+            </Text>
+          </Box>
+
+          <HStack spacing={3} flexWrap="wrap" align="center">
             <Button
-              leftIcon={<FiCheckSquare />}
-              bg="#4f79bd"
+              leftIcon={<FiPlus />}
+              bg={colors.primary}
               color="white"
               borderRadius="full"
-              _hover={{ bg: "#4269a8" }}
-              onClick={() => setSelectionMode(true)}
+              _hover={{ bg: colors.dark }}
+              onClick={() => navigate("/admin/add-food")}
+              w={{ base: "100%", sm: "auto" }}
             >
-              Select
+              Add Food
             </Button>
+
+            {!selectionMode ? (
+              <Button
+                leftIcon={<FiCheckSquare />}
+                bg="#edf4ff"
+                color={colors.darkest}
+                borderRadius="full"
+                _hover={{ bg: colors.chipHover }}
+                onClick={() => setSelectionMode(true)}
+                w={{ base: "100%", sm: "auto" }}
+              >
+                Select
+              </Button>
+            ) : (
+              <>
+                <Button
+                  leftIcon={<FiTrash2 />}
+                  bg="red.50"
+                  color="red.600"
+                  borderRadius="full"
+                  _hover={{ bg: "red.100" }}
+                  onClick={handleDeleteSelected}
+                  isDisabled={selectedFoodIds.length === 0}
+                  w={{ base: "100%", sm: "auto" }}
+                >
+                  Delete Selected{selectedFoodIds.length > 0 ? ` (${selectedFoodIds.length})` : ""}
+                </Button>
+                <Button
+                  leftIcon={<FiX />}
+                  bg="gray.100"
+                  color="gray.700"
+                  borderRadius="full"
+                  _hover={{ bg: "gray.200" }}
+                  onClick={handleCancelSelection}
+                  w={{ base: "100%", sm: "auto" }}
+                >
+                  Cancel
+                </Button>
+              </>
+            )}
+          </HStack>
+        </Flex>
+
+        <Flex justify="space-between" align={{ base: "stretch", md: "center" }} gap={4} mb={6} direction={{ base: "column", md: "row" }}>
+          <HStack gap={3} flexWrap="wrap">
+            <Badge bg="#edf4ff" color={colors.darkest} px={3} py={1.5} borderRadius="full">
+              Total Foods: {foods.length}
+            </Badge>
+            <Badge bg="#f8fbff" color={colors.darkest} px={3} py={1.5} borderRadius="full" border="1px solid" borderColor="#dbe5f4">
+              Visible: {filteredFoods.length}
+            </Badge>
+            <Badge bg="#f8fbff" color={colors.darkest} px={3} py={1.5} borderRadius="full" border="1px solid" borderColor="#dbe5f4">
+              With Links: {linkedFoodsCount}
+            </Badge>
+          </HStack>
+
+          <InputGroup maxW={{ base: "100%", md: "340px" }} startElement={<FiSearch size="16" color="#718096" />}>
+            <Input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search food, description, category"
+              bg="white"
+              borderRadius="full"
+              border="1px solid"
+              borderColor="#dbe5f4"
+            />
+          </InputGroup>
+        </Flex>
+
+        <Box w="100%" maxW="1250px" mx="auto" minW={0}>
+          {!selectionMode ? (
+            <></>
           ) : (
-            <>
-              <Button
-                leftIcon={<FiTrash2 />}
-                bg="red.100"
-                color="red.600"
-                borderRadius="full"
-                _hover={{ bg: "red.200" }}
-                onClick={handleDeleteSelected}
-                isDisabled={selectedFoodIds.length === 0}
-              >
-                Delete Selected
-                {selectedFoodIds.length > 0
-                  ? ` (${selectedFoodIds.length})`
-                  : ""}
-              </Button>
-              <Button
-                leftIcon={<FiX />}
-                bg="gray.200"
-                color="gray.700"
-                borderRadius="full"
-                _hover={{ bg: "gray.300" }}
-                onClick={handleCancelSelection}
-              >
-                Cancel
-              </Button>
-            </>
+            <Text fontSize="sm" color="gray.500" mb={4}>
+              Selection mode is active. Tap cards to select multiple foods for deletion.
+            </Text>
           )}
-        </HStack>
-      </HStack>
-      <Box maxW="1250px" mx="auto">
-        {loading ? (
-          <Text>Loading foods…</Text>
-        ) : (
-          <Grid
-            templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
-            columnGap={8}
-            rowGap={8}
-          >
-            {foods.map((food) => (
-              <GridItem key={food.food_id}>
-                <AdminFoodCard
-                  food={food}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                  selectionMode={selectionMode}
-                  isSelected={selectedFoodIds.includes(food.food_id)}
-                  onToggleSelect={handleToggleSelect}
-                />
-              </GridItem>
-            ))}
-          </Grid>
-        )}
+
+          {loading ? (
+            <Flex py={16} justify="center" align="center" direction="column" gap={3}>
+              <Spinner color={colors.primary} size="lg" />
+              <Text color="gray.600">Loading foods...</Text>
+            </Flex>
+          ) : filteredFoods.length === 0 ? (
+            <Box
+              bg="#fbfdff"
+              border="1px solid"
+              borderColor="#dbe5f4"
+              borderRadius="18px"
+              p={10}
+              textAlign="center"
+            >
+              <Text fontWeight="700" color={colors.darkest} mb={2}>
+                No foods matched your search.
+              </Text>
+              <Text color="gray.600">
+                Try a different keyword or add a new recipe to the library.
+              </Text>
+            </Box>
+          ) : (
+            <Grid
+              w="100%"
+              minW={0}
+              templateColumns={{ base: "minmax(0, 1fr)", "2xl": "repeat(2, minmax(0, 1fr))" }}
+              columnGap={6}
+              rowGap={6}
+            >
+              {filteredFoods.map((food) => (
+                <GridItem key={food.food_id} minW={0}>
+                  <AdminFoodCard
+                    food={food}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    selectionMode={selectionMode}
+                    isSelected={selectedFoodIds.includes(food.food_id)}
+                    onToggleSelect={handleToggleSelect}
+                  />
+                </GridItem>
+              ))}
+            </Grid>
+          )}
+        </Box>
       </Box>
     </Box>
   );

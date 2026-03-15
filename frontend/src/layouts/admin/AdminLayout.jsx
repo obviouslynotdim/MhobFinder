@@ -1,27 +1,36 @@
-import { Box, Flex, useDisclosure } from "@chakra-ui/react";
+import { Box, Flex, useBreakpointValue } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
-import TopBarLeft from "../TopBarLeft.jsx";
 import TopBarRight from "../TopBarRight.jsx";
 import AdminSidebar from "./AdminSidebar.jsx";
-import bgPattern from "../../assets/mhob-background.png";
 
 export default function AdminLayout() {
-  const { open, onToggle } = useDisclosure({ defaultOpen: true });
+  const expandedByDefault = useBreakpointValue({ base: false, md: true });
+  const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    setExpanded(Boolean(expandedByDefault));
+  }, [expandedByDefault]);
 
   return (
     <Flex h="100vh" bg="#dce8fb" overflow="hidden">
-      <AdminSidebar expanded={open} onToggle={onToggle} />
+      <AdminSidebar
+        expanded={expanded}
+        onToggle={() => setExpanded((current) => !current)}
+      />
 
       <Flex flex="1" direction="column" minW={0} overflow="hidden">
         {/* Top App Bar */}
         <Flex
-          h="92px"
+          h={{ base: "88px", md: "84px" }}
           bg="#4f79bd"
           align="center"
           justify="space-between"
-          px={6}
+          px={{ base: 4, md: 6 }}
           color="white"
           flexShrink={0}
+          borderBottom="1px solid"
+          borderColor="whiteAlpha.200"
         >
           <TopBarRight />
         </Flex>
@@ -32,10 +41,8 @@ export default function AdminLayout() {
           minW={0}
           minH={0}
           overflow="hidden"
-          bgImage={`url(${bgPattern})`}
-          bgRepeat="repeat"
-          bgSize="420px"
-          p={4}
+          bg="linear-gradient(180deg, #f4f8ff 0%, #e7eefb 100%)"
+          p={{ base: 2, md: 4 }}
         >
           <Outlet />
         </Box>

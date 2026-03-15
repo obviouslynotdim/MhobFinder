@@ -3,6 +3,27 @@ import admin from "../config/firebase.js";
 import User from "../models/User.js";
 import crypto from "crypto";
 
+const normalizeEmailList = (value = "") =>
+  String(value)
+    .split(/[\s,;]+/)
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean);
+
+const isAdminEmail = (email = "") => {
+  const normalizedEmail = String(email).trim().toLowerCase();
+  const adminEmails = normalizeEmailList(
+    [
+      process.env.ADMIN_EMAILS,
+      process.env.ADMIN_EMAIL,
+      process.env.VITE_ADMIN_EMAILS,
+      process.env.VITE_ADMIN_EMAIL,
+    ]
+      .filter(Boolean)
+      .join(","),
+  );
+  return adminEmails.includes(normalizedEmail);
+};
+
 export const verifyFirebaseToken = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
@@ -31,6 +52,7 @@ export const verifyFirebaseToken = async (req, res, next) => {
     }
 
     req.user = user;
+    req.userIsAdmin = isAdminEmail(email);
     next();
   } catch (error) {
     console.error('Token verification failed:', error);

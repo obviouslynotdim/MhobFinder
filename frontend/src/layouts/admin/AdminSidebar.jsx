@@ -9,6 +9,7 @@ import {
   FiUsers,
   FiBarChart2,
 } from "react-icons/fi";
+import { colors } from "../../theme/tokens.js";
 
 export default function AdminSidebar({ expanded, onToggle }) {
   const navigate = useNavigate();
@@ -27,9 +28,9 @@ export default function AdminSidebar({ expanded, onToggle }) {
 
   return (
     <Box
-      w={expanded ? "260px" : "78px"}
-      bg="#4f79bd"
-      borderRight="3px solid #d2d8e2"
+      w={expanded ? { base: "220px", md: "260px" } : { base: "70px", md: "78px" }}
+      bg={colors.primary}
+      borderRight="1px solid rgba(255,255,255,0.18)"
       display="flex"
       flexDirection="column"
       py={5}
@@ -40,7 +41,7 @@ export default function AdminSidebar({ expanded, onToggle }) {
       h="100vh"
     >
       {/* Menu toggle */}
-      <Flex justify={expanded ? "flex-start" : "center"} px={4}>
+      <Flex justify={expanded ? "flex-start" : "center"} px={{ base: 2, md: 4 }}>
         <Box
           as="button"
           type="button"
@@ -48,8 +49,8 @@ export default function AdminSidebar({ expanded, onToggle }) {
           display="flex"
           alignItems="center"
           justifyContent="center"
-          w="48px"
-          h="48px"
+          w={{ base: "44px", md: "48px" }}
+          h={{ base: "44px", md: "48px" }}
           borderRadius="12px"
           bg="transparent"
           _hover={{ bg: "whiteAlpha.300" }}
@@ -60,21 +61,23 @@ export default function AdminSidebar({ expanded, onToggle }) {
       </Flex>
 
       {/* Sidebar items */}
-      <VStack gap={3} mt={2} align="stretch" px={expanded ? 3 : 0}>
+      <VStack gap={3} mt={2} align="stretch" px={expanded ? { base: 2, md: 3 } : 0}>
         {items.map((item) => (
           <Flex
             key={item.key}
             onClick={() => navigate(item.path)}
             align="center"
             justify={expanded ? "flex-start" : "center"}
-            gap={4}
-            h="48px"
+            gap={{ base: 3, md: 4 }}
+            h="50px"
             px={expanded ? 4 : 0}
-            borderRadius="12px"
-            bg={isActive(item.path) ? "whiteAlpha.300" : "transparent"}
+            mx={expanded ? 0 : 2}
+            borderRadius="14px"
+            bg={isActive(item.path) ? "rgba(255,255,255,0.20)" : "transparent"}
+            border={isActive(item.path) ? "1px solid rgba(255,255,255,0.18)" : "1px solid transparent"}
             cursor="pointer"
-            _hover={{ bg: "whiteAlpha.300" }}
-            transition="background 0.2s ease"
+            _hover={{ bg: "rgba(255,255,255,0.14)" }}
+            transition="background 0.2s ease, border-color 0.2s ease"
           >
             <Icon
               as={item.icon}

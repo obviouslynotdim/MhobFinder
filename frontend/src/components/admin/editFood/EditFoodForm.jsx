@@ -173,11 +173,12 @@ export default function EditFoodForm({ foodId }) {
       border="2px solid"
       borderColor="gray.300"
       bg="#c8d4ea"
-      maxH="80vh"
+      maxH={{ base: "none", md: "80vh" }}
       overflowY="auto"
+      borderRadius="16px"
     >
-      <Box bg="#4f79bd" px={6} py={5} position="sticky" top={0} zIndex={10}>
-        <HStack justify="space-between" align="center">
+      <Box bg="#4f79bd" px={{ base: 4, md: 6 }} py={{ base: 4, md: 5 }} position="sticky" top={0} zIndex={10}>
+        <HStack justify="space-between" align={{ base: "stretch", md: "center" }} flexDirection={{ base: "column", md: "row" }} gap={3}>
           <Heading size="lg" color="white">
             Edit Food
           </Heading>
@@ -186,19 +187,20 @@ export default function EditFoodForm({ foodId }) {
             bg="#4f79bd"
             color="white"
             borderRadius="18px"
-            px={8}
-            py={7}
-            fontSize="lg"
+            px={{ base: 5, md: 8 }}
+            py={{ base: 6, md: 7 }}
+            fontSize={{ base: "md", md: "lg" }}
             fontWeight="700"
             _hover={{ bg: "#4269a8" }}
             leftIcon={<FiSave />}
+            w={{ base: "100%", md: "auto" }}
           >
             Save Changes
           </Button>
         </HStack>
       </Box>
 
-      <VStack spacing={6} align="stretch" px={10} py={8}>
+      <VStack spacing={6} align="stretch" px={{ base: 4, md: 10 }} py={{ base: 5, md: 8 }}>
         <HStack justify="space-between" align="start" flexWrap="wrap">
           <Box>
             <Text fontSize="sm" color="gray.600">
@@ -222,7 +224,7 @@ export default function EditFoodForm({ foodId }) {
         <Separator borderColor="gray.300" />
 
         <Box>
-          <Text fontSize="2xl" fontWeight="700" color="gray.500" mb={2}>
+          <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="700" color="gray.500" mb={2}>
             Title
           </Text>
           <Input
@@ -237,7 +239,7 @@ export default function EditFoodForm({ foodId }) {
         </Box>
 
         <Box>
-          <Text fontSize="2xl" fontWeight="700" color="gray.500" mb={2}>
+          <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="700" color="gray.500" mb={2}>
             Description
           </Text>
           <Textarea
@@ -252,7 +254,7 @@ export default function EditFoodForm({ foodId }) {
         </Box>
 
         <Box position="relative">
-          <Text fontSize="2xl" fontWeight="700" color="gray.500" mb={2}>
+          <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="700" color="gray.500" mb={2}>
             Category
           </Text>
 
@@ -317,7 +319,7 @@ export default function EditFoodForm({ foodId }) {
         </Box>
 
         <Box position="relative">
-          <Text fontSize="2xl" fontWeight="700" color="gray.500" mb={2}>
+          <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="700" color="gray.500" mb={2}>
             Ingredient list
           </Text>
 
@@ -420,7 +422,7 @@ export default function EditFoodForm({ foodId }) {
         </Box>
 
         <Box>
-          <Text fontSize="2xl" fontWeight="700" color="gray.500" mb={2}>
+          <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="700" color="gray.500" mb={2}>
             Link URL
           </Text>
           <Input
@@ -435,7 +437,7 @@ export default function EditFoodForm({ foodId }) {
         </Box>
 
         <Box>
-          <Text fontSize="2xl" fontWeight="700" color="gray.500" mb={2}>
+          <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="700" color="gray.500" mb={2}>
             Status
           </Text>
           <Box
@@ -455,19 +457,20 @@ export default function EditFoodForm({ foodId }) {
           </Box>
         </Box>
 
-        <HStack justify="space-between" pt={2} flexWrap="wrap" gap={4}>
+        <HStack justify="space-between" pt={2} flexWrap="wrap" gap={4} align="stretch">
           <ImageUploadButton onChange={handleImageChange} />
           <Button
             onClick={handleDelete}
             bg="red.500"
             color="white"
             borderRadius="18px"
-            px={8}
-            py={7}
-            fontSize="lg"
+            px={{ base: 5, md: 8 }}
+            py={{ base: 6, md: 7 }}
+            fontSize={{ base: "md", md: "lg" }}
             fontWeight="700"
             _hover={{ bg: "red.600" }}
             leftIcon={<FiTrash2 />}
+            w={{ base: "100%", md: "auto" }}
           >
             Delete
           </Button>
