@@ -13,6 +13,28 @@ import { useUser } from "./UserProvider.jsx";
 
 const AppCtx = createContext(null);
 
+function countMatchingIngredients(food, selectedIngredientIds) {
+  const selectedSet = new Set(selectedIngredientIds.map(Number));
+
+  return (food.ingredients || []).reduce((count, ingredient) => {
+    const ingredientId = Number(ingredient?.ingredient_id ?? ingredient);
+    return selectedSet.has(ingredientId) ? count + 1 : count;
+  }, 0);
+}
+
+function sortFoodsByMatchStrength(foods, selectedIngredientIds) {
+  return [...foods].sort((leftFood, rightFood) => {
+    const rightMatches = countMatchingIngredients(rightFood, selectedIngredientIds);
+    const leftMatches = countMatchingIngredients(leftFood, selectedIngredientIds);
+
+    if (rightMatches !== leftMatches) {
+      return rightMatches - leftMatches;
+    }
+
+    return String(leftFood.title || "").localeCompare(String(rightFood.title || ""));
+  });
+}
+
 export function AppProvider({ children }) {
   const { user } = useUser();
 
@@ -87,7 +109,7 @@ export function AppProvider({ children }) {
 
     try {
       const nextFoods = Array.isArray(ids) && ids.length > 0
-        ? await getMatchedFoods(ids)
+        ? sortFoodsByMatchStrength(await getMatchedFoods(ids), ids)
         : await getAllFoods();
 
       if (reqId === foodsReqIdRef.current) {
