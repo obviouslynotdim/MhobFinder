@@ -4,6 +4,7 @@ import UserDetailHeader from "../../components/admin/userDetail/UserDetailHeader
 import UserProfile from "../../components/admin/userDetail/UserProfile";
 import UserInfoFields from "../../components/admin/userDetail/UserInfoFields";
 import { fetchAllUsers, deleteUser } from "../../services/api/user.service";
+import AppLoadingState from "../../components/common/AppLoadingState.jsx";
 
 export default function UserDetail() {
   const [users, setUsers] = useState([]);
@@ -44,7 +45,15 @@ export default function UserDetail() {
     }
   };
 
-  if (loading) return <Box p={6}>Loading...</Box>;
+  if (loading) {
+    return (
+      <AppLoadingState
+        title="Loading user details"
+        description="Please wait while we fetch account information."
+        minH="320px"
+      />
+    );
+  }
   if (!users.length) return <Box p={6}>No users found</Box>;
 
   return (

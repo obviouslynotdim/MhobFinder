@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   IconButton,
-  Spinner,
   Text,
   VStack,
 } from "@chakra-ui/react";
@@ -11,6 +10,7 @@ import { FiEdit2 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../context/UserProvider.jsx";
 import { colors } from "../../theme/tokens.js";
+import AppLoadingState from "../../components/common/AppLoadingState.jsx";
 
 export default function Profile() {
   const { user, logout, loading } = useUser();
@@ -27,12 +27,11 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <Box p={{ base: 8, md: 10 }} textAlign="center">
-        <VStack gap="3">
-          <Spinner size="lg" color={colors.primary} thickness="4px" />
-          <Text color={colors.dark}>Loading profile...</Text>
-        </VStack>
-      </Box>
+      <AppLoadingState
+        title="Loading profile"
+        description="Getting your account details ready."
+        minH="320px"
+      />
     );
   }
 

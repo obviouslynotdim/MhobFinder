@@ -18,6 +18,7 @@ import IngredientChip from "../../components/IngredientChip.jsx";
 import CategoryDropdown from "../../components/CategoryDropdown.jsx";
 import FullRecipe from "../fullRecipePage/FullRecipe.jsx";
 import { colors } from "../../theme/tokens.js";
+import AppLoadingState from "../../components/common/AppLoadingState.jsx";
 
 import chefImage from "../../assets/chef-serving.png";
 
@@ -102,10 +103,11 @@ function HomeNoResults({ onClear, t }) {
 
 function HomeLoading({ t }) {
   return (
-    <VStack h="full" justify="center" gap="3" textAlign="center" py="20">
-      <Text fontWeight="bold">{t("home.loadingRecipes")}</Text>
-      <Text opacity="0.75">{t("home.loadingHint")}</Text>
-    </VStack>
+    <AppLoadingState
+      title={t("home.loadingRecipes")}
+      description={t("home.loadingHint")}
+      minH="320px"
+    />
   );
 }
 

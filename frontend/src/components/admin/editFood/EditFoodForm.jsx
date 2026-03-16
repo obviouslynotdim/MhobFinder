@@ -25,6 +25,7 @@ import { getAllCategories } from "../../../services/api/category.service";
 import { getAllIngredients } from "../../../services/api/ingredient.service";
 import { colors } from "../../../theme/tokens.js";
 import { useAdminAlert } from "../../../context/AdminAlertContext.jsx";
+import AppLoadingState from "../../common/AppLoadingState.jsx";
 
 export default function EditFoodForm({ foodId }) {
   const navigate = useNavigate();
@@ -228,7 +229,15 @@ export default function EditFoodForm({ foodId }) {
     setLoading(false);
   };
 
-  if (loading) return <Text>Loading...</Text>;
+  if (loading) {
+    return (
+      <AppLoadingState
+        title="Loading food details"
+        description="Preparing recipe data for editing."
+        minH="300px"
+      />
+    );
+  }
   if (error) return <Text color="red.500">{error}</Text>;
 
   return (

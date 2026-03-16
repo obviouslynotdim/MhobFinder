@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
-import { Badge, Box, Flex, HStack, Spinner, Text } from "@chakra-ui/react";
+import { Badge, Box, Flex, HStack, Text } from "@chakra-ui/react";
 import ManageUserHeader from "../../components/admin/manageUser/ManageUserHeader";
 import UserTable from "../../components/admin/manageUser/UserTable";
 import UserCommentsPanel from "../../components/admin/manageUser/UserCommentsPanel";
@@ -8,6 +8,7 @@ import { getAllFoods } from "../../services/api/food.service";
 import { deleteComment, getCommentsByFood } from "../../services/api/comment.service";
 import { colors } from "../../theme/tokens.js";
 import { useAdminAlert } from "../../context/AdminAlertContext.jsx";
+import AppLoadingState from "../../components/common/AppLoadingState.jsx";
 
 export default function ManageUser() {
   const { showAlert, confirm } = useAdminAlert();
@@ -182,10 +183,11 @@ export default function ManageUser() {
 
   if (loading) {
     return (
-      <Flex h="100%" minH={0} justify="center" align="center" direction="column" gap={3}>
-        <Spinner color={colors.primary} size="lg" />
-        <Text color="gray.600">Loading users...</Text>
-      </Flex>
+      <AppLoadingState
+        title="Loading users"
+        description="Fetching user accounts and moderation data."
+        minH="360px"
+      />
     );
   }
 

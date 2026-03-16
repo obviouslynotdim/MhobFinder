@@ -3,7 +3,6 @@ import {
   Box,
   Image,
   Text,
-  Spinner,
   Center,
   Flex,
   Icon,
@@ -21,6 +20,7 @@ import { getCommentsByFood } from "../../services/api/comment.service";
 import MayLike from "./components/MayLike";
 import CommentSection from "./components/CommentSection";
 import colors from "../../theme/tokens";
+import AppLoadingState from "../../components/common/AppLoadingState.jsx";
 
 const FullRecipe = ({ foodId, onClose }) => {
   const { user } = useUser();
@@ -87,9 +87,11 @@ const FullRecipe = ({ foodId, onClose }) => {
 
   if (loading)
     return (
-      <Center h="full">
-        <Spinner size="xl" color={colors.primary} />
-      </Center>
+      <AppLoadingState
+        title="Loading recipe"
+        description="Fetching full recipe details."
+        minH="100vh"
+      />
     );
 
   if (error) return <Text color="red.500">{error}</Text>;

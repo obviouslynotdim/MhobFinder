@@ -20,18 +20,35 @@ import EditFood from "./pages/admin/EditFood.jsx";
 import ManageUser from "./pages/admin/ManageUser.jsx";
 import Analytical from "./pages/admin/Analytical.jsx";
 import UserDetail from "./pages/admin/UserDetail.jsx";
+import AppLoadingState from "./components/common/AppLoadingState.jsx";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useUser();
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <AppLoadingState
+        title="Loading your account"
+        description="Please wait while we verify your session."
+        fullScreen
+      />
+    );
+  }
   return user ? children : <Navigate to="/login" replace />;
 }
 
 function AdminRoute({ children }) {
   const { user, loading } = useUser();
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <AppLoadingState
+        title="Loading admin access"
+        description="Checking your permissions."
+        fullScreen
+      />
+    );
+  }
   if (!user) return <Navigate to="/login" replace />;
   if (!user.isAdmin) return <Navigate to="/home" replace />;
 

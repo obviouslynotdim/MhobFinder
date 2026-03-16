@@ -6,12 +6,12 @@ import {
   Heading,
   HStack,
   Separator,
-  Spinner,
   Stack,
   Text,
 } from "@chakra-ui/react";
 import { FiTrash2, FiX } from "react-icons/fi";
 import { colors } from "../../../theme/tokens.js";
+import AppLoadingState from "../../common/AppLoadingState.jsx";
 
 function formatDate(value) {
   if (!value) return "Unknown date";
@@ -84,10 +84,11 @@ export default function UserCommentsPanel({
 
         <Box p={{ base: 4, md: 6 }} overflowY="auto" maxH="calc(88vh - 104px)">
           {loading ? (
-            <Flex py={16} justify="center" align="center" direction="column" gap={3}>
-              <Spinner color="#4f79bd" size="lg" />
-              <Text color="gray.600">Loading comments...</Text>
-            </Flex>
+            <AppLoadingState
+              title="Loading comments"
+              description="Collecting this user's comments across recipes."
+              minH="280px"
+            />
           ) : groups.length === 0 ? (
             <Box
               border="1px solid"

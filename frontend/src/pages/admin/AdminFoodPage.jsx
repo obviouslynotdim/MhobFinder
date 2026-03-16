@@ -8,7 +8,6 @@ import {
   HStack,
   Input,
   InputGroup,
-  Spinner,
   Text,
 } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
@@ -18,6 +17,7 @@ import AdminFoodCard from "../../components/AdminFoodCard.jsx";
 import { getAllFoods, deleteFood } from "../../services/api/food.service.js";
 import { colors } from "../../theme/tokens.js";
 import { useAdminAlert } from "../../context/AdminAlertContext.jsx";
+import AppLoadingState from "../../components/common/AppLoadingState.jsx";
 
 const ADMIN_PAGE_BATCH_SIZE = 30;
 
@@ -288,10 +288,11 @@ export default function AdminFoodPage() {
           )}
 
           {loading ? (
-            <Flex py={16} justify="center" align="center" direction="column" gap={3}>
-              <Spinner color={colors.primary} size="lg" />
-              <Text color="gray.600">Loading foods...</Text>
-            </Flex>
+            <AppLoadingState
+              title="Loading foods"
+              description="Preparing your recipe library."
+              minH="300px"
+            />
           ) : filteredFoods.length === 0 ? (
             <Box
               bg="#fbfdff"
