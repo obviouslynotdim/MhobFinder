@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Box,
   Flex,
@@ -9,7 +9,9 @@ import {
   Avatar,
   HStack,
   Textarea,
+  Spinner,
 } from "@chakra-ui/react";
+import { keyframes } from "@emotion/react";
 import { FaStar } from "react-icons/fa";
 import { FiEdit2, FiMoreHorizontal, FiTrash2 } from "react-icons/fi";
 import { useUser } from "../../../context/UserProvider";
@@ -21,6 +23,17 @@ import {
 } from "../../../services/api/comment.service";
 import { addOrUpdateRating, getRatingsByFood } from "../../../services/api/rating.service";
 import colors from "../../../theme/tokens";
+
+const feedbackEnter = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
 
 const CommentSection = ({ foodId, comments = [], ratings = [] }) => {
   const { user } = useUser();
@@ -36,6 +49,17 @@ const CommentSection = ({ foodId, comments = [], ratings = [] }) => {
   const [actionMenuForCommentId, setActionMenuForCommentId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [hasReviewed, setHasReviewed] = useState(false);
+  const [editFeedback, setEditFeedback] = useState({ type: "idle", message: "" });
+  const [pendingDeleteCommentId, setPendingDeleteCommentId] = useState(null);
+  const editFeedbackTimerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (editFeedbackTimerRef.current) {
+        clearTimeout(editFeedbackTimerRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     setLocalComments(comments || []);
@@ -186,12 +210,23 @@ const CommentSection = ({ foodId, comments = [], ratings = [] }) => {
       return;
     }
 
+    if (editFeedbackTimerRef.current) {
+      clearTimeout(editFeedbackTimerRef.current);
+      editFeedbackTimerRef.current = null;
+    }
+
+    setEditFeedback({ type: "saving", message: "Updating your review..." });
     setLoading(true);
     try {
       await addOrUpdateRating(foodId, editingRating);
       await updateComment(commentId, { comment_text: editingText.trim() });
       cancelEditing();
       await reloadReviewData();
+
+      setEditFeedback({ type: "success", message: "Review updated successfully." });
+      editFeedbackTimerRef.current = setTimeout(() => {
+        setEditFeedback({ type: "idle", message: "" });
+      }, 2200);
     } catch (error) {
       console.error("Error updating comment:", error);
       const message =
@@ -199,19 +234,19 @@ const CommentSection = ({ foodId, comments = [], ratings = [] }) => {
         error?.response?.data?.message ||
         error?.response?.data?.detail ||
         "Failed to update comment";
+      setEditFeedback({ type: "idle", message: "" });
       alert(message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDeleteComment = async (commentId) => {
-    const confirmed = window.confirm("Delete this comment?");
-    if (!confirmed) return;
+  const handleDeleteComment = async () => {
+    if (!pendingDeleteCommentId) return;
 
     setLoading(true);
     try {
-      await deleteComment(commentId);
+      await deleteComment(pendingDeleteCommentId);
       await reloadReviewData();
     } catch (error) {
       console.error("Error deleting comment:", error);
@@ -224,6 +259,7 @@ const CommentSection = ({ foodId, comments = [], ratings = [] }) => {
     } finally {
       setLoading(false);
       setActionMenuForCommentId(null);
+      setPendingDeleteCommentId(null);
     }
   };
 
@@ -324,6 +360,30 @@ const CommentSection = ({ foodId, comments = [], ratings = [] }) => {
 
       {/* Comments List */}
       <Box>
+        {editFeedback.type !== "idle" && (
+          <Flex
+            mb="4"
+            px="4"
+            py="3"
+            borderRadius="lg"
+            border="1px solid"
+            borderColor={editFeedback.type === "success" ? "green.200" : `${colors.primary}55`}
+            bg={editFeedback.type === "success" ? "green.50" : "white"}
+            align="center"
+            gap="3"
+            animation={`${feedbackEnter} 0.28s ease`}
+          >
+            {editFeedback.type === "saving" ? (
+              <Spinner size="sm" color={colors.primary} thickness="3px" />
+            ) : (
+              <Box boxSize="8px" borderRadius="full" bg="green.500" />
+            )}
+            <Text fontSize="sm" color={editFeedback.type === "success" ? "green.700" : colors.dark}>
+              {editFeedback.message}
+            </Text>
+          </Flex>
+        )}
+
         {localComments.length > 0 ? (
           <Flex direction="column" gap="4">
             {localComments.map((comment, idx) => (
@@ -406,7 +466,10 @@ const CommentSection = ({ foodId, comments = [], ratings = [] }) => {
                             justifyContent="flex-start"
                             color="red.500"
                             leftIcon={<FiTrash2 />}
-                            onClick={() => handleDeleteComment(comment.comment_id)}
+                            onClick={() => {
+                              setPendingDeleteCommentId(comment.comment_id);
+                              setActionMenuForCommentId(null);
+                            }}
                             isLoading={loading}
                           >
                             Delete
@@ -483,6 +546,62 @@ const CommentSection = ({ foodId, comments = [], ratings = [] }) => {
           </Text>
         )}
       </Box>
+
+      {pendingDeleteCommentId && (
+        <>
+          <Box
+            position="fixed"
+            inset="0"
+            bg="blackAlpha.400"
+            zIndex="modal"
+            onClick={() => setPendingDeleteCommentId(null)}
+          />
+
+          <Box
+            position="fixed"
+            top="50%"
+            left="50%"
+            transform="translate(-50%, -50%)"
+            zIndex="modal"
+            bg="white"
+            border="1px solid"
+            borderColor={`${colors.primary}55`}
+            borderRadius="xl"
+            boxShadow="0 14px 36px rgba(43,76,126,0.2)"
+            w={{ base: "90vw", sm: "420px" }}
+            p="5"
+          >
+            <Text fontWeight="bold" fontSize="lg" color={colors.darkest} mb="2">
+              Delete this comment?
+            </Text>
+            <Text fontSize="sm" color={colors.dark} mb="5">
+              This action cannot be undone. Do you want to continue?
+            </Text>
+
+            <HStack justify="flex-end" gap="2">
+              <Button
+                variant="outline"
+                borderColor={colors.primary}
+                color={colors.dark}
+                _hover={{ bg: colors.chipHover }}
+                onClick={() => setPendingDeleteCommentId(null)}
+                isDisabled={loading}
+              >
+                Cancel
+              </Button>
+              <Button
+                bg={colors.primary}
+                color="white"
+                _hover={{ bg: colors.dark }}
+                onClick={handleDeleteComment}
+                isLoading={loading}
+              >
+                Delete
+              </Button>
+            </HStack>
+          </Box>
+        </>
+      )}
     </Box>
   );
 };
