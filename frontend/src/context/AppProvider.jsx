@@ -7,7 +7,7 @@ import {
   useEffect,
   useRef,
 } from "react";
-import { getAllFoods, getMatchedFoods } from "../services/api/food.service.js";
+import { getMatchedFoods, getHomeFoods } from "../services/api/food.service.js";
 import { getAllIngredients } from "../services/api/ingredient.service.js";
 import { useUser } from "./UserProvider.jsx";
 
@@ -60,7 +60,7 @@ export function AppProvider({ children }) {
 
         const [ingData, foodData] = await Promise.all([
           getAllIngredients(),
-          getAllFoods(),
+          getHomeFoods(),
         ]);
 
         setIngredients(ingData);
@@ -110,7 +110,7 @@ export function AppProvider({ children }) {
     try {
       const nextFoods = Array.isArray(ids) && ids.length > 0
         ? sortFoodsByMatchStrength(await getMatchedFoods(ids), ids)
-        : await getAllFoods();
+        : await getHomeFoods({ forceRefresh: true });
 
       if (reqId === foodsReqIdRef.current) {
         setFoods(nextFoods);

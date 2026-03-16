@@ -67,6 +67,8 @@ const CATEGORY_TRANSLATION_KEYS = {
   Soup: "soup",
 };
 
+const HOME_PAGE_BATCH_SIZE = 30;
+
 function HomeEmptyState({ t }) {
   return (
     <VStack h="full" justify="center" gap="4" textAlign="center" py="20">
@@ -125,6 +127,7 @@ export default function Home() {
 
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [visibleCount, setVisibleCount] = useState(HOME_PAGE_BATCH_SIZE);
   const [categoryOptions, setCategoryOptions] = useState([
     { name: "All", foodIds: null },
     ...FALLBACK_CATEGORY_NAMES.map((name) => ({ name, foodIds: null })),
@@ -194,6 +197,17 @@ export default function Home() {
     return foods.filter((food) => selected.foodIds.has(food.food_id));
   }, [foods, categoryOptions, selectedCategory, location]);
 
+  useEffect(() => {
+    setVisibleCount(HOME_PAGE_BATCH_SIZE);
+  }, [filteredFoods]);
+
+  const visibleFoods = useMemo(
+    () => filteredFoods.slice(0, visibleCount),
+    [filteredFoods, visibleCount],
+  );
+
+  const hasMoreFoods = visibleCount < filteredFoods.length;
+
   if (selectedIds.length === 0) return <HomeEmptyState t={t} />;
   if (foodsLoading) return <HomeLoading t={t} />;
   if (foods.length === 0) return <HomeNoResults onClear={clearIngredients} t={t} />;
@@ -259,7 +273,7 @@ export default function Home() {
 
       {/* 2 cards per row + spacing — switch to 2 col only at lg so md viewport has room */}
       <SimpleGrid columns={{ base: 1, lg: 2 }} gap="3">
-        {filteredFoods.map((food) => (
+        {visibleFoods.map((food) => (
           <RecipeCard
             key={food.food_id}
             food={food}
@@ -269,6 +283,24 @@ export default function Home() {
           />
         ))}
       </SimpleGrid>
+
+      {hasMoreFoods && (
+        <HStack justify="center" mt="6">
+          <Button
+            onClick={() => {
+              setVisibleCount((prev) =>
+                Math.min(prev + HOME_PAGE_BATCH_SIZE, filteredFoods.length),
+              );
+            }}
+            variant="outline"
+            borderColor={colors.primary}
+            color={colors.dark}
+            _hover={{ bg: colors.chipHover }}
+          >
+            See more
+          </Button>
+        </HStack>
+      )}
 
       {/* FullRecipe Modal + Dark Backdrop */}
       {selectedRecipe && (

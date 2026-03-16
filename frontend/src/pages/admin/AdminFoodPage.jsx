@@ -18,6 +18,8 @@ import AdminFoodCard from "../../components/AdminFoodCard.jsx";
 import { getAllFoods, deleteFood } from "../../services/api/food.service.js";
 import { colors } from "../../theme/tokens.js";
 
+const ADMIN_PAGE_BATCH_SIZE = 30;
+
 export default function AdminFoodPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,6 +28,7 @@ export default function AdminFoodPage() {
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedFoodIds, setSelectedFoodIds] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(ADMIN_PAGE_BATCH_SIZE);
 
   // Load foods from backend
   useEffect(() => {
@@ -129,6 +132,17 @@ export default function AdminFoodPage() {
     });
   }, [foods, search]);
 
+  useEffect(() => {
+    setVisibleCount(ADMIN_PAGE_BATCH_SIZE);
+  }, [search, foods.length]);
+
+  const visibleFoods = useMemo(
+    () => filteredFoods.slice(0, visibleCount),
+    [filteredFoods, visibleCount],
+  );
+
+  const hasMoreFoods = visibleCount < filteredFoods.length;
+
   const linkedFoodsCount = foods.filter((food) => Boolean(food.link_url)).length;
 
   return (
@@ -216,7 +230,7 @@ export default function AdminFoodPage() {
               Total Foods: {foods.length}
             </Badge>
             <Badge bg="#f8fbff" color={colors.darkest} px={3} py={1.5} borderRadius="full" border="1px solid" borderColor="#dbe5f4">
-              Visible: {filteredFoods.length}
+              Visible: {visibleFoods.length}/{filteredFoods.length}
             </Badge>
             <Badge bg="#f8fbff" color={colors.darkest} px={3} py={1.5} borderRadius="full" border="1px solid" borderColor="#dbe5f4">
               With Links: {linkedFoodsCount}
@@ -274,7 +288,7 @@ export default function AdminFoodPage() {
               columnGap={6}
               rowGap={6}
             >
-              {filteredFoods.map((food) => (
+              {visibleFoods.map((food) => (
                 <GridItem key={food.food_id} minW={0}>
                   <AdminFoodCard
                     food={food}
@@ -287,6 +301,24 @@ export default function AdminFoodPage() {
                 </GridItem>
               ))}
             </Grid>
+          )}
+
+          {!loading && hasMoreFoods && (
+            <Flex justify="center" mt={6}>
+              <Button
+                bg="#edf4ff"
+                color={colors.darkest}
+                borderRadius="full"
+                _hover={{ bg: colors.chipHover }}
+                onClick={() =>
+                  setVisibleCount((prev) =>
+                    Math.min(prev + ADMIN_PAGE_BATCH_SIZE, filteredFoods.length),
+                  )
+                }
+              >
+                See More
+              </Button>
+            </Flex>
           )}
         </Box>
       </Box>

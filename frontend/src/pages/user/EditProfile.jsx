@@ -2,12 +2,15 @@ import {
   Avatar,
   Box,
   Button,
+  HStack,
+  IconButton,
   Input,
   Spinner,
   Text,
   VStack,
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
+import { FiArrowLeft } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../context/UserProvider.jsx";
 import { colors } from "../../theme/tokens.js";
@@ -119,9 +122,23 @@ export default function EditProfile() {
         boxShadow="0 14px 35px rgba(43,76,126,0.12)"
       >
         <VStack gap="5" align="center">
-          <Text fontWeight="800" fontSize="2xl" color={colors.darkest}>
-            Edit Profile
-          </Text>
+          <HStack w="full" justify="space-between" align="center">
+            <IconButton
+              aria-label="Back to profile"
+              variant="ghost"
+              color={colors.darkest}
+              _hover={{ bg: colors.chipBg }}
+              onClick={() => navigate("/profile")}
+            >
+              <FiArrowLeft />
+            </IconButton>
+
+            <Text fontWeight="800" fontSize="2xl" color={colors.darkest}>
+              Edit Profile
+            </Text>
+
+            <Box w="40px" />
+          </HStack>
 
           <Avatar.Root size="2xl">
             <Avatar.Image src={previewUrl || user.photoURL} />

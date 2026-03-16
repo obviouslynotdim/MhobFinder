@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import {
   Box,
   Button,
@@ -15,7 +15,6 @@ import {
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { FiSave, FiTrash2, FiX } from "react-icons/fi";
-import ImageUploadButton from "../addFood/ImageUploadButton";
 import { useApp } from "../../../context/AppProvider.jsx";
 import {
   getFoodById,
@@ -44,6 +43,9 @@ export default function EditFoodForm({ foodId }) {
   const [ingredientSearch, setIngredientSearch] = useState("");
   const [showIngredientDropdown, setShowIngredientDropdown] = useState(false);
   const [imageFile, setImageFile] = useState(null);
+  const [isDraggingImage, setIsDraggingImage] = useState(false);
+  const [currentImageName, setCurrentImageName] = useState("");
+  const fileInputRef = useRef(null);
 
   // Load food, categories, and ingredients from database
   const [categories, setCategories] = useState([]);
@@ -56,9 +58,10 @@ export default function EditFoodForm({ foodId }) {
       .then(([foodData, categoryData, ingredientData]) => {
         setTitle(foodData.title);
         setDescription(foodData.description);
-        setLinkUrl(foodData.link_url);
+        setLinkUrl(foodData.link_url || "");
         setSelectedCategory(foodData.categories?.[0] || null);
         setSelectedIngredients(foodData.ingredients || []);
+        setCurrentImageName(foodData.image_url ? "Current image attached" : "");
         setCategories(categoryData);
         setIngredients(ingredientData);
         setLoading(false);
@@ -92,9 +95,30 @@ export default function EditFoodForm({ foodId }) {
     });
   }, [ingredientSearch, selectedIngredients, ingredients]);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files?.[0] || null;
+  const handleSelectImage = (file) => {
+    if (!file) {
+      setImageFile(null);
+      return;
+    }
+
+    if (!file.type?.startsWith("image/")) {
+      setError("Please choose an image file.");
+      return;
+    }
+
+    setError("");
     setImageFile(file);
+  };
+
+  const handleImageChange = (e) => {
+    handleSelectImage(e.target.files?.[0] || null);
+  };
+
+  const clearSelectedImage = () => {
+    setImageFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const handleSelectCategory = (category) => {
@@ -473,31 +497,120 @@ export default function EditFoodForm({ foodId }) {
           />
         </Box>
 
-        <HStack justify="space-between" pt={2} flexWrap="wrap" gap={3} align="stretch">
-          <ImageUploadButton onChange={handleImageChange} />
-          <Button
-            onClick={handleDelete}
-            bg="red.50"
-            color="red.600"
-            borderRadius="full"
-            px={{ base: 5, md: 7 }}
-            py={{ base: 5, md: 6 }}
-            fontSize={{ base: "sm", md: "md" }}
-            fontWeight="700"
-            _hover={{ bg: "red.100" }}
-            leftIcon={<FiTrash2 />}
-            w={{ base: "100%", md: "auto" }}
-            type="button"
-          >
-            Delete Food
-          </Button>
-        </HStack>
+        <HStack justify="space-between" pt={2} flexWrap="wrap" gap={4} align="stretch">
+          <Box flex="1" minW={{ base: "100%", md: "340px" }}>
+            <Text fontSize={{ base: "sm", md: "md" }} fontWeight="700" color={colors.darkest} mb={2}>
+              Replace Image
+            </Text>
+            <Box
+              border="2px dashed"
+              borderColor={isDraggingImage ? colors.primary : "#BFD3F3"}
+              borderRadius="16px"
+              px={{ base: 4, md: 5 }}
+              py="6"
+              bg={isDraggingImage ? "#EDF4FF" : "#F8FBFF"}
+              transition="all 0.2s ease"
+              cursor="pointer"
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                setIsDraggingImage(true);
+              }}
+              onDragEnter={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                setIsDraggingImage(true);
+              }}
+              onDragLeave={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                setIsDraggingImage(false);
+              }}
+              onDrop={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                setIsDraggingImage(false);
+                handleSelectImage(event.dataTransfer?.files?.[0] || null);
+              }}
+            >
+              <VStack gap="2" textAlign="center" align="center">
+                <Text fontSize="sm" fontWeight="700" color={colors.darkest}>
+                  Drag and drop a new food image here
+                </Text>
+                <Text fontSize="xs" color="gray.600">
+                  or click to browse from your device
+                </Text>
+                {imageFile ? (
+                  <Text fontSize="xs" color={colors.primary} fontWeight="600">
+                    Selected: {imageFile.name}
+                  </Text>
+                ) : currentImageName ? (
+                  <Text fontSize="xs" color="gray.600">
+                    {currentImageName}
+                  </Text>
+                ) : null}
+              </VStack>
 
-        {imageFile && (
-          <Text color="gray.600" fontSize="sm">
-            Selected image: {imageFile.name}
-          </Text>
-        )}
+              <Input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                display="none"
+              />
+            </Box>
+
+            {imageFile && (
+              <Button
+                mt={3}
+                size="sm"
+                variant="outline"
+                borderColor="#BFD3F3"
+                onClick={clearSelectedImage}
+                type="button"
+              >
+                Remove Selected Image
+              </Button>
+            )}
+          </Box>
+
+          <Box
+            minW={{ base: "100%", md: "280px" }}
+            maxW={{ base: "100%", md: "320px" }}
+            bg="#FFF5F5"
+            border="1px solid"
+            borderColor="#FED7D7"
+            borderRadius="16px"
+            px={4}
+            py={4}
+          >
+            <Text fontSize="sm" fontWeight="700" color="red.700" mb={1}>
+              Danger Zone
+            </Text>
+            <Text fontSize="xs" color="red.600" lineHeight="1.6" mb={3}>
+              Permanently remove this food from the library and admin listing.
+            </Text>
+            <Button
+              onClick={handleDelete}
+              bg="white"
+              color="red.600"
+              borderRadius="full"
+              px={{ base: 5, md: 6 }}
+              py={{ base: 5, md: 6 }}
+              fontSize={{ base: "sm", md: "md" }}
+              fontWeight="700"
+              border="1px solid"
+              borderColor="#FEB2B2"
+              _hover={{ bg: "red.50", borderColor: "#FC8181" }}
+              leftIcon={<FiTrash2 />}
+              w="100%"
+              type="button"
+            >
+              Delete Food
+            </Button>
+          </Box>
+        </HStack>
       </VStack>
     </Box>
   );

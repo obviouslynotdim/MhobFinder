@@ -5,6 +5,7 @@ import {
     HStack,
     IconButton,
     Image,
+    Link,
     Text,
     VStack,
 } from "@chakra-ui/react";
@@ -188,7 +189,9 @@ function AdminFoodCard({
                 </Text>
 
                 {link_url && (
-                    <Text
+                    <Link
+                        href={link_url}
+                        isExternal
                         fontSize="xs"
                         color={colors.primary}
                         w="100%"
@@ -196,9 +199,12 @@ function AdminFoodCard({
                         textOverflow="ellipsis"
                         whiteSpace="nowrap"
                         title={link_url}
+                        textDecoration="underline"
+                        textUnderlineOffset="2px"
+                        onClick={(event) => event.stopPropagation()}
                     >
                         {getShortLink(link_url)}
-                    </Text>
+                    </Link>
                 )}
 
                 {!selectionMode && (

@@ -3,6 +3,52 @@
 const API_BASE = import.meta.env.VITE_API_BASE || "";
 // Example: "http://localhost:5000" if bypassing proxy
 
+const HOME_FOODS_CACHE_KEY = "mhob:home-foods:v1";
+const HOME_FOODS_CACHE_TTL_MS = 5 * 60 * 1000;
+const HOME_FOODS_CACHE_LIMIT = 30;
+
+function readHomeFoodsCache() {
+  if (typeof window === "undefined") return null;
+
+  try {
+    const raw = window.localStorage.getItem(HOME_FOODS_CACHE_KEY);
+    if (!raw) return null;
+
+    const parsed = JSON.parse(raw);
+    const isExpired = Date.now() - parsed.timestamp > HOME_FOODS_CACHE_TTL_MS;
+
+    if (isExpired || !Array.isArray(parsed.foods)) {
+      window.localStorage.removeItem(HOME_FOODS_CACHE_KEY);
+      return null;
+    }
+
+    return parsed.foods;
+  } catch {
+    return null;
+  }
+}
+
+function writeHomeFoodsCache(foods) {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.setItem(
+      HOME_FOODS_CACHE_KEY,
+      JSON.stringify({
+        timestamp: Date.now(),
+        foods,
+      })
+    );
+  } catch {
+    // Ignore storage failures and keep request flow functional.
+  }
+}
+
+export function invalidateHomeFoodsCache() {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(HOME_FOODS_CACHE_KEY);
+}
+
 async function handleResponse(res) {
   if (!res.ok) {
     const text = await res.text();
@@ -20,6 +66,24 @@ export const getAllFoods = async () => {
   });
 
   return handleResponse(res);
+};
+
+// ---------------------------
+// Get home foods (cached + capped)
+// ---------------------------
+export const getHomeFoods = async ({ forceRefresh = false } = {}) => {
+  if (!forceRefresh) {
+    const cachedFoods = readHomeFoodsCache();
+    if (cachedFoods) return cachedFoods;
+  }
+
+  const foods = await getAllFoods();
+  const cappedFoods = Array.isArray(foods)
+    ? foods.slice(0, HOME_FOODS_CACHE_LIMIT)
+    : [];
+
+  writeHomeFoodsCache(cappedFoods);
+  return cappedFoods;
 };
 
 // ---------------------------

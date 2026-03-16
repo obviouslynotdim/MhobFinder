@@ -39,6 +39,11 @@ export const translations = {
       profilePage: "Profile Page",
       searchRecipesOrUsers: "Search recipes or users",
       adminBrand: "MhobFinder Admin",
+      auth: {
+        checking: "Checking session...",
+        loggedInAs: "Logged in: {name}",
+        guest: "Guest",
+      },
       adminTitles: {
         manageUser: "User Management",
         analytical: "Analytics",
@@ -105,6 +110,11 @@ export const translations = {
       profilePage: "ទំព័រប្រូហ្វាល់",
       searchRecipesOrUsers: "ស្វែងរកមុខម្ហូប ឬអ្នកប្រើ",
       adminBrand: "MhobFinder អេដមិន",
+      auth: {
+        checking: "កំពុងពិនិត្យសម័យ...",
+        loggedInAs: "បានចូលជា {name}",
+        guest: "ភ្ញៀវ",
+      },
       adminTitles: {
         manageUser: "គ្រប់គ្រងអ្នកប្រើ",
         analytical: "វិភាគទិន្នន័យ",

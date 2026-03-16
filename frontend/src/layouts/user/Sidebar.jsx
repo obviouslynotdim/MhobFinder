@@ -21,6 +21,7 @@ import {
 } from "react-icons/fi";
 import { useState } from "react";
 import { useApp } from "../../context/AppProvider.jsx";
+import { useUser } from "../../context/UserProvider.jsx";
 import { colors } from "../../theme/tokens.js";
 
 // Import ingredient type images
@@ -181,6 +182,7 @@ const CACHE_LIMIT = 10;
 
 export default function Sidebar({ collapsed }) {
   const { ingredients, selectedIds, toggleIngredient } = useApp();
+  const { user } = useUser();
   const loc = useLocation();
   const [expandedCats, setExpandedCats] = useState(new Set());
 
@@ -196,9 +198,16 @@ export default function Sidebar({ collapsed }) {
   if (collapsed) {
     const mainNavItems = [
       { to: "/home", icon: <FiHome />, label: "Home" },
-      { to: "/favorites", icon: <FiHeart />, label: "Favorites" },
       { to: "/profile", icon: <FiUser />, label: "Profile" },
     ];
+
+    if (user) {
+      mainNavItems.splice(1, 0, {
+        to: "/favorites",
+        icon: <FiHeart />,
+        label: "Favorites",
+      });
+    }
 
     const aboutItem = { to: "/about", icon: <FiInfo />, label: "About" };
 
