@@ -14,7 +14,7 @@ import {
   Separator,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { FiSave, FiTrash2, FiX } from "react-icons/fi";
+import { FiSave, FiTrash2, FiX, FiArrowLeft, FiChevronDown } from "react-icons/fi";
 import { useApp } from "../../../context/AppProvider.jsx";
 import {
   getFoodById,
@@ -24,10 +24,12 @@ import {
 import { getAllCategories } from "../../../services/api/category.service";
 import { getAllIngredients } from "../../../services/api/ingredient.service";
 import { colors } from "../../../theme/tokens.js";
+import { useAdminAlert } from "../../../context/AdminAlertContext.jsx";
 
 export default function EditFoodForm({ foodId }) {
   const navigate = useNavigate();
   const { refreshFoods, selectedIds } = useApp();
+  const { showAlert, confirm } = useAdminAlert();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -127,6 +129,11 @@ export default function EditFoodForm({ foodId }) {
     setShowCategoryDropdown(false);
   };
 
+  const handleRemoveCategory = () => {
+    setSelectedCategory(null);
+    setCategorySearch("");
+  };
+
   const handleAddIngredient = (ingredient) => {
     setSelectedIngredients((prev) => [...prev, ingredient]);
     setIngredientSearch("");
@@ -166,11 +173,20 @@ export default function EditFoodForm({ foodId }) {
         imageFile,
       });
       await refreshFoods(selectedIds);
-      alert("Food updated successfully!");
+      showAlert({
+        tone: "success",
+        title: "Food Updated",
+        description: "The recipe was updated successfully.",
+      });
       navigate("/admin/foods", {
         state: { updatedFood },
       });
     } catch {
+      showAlert({
+        tone: "error",
+        title: "Update Failed",
+        description: "Could not update this recipe. Please try again.",
+      });
       setError("Failed to update food.");
     }
     setLoading(false);
@@ -182,17 +198,31 @@ export default function EditFoodForm({ foodId }) {
   };
 
   const handleDelete = async () => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this food?",
-    );
+    const confirmed = await confirm({
+      tone: "error",
+      title: "Delete This Food?",
+      description: "This action is permanent and cannot be undone.",
+      confirmLabel: "Delete",
+      cancelLabel: "Cancel",
+    });
     if (!confirmed) return;
+
     setLoading(true);
     try {
       await deleteFood(foodId);
       await refreshFoods(selectedIds);
-      alert("Food deleted successfully!");
+      showAlert({
+        tone: "success",
+        title: "Food Deleted",
+        description: "The recipe has been removed successfully.",
+      });
       navigate("/admin/foods");
     } catch {
+      showAlert({
+        tone: "error",
+        title: "Delete Failed",
+        description: "Could not delete this recipe. Please try again.",
+      });
       setError("Failed to delete food.");
     }
     setLoading(false);
@@ -219,7 +249,21 @@ export default function EditFoodForm({ foodId }) {
       >
         <HStack justify="space-between" align={{ base: "stretch", md: "center" }} flexDirection={{ base: "column", md: "row" }} gap={3}>
           <Box>
-            <Heading size="lg" color={colors.darkest}>
+            <HStack mb={1} spacing={3} align="center">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate("/admin/foods")}
+                color={colors.primary}
+                _hover={{ bg: "#eef3fb" }}
+                fontWeight="600"
+                px={2}
+              >
+                <FiArrowLeft style={{ marginRight: "6px" }} />
+                All Foods
+              </Button>
+            </HStack>
+            <Heading size="lg" color={colors.darkest} fontWeight="800">
               Edit Food
             </Heading>
             <Text fontSize="sm" color="gray.600" mt={1}>
@@ -307,25 +351,48 @@ export default function EditFoodForm({ foodId }) {
             Category
           </Text>
 
-          <Input
-            value={categorySearch}
-            onFocus={() => setShowCategoryDropdown(true)}
-            onChange={(e) => {
-              setCategorySearch(e.target.value);
-              setShowCategoryDropdown(true);
-            }}
-            placeholder="Search category"
-            bg="white"
-            borderRadius="12px"
-            h="46px"
-            border="1px solid"
-            borderColor="#dbe5f4"
-            _focusVisible={{ borderColor: colors.primary, boxShadow: `0 0 0 1px ${colors.primary}` }}
-          />
+          <Box position="relative">
+            <Input
+              value={categorySearch}
+              onFocus={() => setShowCategoryDropdown(true)}
+              onChange={(e) => {
+                setCategorySearch(e.target.value);
+                setShowCategoryDropdown(true);
+              }}
+              placeholder="Search category"
+              bg="white"
+              borderRadius="12px"
+              h="46px"
+              border="1px solid"
+              borderColor="#dbe5f4"
+              _focusVisible={{ borderColor: colors.primary, boxShadow: `0 0 0 1px ${colors.primary}` }}
+              pr="40px"
+            />
+            <Button
+              position="absolute"
+              right="2"
+              top="50%"
+              transform="translateY(-50%)"
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
+              p={0}
+              minW="auto"
+              h="auto"
+              _hover={{ bg: "transparent" }}
+            >
+              <FiChevronDown 
+                size={20} 
+                style={{ 
+                  transition: "transform 0.2s",
+                  transform: showCategoryDropdown ? "rotate(180deg)" : "rotate(0deg)"
+                }} 
+              />
+            </Button>
+          </Box>
 
           {showCategoryDropdown &&
-            categorySearch &&
-            filteredCategories.length > 0 && (
+            (categorySearch ? filteredCategories : categories).length > 0 && (
               <Box
                 mt={2}
                 bg="white"
@@ -339,7 +406,7 @@ export default function EditFoodForm({ foodId }) {
                 w="100%"
                 zIndex={20}
               >
-                {filteredCategories.map((category) => (
+                {(categorySearch ? filteredCategories : categories).map((category) => (
                   <Box
                     key={category.category_id || category.id || category.name}
                     px={4}
@@ -353,6 +420,27 @@ export default function EditFoodForm({ foodId }) {
                 ))}
               </Box>
             )}
+          {showCategoryDropdown && 
+            !selectedCategory &&
+            (categorySearch ? filteredCategories : categories).length === 0 && (
+              <Box
+                mt={2}
+                bg="white"
+                borderRadius="12px"
+                border="1px solid"
+                borderColor="#dbe5f4"
+                boxShadow="md"
+                px={4}
+                py={3}
+                position="absolute"
+                w="100%"
+                zIndex={20}
+              >
+                <Text fontSize="sm" color="gray.500">
+                  No categories found
+                </Text>
+              </Box>
+            )}
           {selectedCategory && (
             <Box
               mt={2}
@@ -360,13 +448,26 @@ export default function EditFoodForm({ foodId }) {
               py={2}
               bg={colors.chipBg}
               borderRadius="md"
-              display="inline-block"
+              display="inline-flex"
+              alignItems="center"
+              gap={2}
             >
               <Text fontSize="sm" color={colors.darkest}>
                 {selectedCategory.name ||
                   selectedCategory.category_name ||
                   selectedCategory}
               </Text>
+              <Button
+                size="xs"
+                variant="ghost"
+                onClick={handleRemoveCategory}
+                p={0}
+                minW="auto"
+                h="auto"
+                _hover={{ bg: "transparent", opacity: 0.7 }}
+              >
+                <FiX size={16} />
+              </Button>
             </Box>
           )}
         </Box>
@@ -376,25 +477,48 @@ export default function EditFoodForm({ foodId }) {
             Ingredient List
           </Text>
 
-          <Input
-            value={ingredientSearch}
-            onFocus={() => setShowIngredientDropdown(true)}
-            onChange={(e) => {
-              setIngredientSearch(e.target.value);
-              setShowIngredientDropdown(true);
-            }}
-            placeholder="Search ingredients"
-            bg="white"
-            borderRadius="12px"
-            h="46px"
-            border="1px solid"
-            borderColor="#dbe5f4"
-            _focusVisible={{ borderColor: colors.primary, boxShadow: `0 0 0 1px ${colors.primary}` }}
-          />
+          <Box position="relative">
+            <Input
+              value={ingredientSearch}
+              onFocus={() => setShowIngredientDropdown(true)}
+              onChange={(e) => {
+                setIngredientSearch(e.target.value);
+                setShowIngredientDropdown(true);
+              }}
+              placeholder="Search ingredients"
+              bg="white"
+              borderRadius="12px"
+              h="46px"
+              border="1px solid"
+              borderColor="#dbe5f4"
+              _focusVisible={{ borderColor: colors.primary, boxShadow: `0 0 0 1px ${colors.primary}` }}
+              pr="40px"
+            />
+            <Button
+              position="absolute"
+              right="2"
+              top="50%"
+              transform="translateY(-50%)"
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowIngredientDropdown(!showIngredientDropdown)}
+              p={0}
+              minW="auto"
+              h="auto"
+              _hover={{ bg: "transparent" }}
+            >
+              <FiChevronDown 
+                size={20} 
+                style={{ 
+                  transition: "transform 0.2s",
+                  transform: showIngredientDropdown ? "rotate(180deg)" : "rotate(0deg)"
+                }} 
+              />
+            </Button>
+          </Box>
 
           {showIngredientDropdown &&
-            ingredientSearch &&
-            filteredIngredients.length > 0 && (
+            (ingredientSearch ? filteredIngredients : ingredients).length > 0 && (
               <Box
                 mt={2}
                 bg="white"
@@ -408,7 +532,7 @@ export default function EditFoodForm({ foodId }) {
                 w="100%"
                 zIndex={20}
               >
-                {filteredIngredients.map((ingredient) => (
+                {(ingredientSearch ? filteredIngredients : ingredients).map((ingredient) => (
                   <Box
                     key={
                       ingredient.ingredient_id ||
@@ -426,6 +550,27 @@ export default function EditFoodForm({ foodId }) {
                       ingredient}
                   </Box>
                 ))}
+              </Box>
+            )}
+          {showIngredientDropdown && 
+            !ingredientSearch &&
+            (ingredientSearch ? filteredIngredients : ingredients).length === 0 && (
+              <Box
+                mt={2}
+                bg="white"
+                borderRadius="12px"
+                border="1px solid"
+                borderColor="#dbe5f4"
+                boxShadow="md"
+                px={4}
+                py={3}
+                position="absolute"
+                w="100%"
+                zIndex={20}
+              >
+                <Text fontSize="sm" color="gray.500">
+                  No ingredients found
+                </Text>
               </Box>
             )}
 

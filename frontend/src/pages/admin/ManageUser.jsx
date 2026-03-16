@@ -7,8 +7,10 @@ import { fetchAllUsers, deleteUser } from "../../services/api/user.service";
 import { getAllFoods } from "../../services/api/food.service";
 import { deleteComment, getCommentsByFood } from "../../services/api/comment.service";
 import { colors } from "../../theme/tokens.js";
+import { useAdminAlert } from "../../context/AdminAlertContext.jsx";
 
 export default function ManageUser() {
+  const { showAlert, confirm } = useAdminAlert();
   const [search, setSearch] = useState("");
 
   const [users, setUsers] = useState([]);
@@ -103,7 +105,13 @@ export default function ManageUser() {
   };
 
   const handleDeleteComment = async (foodId, commentId) => {
-    const confirmed = window.confirm("Delete this comment?");
+    const confirmed = await confirm({
+      tone: "error",
+      title: "Delete This Comment?",
+      description: "This comment will be permanently removed.",
+      confirmLabel: "Delete",
+      cancelLabel: "Cancel",
+    });
     if (!confirmed) return;
 
     setDeletingCommentId(commentId);
@@ -120,19 +128,34 @@ export default function ManageUser() {
           })
           .filter((group) => group.comments.length > 0),
       );
+      showAlert({
+        tone: "success",
+        title: "Comment Deleted",
+        description: "The comment has been removed successfully.",
+      });
     } catch (error) {
       const message =
         error?.response?.data?.error ||
         error?.response?.data?.message ||
         "Failed to delete comment";
-      alert(message);
+      showAlert({
+        tone: "error",
+        title: "Delete Failed",
+        description: message,
+      });
     } finally {
       setDeletingCommentId(null);
     }
   };
 
   const handleDelete = async (userId) => {
-    const confirmed = window.confirm("Delete this user and related data?");
+    const confirmed = await confirm({
+      tone: "error",
+      title: "Delete This User?",
+      description: "This will remove the user and related data.",
+      confirmLabel: "Delete User",
+      cancelLabel: "Cancel",
+    });
     if (!confirmed) return;
 
     setLoading(true);
@@ -141,8 +164,17 @@ export default function ManageUser() {
       setUsers((prevUsers) =>
         prevUsers.filter((user) => user.user_id !== userId),
       );
+      showAlert({
+        tone: "success",
+        title: "User Deleted",
+        description: "The user was removed successfully.",
+      });
     } catch {
-      // Optionally show error
+      showAlert({
+        tone: "error",
+        title: "Delete Failed",
+        description: "Could not delete this user. Please try again.",
+      });
     } finally {
       setLoading(false);
     }

@@ -10,6 +10,7 @@ import {
   Wrap,
   WrapItem,
 } from "@chakra-ui/react";
+import { FiChevronDown } from "react-icons/fi";
 import { useApp } from "../../context/AppProvider.jsx";
 import { useTranslation } from "../../context/useTranslation.js";
 import RecipeCard from "../../components/RecipeCard.jsx";
@@ -298,6 +299,7 @@ export default function Home() {
             _hover={{ bg: colors.chipHover }}
           >
             See more
+            <FiChevronDown style={{ marginLeft: "6px" }} />
           </Button>
         </HStack>
       )}

@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { useApp } from "../../../context/AppProvider.jsx";
 import {
   Box,
@@ -12,8 +12,9 @@ import {
   Wrap,
   WrapItem,
 } from "@chakra-ui/react";
-import { FiPlusSquare, FiX, FiImage } from "react-icons/fi";
+import { FiPlusSquare, FiX, FiImage, FiChevronDown } from "react-icons/fi";
 import { colors } from "../../../theme/tokens.js";
+import { useAdminAlert } from "../../../context/AdminAlertContext.jsx";
 
 import { getAllCategories } from "../../../services/api/category.service.js";
 import { getAllIngredients } from "../../../services/api/ingredient.service.js";
@@ -21,6 +22,7 @@ import { addFood } from "../../../services/api/food.service.js";
 
 export default function AddFoodForm() {
   const { refreshFoods } = useApp();
+  const { showAlert } = useAdminAlert();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -41,6 +43,8 @@ export default function AddFoodForm() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isDraggingImage, setIsDraggingImage] = useState(false);
+  const fileInputRef = useRef(null);
 
   // Fetch data
   useEffect(() => {
@@ -71,13 +75,40 @@ export default function AddFoodForm() {
 
   const handleImageChange = (e) => {
     const file = e.target.files?.[0] || null;
+    handleSelectImage(file);
+  };
+
+  const handleSelectImage = (file) => {
+    if (!file) {
+      setImageFile(null);
+      return;
+    }
+
+    if (!file.type?.startsWith("image/")) {
+      setError("Please choose an image file.");
+      return;
+    }
+
+    setError("");
     setImageFile(file);
+  };
+
+  const clearSelectedImage = () => {
+    setImageFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const handleSelectCategory = (category) => {
     setSelectedCategory(category);
     setCategorySearch(category.name);
     setShowCategoryDropdown(false);
+  };
+
+  const handleRemoveCategory = () => {
+    setSelectedCategory(null);
+    setCategorySearch("");
   };
 
   const handleAddIngredient = (ingredient) => {
@@ -121,7 +152,11 @@ export default function AddFoodForm() {
       // Refresh all foods after adding
       await refreshFoods([]);
 
-      alert("Food added successfully!");
+      showAlert({
+        tone: "success",
+        title: "Food Added",
+        description: "The new recipe has been added successfully.",
+      });
 
       // Reset form
       setTitle("");
@@ -132,6 +167,11 @@ export default function AddFoodForm() {
       setSelectedIngredients([]);
       setImageFile(null);
     } catch {
+      showAlert({
+        tone: "error",
+        title: "Add Failed",
+        description: "Could not add the food. Please try again.",
+      });
       setError("Failed to add food to database.");
     }
 
@@ -188,24 +228,48 @@ export default function AddFoodForm() {
 
         {/* Category */}
         <Box position="relative">
-          <Input
-            placeholder="Search category..."
-            value={categorySearch}
-            onFocus={() => setShowCategoryDropdown(true)}
-            onChange={(e) => {
-              setCategorySearch(e.target.value);
-              setShowCategoryDropdown(true);
-            }}
-            borderRadius="full"
-            h="48px"
-            bg="white"
-            borderColor="#dbe5f4"
-            _focusVisible={{ borderColor: colors.primary, boxShadow: `0 0 0 1px ${colors.primary}` }}
-          />
+          <Box position="relative">
+            <Input
+              placeholder="Search category..."
+              value={categorySearch}
+              onFocus={() => setShowCategoryDropdown(true)}
+              onChange={(e) => {
+                setCategorySearch(e.target.value);
+                setShowCategoryDropdown(true);
+              }}
+              borderRadius="full"
+              h="48px"
+              bg="white"
+              borderColor="#dbe5f4"
+              _focusVisible={{ borderColor: colors.primary, boxShadow: `0 0 0 1px ${colors.primary}` }}
+              pr="40px"
+            />
+            <Button
+              position="absolute"
+              right="8px"
+              top="50%"
+              transform="translateY(-50%)"
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
+              p={0}
+              minW="auto"
+              h="auto"
+              _hover={{ bg: "transparent" }}
+            >
+              <FiChevronDown 
+                size={20} 
+                style={{ 
+                  transition: "transform 0.2s",
+                  transform: showCategoryDropdown ? "rotate(180deg)" : "rotate(0deg)"
+                }} 
+              />
+            </Button>
+          </Box>
 
-          {showCategoryDropdown && (
+          {showCategoryDropdown && (categorySearch ? filteredCategories : categories).length > 0 && (
             <Box bg="white" border="1px solid #dbe5f4" mt={2} borderRadius="14px" maxH="220px" overflowY="auto" position="absolute" w="100%" zIndex={10} boxShadow="md">
-              {filteredCategories.map((category) => (
+              {(categorySearch ? filteredCategories : categories).map((category) => (
                 <Box
                   key={category.category_id}
                   px={3}
@@ -219,28 +283,90 @@ export default function AddFoodForm() {
               ))}
             </Box>
           )}
+
+          {showCategoryDropdown && 
+            !categorySearch &&
+            (categorySearch ? filteredCategories : categories).length === 0 && (
+              <Box bg="white" border="1px solid #dbe5f4" mt={2} borderRadius="14px" px={3} py={2} position="absolute" w="100%" zIndex={10} boxShadow="md">
+                <Text fontSize="sm" color="gray.500">
+                  No categories found
+                </Text>
+              </Box>
+            )}
+
+          {selectedCategory && (
+            <Box
+              mt={2}
+              px={4}
+              py={2}
+              bg={colors.chipBg}
+              borderRadius="md"
+              display="inline-flex"
+              alignItems="center"
+              gap={2}
+            >
+              <Text fontSize="sm" color={colors.darkest}>
+                {selectedCategory.name}
+              </Text>
+              <Button
+                size="xs"
+                variant="ghost"
+                onClick={handleRemoveCategory}
+                p={0}
+                minW="auto"
+                h="auto"
+                _hover={{ bg: "transparent", opacity: 0.7 }}
+              >
+                <FiX size={16} />
+              </Button>
+            </Box>
+          )}
         </Box>
 
         {/* Ingredients */}
         <Box position="relative">
-          <Input
-            placeholder="Search ingredients..."
-            value={ingredientSearch}
-            onFocus={() => setShowIngredientDropdown(true)}
-            onChange={(e) => {
-              setIngredientSearch(e.target.value);
-              setShowIngredientDropdown(true);
-            }}
-            borderRadius="full"
-            h="48px"
-            bg="white"
-            borderColor="#dbe5f4"
-            _focusVisible={{ borderColor: colors.primary, boxShadow: `0 0 0 1px ${colors.primary}` }}
-          />
+          <Box position="relative">
+            <Input
+              placeholder="Search ingredients..."
+              value={ingredientSearch}
+              onFocus={() => setShowIngredientDropdown(true)}
+              onChange={(e) => {
+                setIngredientSearch(e.target.value);
+                setShowIngredientDropdown(true);
+              }}
+              borderRadius="full"
+              h="48px"
+              bg="white"
+              borderColor="#dbe5f4"
+              _focusVisible={{ borderColor: colors.primary, boxShadow: `0 0 0 1px ${colors.primary}` }}
+              pr="40px"
+            />
+            <Button
+              position="absolute"
+              right="8px"
+              top="50%"
+              transform="translateY(-50%)"
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowIngredientDropdown(!showIngredientDropdown)}
+              p={0}
+              minW="auto"
+              h="auto"
+              _hover={{ bg: "transparent" }}
+            >
+              <FiChevronDown 
+                size={20} 
+                style={{ 
+                  transition: "transform 0.2s",
+                  transform: showIngredientDropdown ? "rotate(180deg)" : "rotate(0deg)"
+                }} 
+              />
+            </Button>
+          </Box>
 
-          {showIngredientDropdown && (
+          {showIngredientDropdown && (ingredientSearch ? filteredIngredients : ingredients.filter(ing => !selectedIngredients.some(sel => sel.ingredient_id === ing.ingredient_id))).length > 0 && (
             <Box bg="white" border="1px solid #dbe5f4" mt={2} borderRadius="14px" maxH="220px" overflowY="auto" position="absolute" w="100%" zIndex={10} boxShadow="md">
-              {filteredIngredients.map((ingredient) => (
+              {(ingredientSearch ? filteredIngredients : ingredients.filter(ing => !selectedIngredients.some(sel => sel.ingredient_id === ing.ingredient_id))).map((ingredient) => (
                 <Box
                   key={ingredient.ingredient_id}
                   px={3}
@@ -254,6 +380,16 @@ export default function AddFoodForm() {
               ))}
             </Box>
           )}
+
+          {showIngredientDropdown && 
+            !ingredientSearch &&
+            (ingredientSearch ? filteredIngredients : ingredients.filter(ing => !selectedIngredients.some(sel => sel.ingredient_id === ing.ingredient_id))).length === 0 && (
+              <Box bg="white" border="1px solid #dbe5f4" mt={2} borderRadius="14px" px={3} py={2} position="absolute" w="100%" zIndex={10} boxShadow="md">
+                <Text fontSize="sm" color="gray.500">
+                  No ingredients available
+                </Text>
+              </Box>
+            )}
 
           <Wrap mt={2}>
             {selectedIngredients.map((ingredient) => (
@@ -293,32 +429,78 @@ export default function AddFoodForm() {
         />
 
         {/* Image */}
-        <HStack gap={3} flexWrap="wrap">
-          <Button
-            as="label"
-            leftIcon={<FiImage />}
-            bg="#edf4ff"
-            color={colors.darkest}
-            borderRadius="full"
-            border="1px solid"
-            borderColor="#dbe5f4"
-            _hover={{ bg: colors.chipHover }}
+        <Box>
+          <Text fontSize={{ base: "sm", md: "md" }} fontWeight="700" color={colors.darkest} mb={2}>
+            Upload Image
+          </Text>
+          <Box
+            border="2px dashed"
+            borderColor={isDraggingImage ? colors.primary : "#BFD3F3"}
+            borderRadius="16px"
+            px={{ base: 4, md: 5 }}
+            py="6"
+            bg={isDraggingImage ? "#EDF4FF" : "#F8FBFF"}
+            transition="all 0.2s ease"
+            cursor="pointer"
+            onClick={() => fileInputRef.current?.click()}
+            onDragOver={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              setIsDraggingImage(true);
+            }}
+            onDragEnter={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              setIsDraggingImage(true);
+            }}
+            onDragLeave={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              setIsDraggingImage(false);
+            }}
+            onDrop={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              setIsDraggingImage(false);
+              handleSelectImage(event.dataTransfer?.files?.[0] || null);
+            }}
           >
-            Choose Image
+            <VStack gap="2" textAlign="center" align="center">
+              <Text fontSize="sm" fontWeight="700" color={colors.darkest}>
+                Drag and drop a food image here
+              </Text>
+              <Text fontSize="xs" color="gray.600">
+                or click to browse from your device
+              </Text>
+              {imageFile && (
+                <Text fontSize="xs" color={colors.primary} fontWeight="600">
+                  Selected: {imageFile.name}
+                </Text>
+              )}
+            </VStack>
+
             <Input
+              ref={fileInputRef}
               type="file"
-              hidden
               accept="image/*"
               onChange={handleImageChange}
+              display="none"
             />
-          </Button>
+          </Box>
 
           {imageFile && (
-            <Text fontSize="sm" color="gray.600" noOfLines={1}>
-              {imageFile.name}
-            </Text>
+            <Button
+              mt={3}
+              size="sm"
+              variant="outline"
+              borderColor="#BFD3F3"
+              onClick={clearSelectedImage}
+              w="100%"
+            >
+              Clear Image
+            </Button>
           )}
-        </HStack>
+        </Box>
 
         <Button
           onClick={handleSubmit}

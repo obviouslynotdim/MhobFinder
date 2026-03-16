@@ -13,16 +13,18 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FiCheckSquare, FiPlus, FiSearch, FiTrash2, FiX } from "react-icons/fi";
+import { FiCheckSquare, FiChevronDown, FiPlus, FiSearch, FiTrash2, FiX } from "react-icons/fi";
 import AdminFoodCard from "../../components/AdminFoodCard.jsx";
 import { getAllFoods, deleteFood } from "../../services/api/food.service.js";
 import { colors } from "../../theme/tokens.js";
+import { useAdminAlert } from "../../context/AdminAlertContext.jsx";
 
 const ADMIN_PAGE_BATCH_SIZE = 30;
 
 export default function AdminFoodPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { showAlert, confirm } = useAdminAlert();
   const [foods, setFoods] = useState([]);
   const [search, setSearch] = useState("");
   const [selectionMode, setSelectionMode] = useState(false);
@@ -69,16 +71,29 @@ export default function AdminFoodPage() {
   };
 
   const handleDelete = async (foodId) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this food?",
-    );
+    const confirmed = await confirm({
+      tone: "error",
+      title: "Delete This Food?",
+      description: "This recipe will be removed from the library.",
+      confirmLabel: "Delete",
+      cancelLabel: "Cancel",
+    });
     if (!confirmed) return;
     try {
       await deleteFood(foodId);
       setFoods((prev) => prev.filter((food) => food.food_id !== foodId));
       setSelectedFoodIds((prev) => prev.filter((id) => id !== foodId));
+      showAlert({
+        tone: "success",
+        title: "Food Deleted",
+        description: "The recipe has been removed from Food Library.",
+      });
     } catch {
-      alert("Failed to delete food.");
+      showAlert({
+        tone: "error",
+        title: "Delete Failed",
+        description: "Could not delete this food. Please try again.",
+      });
     }
   };
 
@@ -92,9 +107,13 @@ export default function AdminFoodPage() {
 
   const handleDeleteSelected = async () => {
     if (selectedFoodIds.length === 0) return;
-    const confirmed = window.confirm(
-      `Are you sure you want to delete ${selectedFoodIds.length} selected food(s)?`,
-    );
+    const confirmed = await confirm({
+      tone: "error",
+      title: `Delete ${selectedFoodIds.length} Selected Food(s)?`,
+      description: "All selected recipes will be removed from the library.",
+      confirmLabel: "Delete Selected",
+      cancelLabel: "Cancel",
+    });
     if (!confirmed) return;
     try {
       await Promise.all(selectedFoodIds.map(deleteFood));
@@ -103,8 +122,17 @@ export default function AdminFoodPage() {
       );
       setSelectedFoodIds([]);
       setSelectionMode(false);
+      showAlert({
+        tone: "success",
+        title: "Selected Foods Deleted",
+        description: "The selected recipes were removed successfully.",
+      });
     } catch {
-      alert("Failed to delete selected foods.");
+      showAlert({
+        tone: "error",
+        title: "Delete Failed",
+        description: "Could not delete selected foods. Please try again.",
+      });
     }
   };
 
@@ -317,6 +345,7 @@ export default function AdminFoodPage() {
                 }
               >
                 See More
+                <FiChevronDown style={{ marginLeft: "6px" }} />
               </Button>
             </Flex>
           )}
