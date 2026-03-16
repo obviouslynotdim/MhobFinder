@@ -6,6 +6,7 @@ import TopBarLeft from "../TopBarLeft.jsx";
 import TopBarRight from "../TopBarRight.jsx";
 import Sidebar from "./Sidebar.jsx";
 import backgroundImage from "../../assets/bg.png";
+import FoodAssistantWidget from "../../components/common/FoodAssistantWidget.jsx";
 
 export default function AppShell() {
   const [userCollapsed, setUserCollapsed] = useState(false);
@@ -87,6 +88,8 @@ export default function AppShell() {
           </Box>
         </Box>
       </Flex>
+
+      <FoodAssistantWidget />
     </Flex>
   );
 }

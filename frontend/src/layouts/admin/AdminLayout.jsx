@@ -5,6 +5,7 @@ import TopBarRight from "../TopBarRight.jsx";
 import AdminSidebar from "./AdminSidebar.jsx";
 import bgPattern from "../../assets/mhob-background.png";
 import { AdminAlertProvider } from "../../context/AdminAlertContext.jsx";
+import FoodAssistantWidget from "../../components/common/FoodAssistantWidget.jsx";
 
 export default function AdminLayout() {
   const expandedByDefault = useBreakpointValue({ base: false, md: true });
@@ -53,6 +54,8 @@ export default function AdminLayout() {
             <Outlet />
           </Box>
         </Flex>
+
+        <FoodAssistantWidget />
       </Flex>
     </AdminAlertProvider>
   );

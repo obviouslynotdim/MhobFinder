@@ -68,12 +68,18 @@ export function UserProvider({ children }) {
       const result = await signInWithPopup(auth, googleProvider);
       const firebaseUser = result.user;
       // Register user in backend if new
-      await registerUser({
-        name: firebaseUser.displayName,
-        email: firebaseUser.email,
-        password: null,
-        is_oauth: true,
-      });
+      try {
+        await registerUser({
+          name: firebaseUser.displayName,
+          email: firebaseUser.email,
+          password: null,
+          is_oauth: true,
+        });
+      } catch (registerError) {
+        // User might already exist or other backend error
+        // This is okay - Firebase login already succeeded
+        console.warn("User registration error (may already exist):", registerError);
+      }
     } catch (error) {
       console.error("Google sign in error:", error);
       setLoading(false);

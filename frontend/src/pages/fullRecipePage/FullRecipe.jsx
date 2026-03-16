@@ -209,7 +209,7 @@ const FullRecipe = ({ foodId, onClose }) => {
                 aria-label={
                   isFavorite ? "Remove from favorites" : "Add to favorites"
                 }
-                onClick={handleFavoriteClick}
+                onClick={handleFavoriteClick}a
                 bg={isFavorite ? "red.500" : "white"}
                 color={isFavorite ? "white" : "red.500"}
                 border="1px solid"
