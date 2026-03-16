@@ -22,21 +22,9 @@ function getAdminTitle(pathname, t) {
   return t("topBar.adminTitles.default");
 }
 
-function getUserDisplayName(user) {
-  if (!user) return "";
-
-  const source = String(user.name || user.email || "").trim();
-  if (!source) return "User";
-
-  const firstSegment = source.split(/[\s@]+/)[0] || source;
-  return firstSegment.length > 14
-    ? `${firstSegment.slice(0, 14)}...`
-    : firstSegment;
-}
-
 export default function TopBarRight() {
   const { search, setSearch } = useApp();
-  const { user, loading } = useUser();
+  const { user } = useUser();
   const { t } = useTranslation();
   const nav = useNavigate();
   const loc = useLocation();
@@ -47,39 +35,6 @@ export default function TopBarRight() {
   const isProfileSection = isProfilePage || isEditProfilePage;
   const activeNavBg = "whiteAlpha.200";
   const useCustomTitle = isFavoritesPage || isProfileSection;
-  const isLoggedIn = Boolean(user);
-  const authStatus = loading
-    ? t("topBar.auth.checking")
-    : isLoggedIn
-      ? t("topBar.auth.loggedInAs", { name: getUserDisplayName(user) })
-      : t("topBar.auth.guest");
-  const authDotColor = loading ? "yellow.300" : isLoggedIn ? "green.300" : "orange.300";
-
-  const authChip = (
-    <HStack
-      gap="1.5"
-      maxW={{ base: "140px", md: "220px" }}
-      title={authStatus}
-    >
-      <Box
-        flexShrink={0}
-        w="8px"
-        h="8px"
-        borderRadius="full"
-        bg={authDotColor}
-      />
-      <Text
-        color="white"
-        fontSize={{ base: "2xs", md: "xs" }}
-        fontWeight="700"
-        whiteSpace="nowrap"
-        overflow="hidden"
-        textOverflow="ellipsis"
-      >
-        {authStatus}
-      </Text>
-    </HStack>
-  );
 
   if (isAdminPage) {
     return (
@@ -114,8 +69,6 @@ export default function TopBarRight() {
         </InputGroup>
 
         <HStack gap={1}>
-          {authChip}
-
           <IconButton
             aria-label="Profile"
             variant="ghost"
@@ -158,8 +111,6 @@ export default function TopBarRight() {
         )}
 
         <HStack gap={2}>
-          {authChip}
-
           {user && (
             <IconButton
               aria-label="Favorites"

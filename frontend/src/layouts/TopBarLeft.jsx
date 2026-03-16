@@ -204,7 +204,7 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
             onChange={handleIngSearchChange}
             onFocus={() => ingSearch.length > 0 && setDrawerOpen(true)}
             onBlur={() => setTimeout(() => setDrawerOpen(false), 150)}
-            placeholder={language === "kh" ? "បន្ថែមគ្រឿងផ្សំ..." : "Add ingredient..."}
+            placeholder={language === "kh" ? "បន្ថែមគ្រឿងផ្សំ..." : "Input ingredient..."}
             bg="white"
             borderRadius="md"
             h="40px"

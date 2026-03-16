@@ -101,19 +101,17 @@ export default function Profile() {
             <Text fontSize="sm" color={colors.dark}>
               {user.email}
             </Text>
-            {user.isAdmin && (
-              <Box
-                px="3"
-                py="0.5"
-                bg={colors.primary}
-                color="white"
-                borderRadius="full"
-                fontSize="xs"
-                fontWeight="semibold"
-              >
-                Admin
-              </Box>
-            )}
+            <Box
+              px="3"
+              py="0.5"
+              bg={colors.primary}
+              color="white"
+              borderRadius="full"
+              fontSize="xs"
+              fontWeight="semibold"
+            >
+              {user.isAdmin ? "Admin" : "User"}
+            </Box>
           </VStack>
 
           <Box
