@@ -169,9 +169,23 @@ export function AppProvider({ children }) {
 
     return !q
       ? foods
-      : foods.filter((f) =>
-          (f.title || "").toLowerCase().includes(q)
-        );
+      : foods.filter((f) => {
+          const title = String(f.title || "").toLowerCase();
+          const description = String(f.description || "").toLowerCase();
+          const categories = Array.isArray(f.categories)
+            ? f.categories.map((category) => String(category?.name || "").toLowerCase())
+            : [];
+          const ingredients = Array.isArray(f.ingredients)
+            ? f.ingredients.map((ingredient) => String(ingredient?.name || "").toLowerCase())
+            : [];
+
+          return (
+            title.includes(q) ||
+            description.includes(q) ||
+            categories.some((name) => name.includes(q)) ||
+            ingredients.some((name) => name.includes(q))
+          );
+        });
   }, [foods, search]);
 
   // -------------------------
