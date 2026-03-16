@@ -35,7 +35,12 @@ const feedbackEnter = keyframes`
   }
 `;
 
-const CommentSection = ({ foodId, comments = [], ratings = [] }) => {
+const CommentSection = ({
+  foodId,
+  comments = [],
+  ratings = [],
+  onReviewDataChange,
+}) => {
   const { user } = useUser();
   const [localComments, setLocalComments] = useState(comments);
   const [localRatings, setLocalRatings] = useState(ratings);
@@ -75,8 +80,12 @@ const CommentSection = ({ foodId, comments = [], ratings = [] }) => {
       getRatingsByFood(foodId).catch(() => []),
     ]);
 
-    setLocalComments(updatedComments || []);
-    setLocalRatings(updatedRatings || []);
+    const nextComments = updatedComments || [];
+    const nextRatings = updatedRatings || [];
+
+    setLocalComments(nextComments);
+    setLocalRatings(nextRatings);
+    onReviewDataChange?.({ comments: nextComments, ratings: nextRatings });
   };
 
   const handleSubmitComment = async () => {

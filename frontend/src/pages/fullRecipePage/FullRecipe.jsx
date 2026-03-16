@@ -357,6 +357,10 @@ const FullRecipe = ({ foodId, onClose }) => {
             foodId={food.food_id}
             comments={comments}
             ratings={ratings}
+            onReviewDataChange={({ comments: nextComments, ratings: nextRatings }) => {
+              setComments(nextComments || []);
+              setRatings(nextRatings || []);
+            }}
           />
         </Box>
       </Box>
