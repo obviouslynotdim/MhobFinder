@@ -1,9 +1,6 @@
 import express from "express";
 import cors from "cors";
-import session from "express-session";
-import passport from "passport";
 import { DataTypes } from "sequelize";
-import "./config/passport.js";
 import "./config/firebase.js"; // Initialize Firebase Admin
 import sequelize from "./config/database.js";
 import "./models/index.js";
@@ -25,9 +22,6 @@ const app = express();
 // ENVIRONMENT VALIDATION
 // ---------------------------
 const requiredEnvs = [
-  "SESSION_SECRET",
-  "GOOGLE_CLIENT_ID",
-  "GOOGLE_CLIENT_SECRET",
   "DB_NAME",
   "DB_USER",
   "DB_PASSWORD",
@@ -72,24 +66,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Session
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-    },
-  }),
-);
-
-// Passport
-app.use(passport.initialize());
-app.use(passport.session());
-
 // ---------------------------
 // ROUTES
 // ---------------------------
@@ -111,26 +87,6 @@ app.use("/api/ratings", ratingRoutes);
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/ingredient-types", ingredientTypeRoutes);
 app.use("/api/users", usersRoutes);
-
-
-// Google OAuth
-app.get(
-  "/auth/google",
-  passport.authenticate("google", { scope: ["profile", "email"] }),
-);
-
-app.get("/auth/google/callback", (req, res, next) => {
-  passport.authenticate("google", (err, user) => {
-    if (err || !user)
-      return res.status(401).json({ error: "Authentication failed" });
-
-    req.logIn(user, (err) => {
-      if (err) return res.status(500).json({ error: "Login failed" });
-      // SPA-friendly: return user info as JSON
-      return res.json({ message: "Login successful", user });
-    });
-  })(req, res, next);
-});
 
 // ---------------------------
 // ERROR HANDLING
