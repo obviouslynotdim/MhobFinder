@@ -6,7 +6,7 @@ import {
   InputGroup,
   Text,
 } from "@chakra-ui/react";
-import { FiArrowLeft, FiHeart, FiUser, FiSearch, FiEdit2 } from "react-icons/fi";
+import { FiArrowLeft, FiHeart, FiUser, FiSearch } from "react-icons/fi";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useApp } from "../context/AppProvider.jsx";
 import { useUser } from "../context/UserProvider.jsx";
@@ -138,18 +138,6 @@ export default function TopBarRight() {
           >
             <FiUser />
           </IconButton>
-
-          {isProfilePage && (
-            <IconButton
-              aria-label="Edit profile"
-              variant="ghost"
-              color="white"
-              _hover={{ bg: "whiteAlpha.200" }}
-              onClick={() => nav("/profile/edit")}
-            >
-              <FiEdit2 />
-            </IconButton>
-          )}
 
           <LanguageSwitcher iconColor="white" hoverBg="whiteAlpha.200" />
         </HStack>

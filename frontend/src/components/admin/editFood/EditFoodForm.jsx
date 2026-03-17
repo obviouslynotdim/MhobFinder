@@ -83,17 +83,38 @@ export default function EditFoodForm({ foodId }) {
   }, [categorySearch, categories]);
 
   const filteredIngredients = useMemo(() => {
-    return ingredients.filter((ing) => {
-      const name = ing.name || ing.ingredient_name || ing;
-      // Exclude already selected ingredients by id or name
-      return (
-        name.toLowerCase().includes(ingredientSearch.toLowerCase()) &&
-        !selectedIngredients.some(
-          (sel) =>
-            sel.ingredient_id === ing.ingredient_id ||
-            sel === ing.ingredient_id ||
-            sel === name,
+    const selectedIngredientIds = new Set(
+      selectedIngredients
+        .map((sel) =>
+          sel && typeof sel === "object"
+            ? String(sel.ingredient_id ?? sel.id ?? "")
+            : String(sel),
         )
+        .filter(Boolean),
+    );
+
+    const selectedIngredientNames = new Set(
+      selectedIngredients
+        .map((sel) => {
+          if (sel && typeof sel === "object") {
+            const name = sel.name || sel.ingredient_name || "";
+            return String(name).trim().toLowerCase();
+          }
+          return "";
+        })
+        .filter(Boolean),
+    );
+
+    return ingredients.filter((ing) => {
+      const name = String(ing.name || ing.ingredient_name || ing)
+        .trim()
+        .toLowerCase();
+      const ingredientId = String(ing.ingredient_id ?? ing.id ?? "");
+
+      return (
+        name.includes(ingredientSearch.trim().toLowerCase()) &&
+        !selectedIngredientIds.has(ingredientId) &&
+        !selectedIngredientNames.has(name)
       );
     });
   }, [ingredientSearch, selectedIngredients, ingredients]);
@@ -136,7 +157,33 @@ export default function EditFoodForm({ foodId }) {
   };
 
   const handleAddIngredient = (ingredient) => {
-    setSelectedIngredients((prev) => [...prev, ingredient]);
+    setSelectedIngredients((prev) => {
+      const nextId = String(ingredient.ingredient_id ?? ingredient.id ?? "");
+      const nextName = String(ingredient.name || ingredient.ingredient_name || "")
+        .trim()
+        .toLowerCase();
+
+      const alreadySelected = prev.some((item) => {
+        const itemId =
+          item && typeof item === "object"
+            ? String(item.ingredient_id ?? item.id ?? "")
+            : String(item);
+        const itemName =
+          item && typeof item === "object"
+            ? String(item.name || item.ingredient_name || "")
+                .trim()
+                .toLowerCase()
+            : "";
+
+        return (nextId && itemId === nextId) || (nextName && itemName === nextName);
+      });
+
+      if (alreadySelected) {
+        return prev;
+      }
+
+      return [...prev, ingredient];
+    });
     setIngredientSearch("");
     setShowIngredientDropdown(false);
   };
@@ -526,8 +573,7 @@ export default function EditFoodForm({ foodId }) {
             </Button>
           </Box>
 
-          {showIngredientDropdown &&
-            (ingredientSearch ? filteredIngredients : ingredients).length > 0 && (
+          {showIngredientDropdown && filteredIngredients.length > 0 && (
               <Box
                 mt={2}
                 bg="white"
@@ -541,7 +587,7 @@ export default function EditFoodForm({ foodId }) {
                 w="100%"
                 zIndex={20}
               >
-                {(ingredientSearch ? filteredIngredients : ingredients).map((ingredient) => (
+                {filteredIngredients.map((ingredient) => (
                   <Box
                     key={
                       ingredient.ingredient_id ||
@@ -561,9 +607,7 @@ export default function EditFoodForm({ foodId }) {
                 ))}
               </Box>
             )}
-          {showIngredientDropdown && 
-            !ingredientSearch &&
-            (ingredientSearch ? filteredIngredients : ingredients).length === 0 && (
+          {showIngredientDropdown && filteredIngredients.length === 0 && (
               <Box
                 mt={2}
                 bg="white"
