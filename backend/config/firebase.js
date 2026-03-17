@@ -1,18 +1,17 @@
 // config/firebase.js
 import admin from "firebase-admin";
-import path from "path";
-import { fileURLToPath } from "url";
+import dotenv from "dotenv";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Initialize Firebase Admin SDK using service account JSON file
-// Download the service account key from Firebase Console > Project settings > Service accounts
-// Place the JSON file in the backend/config/ directory and name it serviceAccountKey.json
-const serviceAccountPath = path.join(__dirname, "serviceAccountKey.json");
+dotenv.config();
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccountPath),
+  credential: admin.credential.cert({
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    privateKeyId: process.env.FIREBASE_PRIVATE_KEY_ID,
+    privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+    clientId: process.env.FIREBASE_CLIENT_ID,
+  }),
 });
 
 export default admin;
