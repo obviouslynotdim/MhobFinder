@@ -2,6 +2,8 @@ import BugReport from "../models/bugReport.js";
 import Food from "../models/food.js";
 import User from "../models/user.js";
 import { Op } from "sequelize";
+import { cleanText, parsePositiveInt } from "../utils/validation.js";
+import { buildBugReportAdminInclude } from "../utils/includeOptions.js";
 
 const REPORT_COOLDOWN_MS = 24 * 60 * 60 * 1000;
 const MAX_REPORTS_PER_DAY = 3;
@@ -18,9 +20,12 @@ const REASON_LABELS = {
 
 export const createBugReport = async (req, res, next) => {
   try {
-    const { food_id, reason_code, details, description } = req.body;
+    const food_id = parsePositiveInt(req.body?.food_id);
+    const reason_code = req.body?.reason_code;
+    const details = req.body?.details;
+    const description = req.body?.description;
     const normalizedReason = String(reason_code || "").trim().toLowerCase();
-    const trimmedDetails = String(details || description || "").trim();
+    const trimmedDetails = cleanText(details || description || "", 1500);
 
     if (!food_id) {
       return res.status(400).json({ error: "food_id is required" });
@@ -77,36 +82,21 @@ export const createBugReport = async (req, res, next) => {
 
 export const getBugReportsForAdmin = async (req, res, next) => {
   try {
-    if (!req.userIsAdmin) {
-      return res.status(403).json({ error: "Admin access required" });
-    }
-
     const status = String(req.query.status || "all").trim().toLowerCase();
     const where = {};
 
     if (status && status !== "all") {
+      if (!ALLOWED_STATUSES.includes(status)) {
+        return res.status(400).json({
+          error: `status must be one of: all, ${ALLOWED_STATUSES.join(", ")}`,
+        });
+      }
       where.status = status;
     }
 
     const reports = await BugReport.findAll({
       where,
-      include: [
-        {
-          model: User,
-          as: "reporter",
-          attributes: ["user_id", "name", "email", "image_url"],
-        },
-        {
-          model: Food,
-          as: "food",
-          attributes: ["food_id", "title", "image_url"],
-        },
-        {
-          model: User,
-          as: "handledBy",
-          attributes: ["user_id", "name", "email"],
-        },
-      ],
+      include: buildBugReportAdminInclude(),
       order: [["createdAt", "DESC"]],
     });
 
@@ -118,13 +108,13 @@ export const getBugReportsForAdmin = async (req, res, next) => {
 
 export const updateBugReportStatus = async (req, res, next) => {
   try {
-    if (!req.userIsAdmin) {
-      return res.status(403).json({ error: "Admin access required" });
-    }
-
-    const { reportId } = req.params;
+    const reportId = parsePositiveInt(req.params?.reportId);
     const nextStatus = String(req.body?.status || "").trim().toLowerCase();
-    const adminNote = String(req.body?.admin_note || "").trim();
+    const adminNote = cleanText(req.body?.admin_note || "", 1500);
+
+    if (!reportId) {
+      return res.status(400).json({ error: "Invalid reportId" });
+    }
 
     if (!ALLOWED_STATUSES.includes(nextStatus)) {
       return res.status(400).json({
@@ -138,29 +128,13 @@ export const updateBugReportStatus = async (req, res, next) => {
     }
 
     report.status = nextStatus;
-    report.admin_note = adminNote || null;
+    report.admin_note = adminNote;
     report.handled_by = req.user.user_id;
     report.handled_at = new Date();
     await report.save();
 
     const updated = await BugReport.findByPk(report.report_id, {
-      include: [
-        {
-          model: User,
-          as: "reporter",
-          attributes: ["user_id", "name", "email", "image_url"],
-        },
-        {
-          model: Food,
-          as: "food",
-          attributes: ["food_id", "title", "image_url"],
-        },
-        {
-          model: User,
-          as: "handledBy",
-          attributes: ["user_id", "name", "email"],
-        },
-      ],
+      include: buildBugReportAdminInclude(),
     });
 
     return res.status(200).json(updated);
@@ -171,11 +145,11 @@ export const updateBugReportStatus = async (req, res, next) => {
 
 export const deleteBugReport = async (req, res, next) => {
   try {
-    if (!req.userIsAdmin) {
-      return res.status(403).json({ error: "Admin access required" });
+    const reportId = parsePositiveInt(req.params?.reportId);
+    if (!reportId) {
+      return res.status(400).json({ error: "Invalid reportId" });
     }
 
-    const { reportId } = req.params;
     const deletedCount = await BugReport.destroy({
       where: { report_id: reportId },
     });

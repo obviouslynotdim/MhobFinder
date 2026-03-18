@@ -118,6 +118,7 @@ export function UserAlertProvider({ children }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useUserAlert() {
   const context = useContext(UserAlertContext);
 

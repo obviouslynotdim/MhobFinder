@@ -97,6 +97,7 @@ export const verifyFirebaseToken = async (req, res, next) => {
         name: decodedToken.name || "User",
         email,
         password: hashedPassword,
+        is_oauth: true,
         image_url: null,
         image_public_id: null,
       });

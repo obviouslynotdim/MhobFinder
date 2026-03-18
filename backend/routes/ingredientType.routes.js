@@ -3,6 +3,7 @@ import {
   getAllIngredientTypes,
   createIngredientType,
 } from "../controllers/ingredientType.controller.js";
+import { verifyFirebaseToken, requireAdmin } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -35,6 +36,6 @@ router.get("/", getAllIngredientTypes);
  *       201:
  *         description: Ingredient type created
  */
-router.post("/", createIngredientType);
+router.post("/", verifyFirebaseToken, requireAdmin, createIngredientType);
 
 export default router;

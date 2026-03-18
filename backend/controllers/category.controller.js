@@ -1,17 +1,12 @@
 import Category from "../models/category.js";
-import Food from "../models/food.js";
+import { parsePositiveInt } from "../utils/validation.js";
+import { buildCategoryFoodsInclude } from "../utils/includeOptions.js";
 
 // Get all categories with foods
 export const getAllCategories = async (req, res, next) => {
   try {
     const categories = await Category.findAll({
-      include: [
-        {
-          model: Food,
-          as: "foods", // ✅ must match Category.belongsToMany(Food, { as: "foods" })
-          through: { attributes: [] },
-        },
-      ],
+      include: buildCategoryFoodsInclude(),
     });
     res.json(categories);
   } catch (err) {
@@ -22,16 +17,13 @@ export const getAllCategories = async (req, res, next) => {
 // Get a single category by ID with foods
 export const getCategoryById = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const id = parsePositiveInt(req.params?.id);
+    if (!id) {
+      return res.status(400).json({ message: "Invalid category id" });
+    }
 
     const category = await Category.findByPk(id, {
-      include: [
-        {
-          model: Food,
-          as: "foods", // ✅ must match the alias
-          through: { attributes: [] },
-        },
-      ],
+      include: buildCategoryFoodsInclude(),
     });
 
     if (!category) {

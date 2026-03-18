@@ -45,6 +45,11 @@ export function UserProvider({ children }) {
 
         const userData = {
           id: firebaseUser.uid,
+          firebaseUid: firebaseUser.uid,
+          dbUserId:
+            Number.isInteger(Number(dbProfile?.user_id)) && Number(dbProfile?.user_id) > 0
+              ? Number(dbProfile.user_id)
+              : null,
           name: dbProfile?.name || firebaseUser.displayName || "User",
           email,
           photoURL: dbProfile?.image_url || firebaseUser.photoURL || "",

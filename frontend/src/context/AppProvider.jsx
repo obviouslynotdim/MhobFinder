@@ -9,6 +9,11 @@ import {
 } from "react";
 import { getMatchedFoods, getHomeFoods } from "../services/api/food.service.js";
 import { getAllIngredients } from "../services/api/ingredient.service.js";
+import {
+  addFavorite,
+  getUserFavorites,
+  removeFavorite,
+} from "../services/api/favorite.service.js";
 import { useUser } from "./UserProvider.jsx";
 
 const AppCtx = createContext(null);
@@ -49,6 +54,51 @@ export function AppProvider({ children }) {
   const [favorites, setFavorites] = useState([]);
 
   const foodsReqIdRef = useRef(0);
+  const favoritesReqSeqRef = useRef(new Map());
+
+  const resolveFavoriteCacheKey = useCallback(() => {
+    if (user?.dbUserId) {
+      return `mhob:favorites:${user.dbUserId}`;
+    }
+
+    if (user?.id) {
+      return `mhob:favorites:${user.id}`;
+    }
+
+    return null;
+  }, [user?.dbUserId, user?.id]);
+
+  const readCachedFavorites = useCallback(() => {
+    const keys = [];
+
+    if (user?.dbUserId) {
+      keys.push(`mhob:favorites:${user.dbUserId}`);
+    }
+
+    if (user?.id) {
+      keys.push(`mhob:favorites:${user.id}`);
+    }
+
+    for (const key of keys) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (raw == null) {
+          continue;
+        }
+
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          return parsed
+            .map((id) => Number(id))
+            .filter((id) => Number.isInteger(id) && id > 0);
+        }
+      } catch {
+        // Ignore invalid cached content and keep searching.
+      }
+    }
+
+    return [];
+  }, [user?.dbUserId, user?.id]);
 
   // -------------------------
   // Initial Load
@@ -77,27 +127,73 @@ export function AppProvider({ children }) {
   // Load Favorites for User
   // -------------------------
   useEffect(() => {
-    if (user?.id) {
-      const stored = JSON.parse(
-        localStorage.getItem(`mhob:favorites:${user.id}`) || "[]"
-      );
-      setFavorites(stored);
-    } else {
+    let active = true;
+
+    if (!user?.id) {
       setFavorites([]);
+      return () => {
+        active = false;
+      };
     }
-  }, [user?.id]);
+
+    const hydrateFavorites = async () => {
+      const cachedFavorites = readCachedFavorites();
+
+      if (cachedFavorites.length > 0) {
+        setFavorites(cachedFavorites);
+      } else {
+        setFavorites([]);
+      }
+
+      if (!user?.dbUserId) {
+        return;
+      }
+
+      try {
+        const serverFavorites = await getUserFavorites(user.dbUserId);
+        if (!active) return;
+
+        const normalized = Array.isArray(serverFavorites)
+          ? serverFavorites
+            .map((food) => Number(food?.food_id))
+            .filter((id) => Number.isInteger(id) && id > 0)
+          : [];
+
+        // One-time migration path: preserve pre-server local favorites by
+        // backfilling them when server currently has none.
+        if (normalized.length === 0 && cachedFavorites.length > 0) {
+          const uniqueCached = Array.from(new Set(cachedFavorites));
+          await Promise.all(
+            uniqueCached.map((foodId) => addFavorite(user.dbUserId, foodId).catch(() => null)),
+          );
+          if (!active) return;
+          setFavorites(uniqueCached);
+          return;
+        }
+
+        setFavorites(normalized);
+      } catch (error) {
+        if (!active) return;
+        console.error("Failed to load server favorites, using local cache.", error);
+      }
+    };
+
+    hydrateFavorites();
+
+    return () => {
+      active = false;
+    };
+  }, [readCachedFavorites, user?.dbUserId, user?.id]);
 
   // -------------------------
   // Save Favorites
   // -------------------------
   useEffect(() => {
-    if (user?.id) {
-      localStorage.setItem(
-        `mhob:favorites:${user.id}`,
-        JSON.stringify(favorites)
-      );
-    }
-  }, [favorites, user?.id]);
+    const cacheKey = resolveFavoriteCacheKey();
+    if (!cacheKey) return;
+
+    localStorage.setItem(cacheKey, JSON.stringify(favorites));
+  }, [favorites, resolveFavoriteCacheKey]);
 
   // -------------------------
   // Refresh foods by ingredients
@@ -153,13 +249,55 @@ export function AppProvider({ children }) {
   // -------------------------
   // Toggle Favorite
   // -------------------------
-  const toggleFavorite = useCallback((foodId) => {
-    setFavorites((prev) =>
-      prev.includes(foodId)
-        ? prev.filter((x) => x !== foodId)
-        : [...prev, foodId]
-    );
-  }, []);
+  const toggleFavorite = useCallback(async (foodId) => {
+    const normalizedFoodId = Number(foodId);
+    if (!Number.isInteger(normalizedFoodId) || normalizedFoodId <= 0) {
+      return false;
+    }
+
+    let previousFavorites = [];
+    let nextFavorites = [];
+    let alreadyFavorite = false;
+
+    setFavorites((prev) => {
+      previousFavorites = prev;
+      alreadyFavorite = prev.includes(normalizedFoodId);
+      nextFavorites = alreadyFavorite
+        ? prev.filter((id) => id !== normalizedFoodId)
+        : [...prev, normalizedFoodId];
+
+      return nextFavorites;
+    });
+
+    if (!user?.dbUserId) {
+      return true;
+    }
+
+    const nextSeq = (favoritesReqSeqRef.current.get(normalizedFoodId) || 0) + 1;
+    favoritesReqSeqRef.current.set(normalizedFoodId, nextSeq);
+
+    try {
+      if (alreadyFavorite) {
+        await removeFavorite(user.dbUserId, normalizedFoodId);
+      } else {
+        await addFavorite(user.dbUserId, normalizedFoodId);
+      }
+
+      return true;
+    } catch (error) {
+      const latestSeq = favoritesReqSeqRef.current.get(normalizedFoodId);
+      if (latestSeq === nextSeq) {
+        setFavorites(previousFavorites);
+      }
+      console.error("Failed to sync favorite with server.", error);
+      return false;
+    } finally {
+      const latestSeq = favoritesReqSeqRef.current.get(normalizedFoodId);
+      if (latestSeq === nextSeq) {
+        favoritesReqSeqRef.current.delete(normalizedFoodId);
+      }
+    }
+  }, [user?.dbUserId]);
 
   // -------------------------
   // Search Filter

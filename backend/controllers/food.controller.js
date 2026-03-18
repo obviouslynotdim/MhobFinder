@@ -4,6 +4,7 @@ import Category from "../models/category.js";
 import { Op } from "sequelize";
 import cloudinary from "../config/cloudinary.js";
 import { cleanText, parseIdArray, parsePositiveInt } from "../utils/validation.js";
+import { buildFoodFullInclude } from "../utils/includeOptions.js";
 
 // ---------------------------
 // Helper: Upload to Cloudinary
@@ -39,18 +40,7 @@ const isValidHttpUrl = (value) => {
 export const getAllFoods = async (req, res, next) => {
   try {
     const foods = await Food.findAll({
-      include: [
-        {
-          model: Ingredient,
-          as: "ingredients",
-          through: { attributes: [] },
-        },
-        {
-          model: Category,
-          as: "categories",
-          through: { attributes: [] },
-        },
-      ],
+      include: buildFoodFullInclude(),
       distinct: true,
     });
 
@@ -71,18 +61,7 @@ export const getFoodById = async (req, res, next) => {
     }
 
     const food = await Food.findByPk(id, {
-      include: [
-        {
-          model: Ingredient,
-          as: "ingredients",
-          through: { attributes: [] },
-        },
-        {
-          model: Category,
-          as: "categories",
-          through: { attributes: [] },
-        },
-      ],
+      include: buildFoodFullInclude(),
     });
 
     if (!food) {
@@ -179,19 +158,8 @@ export const createFood = async (req, res, next) => {
       await newFood.setCategories(categoryIds);
     }
 
-    const food = await Food.findByPk(newFood.id, {
-      include: [
-        {
-          model: Ingredient,
-          as: "ingredients",
-          through: { attributes: [] },
-        },
-        {
-          model: Category,
-          as: "categories",
-          through: { attributes: [] },
-        },
-      ],
+    const food = await Food.findByPk(newFood.food_id, {
+      include: buildFoodFullInclude(),
     });
 
     res.status(201).json(food);
@@ -279,18 +247,7 @@ export const updateFood = async (req, res, next) => {
     }
 
     const updatedFood = await Food.findByPk(id, {
-      include: [
-        {
-          model: Ingredient,
-          as: "ingredients",
-          through: { attributes: [] },
-        },
-        {
-          model: Category,
-          as: "categories",
-          through: { attributes: [] },
-        },
-      ],
+      include: buildFoodFullInclude(),
     });
 
     res.json(updatedFood);

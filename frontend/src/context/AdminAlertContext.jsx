@@ -172,6 +172,7 @@ export function AdminAlertProvider({ children }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAdminAlert() {
   const context = useContext(AdminAlertContext);
 

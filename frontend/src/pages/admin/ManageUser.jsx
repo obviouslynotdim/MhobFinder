@@ -6,7 +6,6 @@ import UserCommentsPanel from "../../components/admin/manageUser/UserCommentsPan
 import { fetchAllUsers, deleteUser } from "../../services/api/user.service";
 import { getAllFoods } from "../../services/api/food.service";
 import { deleteComment, getCommentsByFood } from "../../services/api/comment.service";
-import { colors } from "../../theme/tokens.js";
 import { useAdminAlert } from "../../context/AdminAlertContext.jsx";
 import AppLoadingState from "../../components/common/AppLoadingState.jsx";
 

@@ -8,7 +8,6 @@ export const toSafeUser = (user) => {
     name: source.name,
     email: source.email,
     image_url: source.image_url || null,
-    image_public_id: source.image_public_id || null,
     createdAt: source.createdAt,
     updatedAt: source.updatedAt,
   };

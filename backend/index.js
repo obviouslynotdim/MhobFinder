@@ -120,6 +120,15 @@ async function ensureUserProfileColumns() {
   const queryInterface = sequelize.getQueryInterface();
   const usersTable = await queryInterface.describeTable("users");
 
+  if (!usersTable.is_oauth) {
+    await queryInterface.addColumn("users", "is_oauth", {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    });
+    console.log("✅ Added users.is_oauth column");
+  }
+
   if (!usersTable.image_url) {
     await queryInterface.addColumn("users", "image_url", {
       type: DataTypes.STRING,

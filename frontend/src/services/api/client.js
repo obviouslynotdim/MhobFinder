@@ -2,8 +2,10 @@
 import axios from 'axios';
 import { auth } from '../../firebase.js';
 
+const API_ROOT = (import.meta.env.VITE_API_BASE || 'http://localhost:5000').replace(/\/$/, '');
+
 const apiClient = axios.create({
-  baseURL: 'http://localhost:5000/api', // Adjust to your backend URL
+  baseURL: `${API_ROOT}/api`,
 });
 
 // Add Firebase token to requests
