@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
 import { DataTypes } from "sequelize";
 import "./config/firebase.js"; // Initialize Firebase Admin
 import sequelize from "./config/database.js";
@@ -58,8 +59,14 @@ app.use(
   }),
 );
 
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+  }),
+);
+
 // JSON parser
-app.use(express.json());
+app.use(express.json({ limit: "200kb" }));
 
 // Logging middleware
 app.use((req, res, next) => {

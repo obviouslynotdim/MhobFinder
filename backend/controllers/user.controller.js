@@ -1,24 +1,50 @@
 import User from "../models/user.js";
 import cloudinary from "../config/cloudinary.js";
+import bcrypt from "bcryptjs"; // for hashing passwords
+import {
+  cleanText,
+  normalizeEmail,
+  parsePositiveInt,
+} from "../utils/validation.js";
+import { toSafeUser } from "../utils/serializers.js";
+
+const canAccessUser = (req, targetUserId) => {
+  if (!req.user) return false;
+  return req.userIsAdmin || req.user.user_id === targetUserId;
+};
+
 // ---------------------------
 // GET ALL USERS
 // ---------------------------
 export const getAllUsers = async (req, res, next) => {
   try {
     const users = await User.findAll();
-    res.status(200).json(users);
+    res.status(200).json(users.map(toSafeUser));
   } catch (err) {
     next(err);
   }
 };
-import bcrypt from "bcryptjs"; // for hashing passwords
 
 // ---------------------------
 // REGISTER USER
 // ---------------------------
 export const register = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const name = cleanText(req.body?.name, 100);
+    const email = normalizeEmail(req.body?.email);
+    const password = String(req.body?.password || "");
+
+    if (!name) {
+      return res.status(400).json({ error: "Valid name is required" });
+    }
+
+    if (!email) {
+      return res.status(400).json({ error: "Valid email is required" });
+    }
+
+    if (password && password.length < 8) {
+      return res.status(400).json({ error: "Password must be at least 8 characters" });
+    }
 
     // Check if user already exists
     const existingUser = await User.findOne({ where: { email } });
@@ -28,7 +54,7 @@ export const register = async (req, res, next) => {
 
     // Hash password
     let hashedPassword = null;
-    if (password) {
+    if (password.length > 0) {
       hashedPassword = await bcrypt.hash(password, 10);
     } else {
       hashedPassword = await bcrypt.hash("oauth_placeholder", 10);
@@ -39,10 +65,13 @@ export const register = async (req, res, next) => {
       name,
       email,
       password: hashedPassword,
-      is_oauth: password ? false : true,
+      is_oauth: password.length === 0,
     });
 
-    res.status(201).json({ message: "User registered successfully", user });
+    res.status(201).json({
+      message: "User registered successfully",
+      user: toSafeUser(user),
+    });
   } catch (err) {
     next(err);
   }
@@ -53,7 +82,12 @@ export const register = async (req, res, next) => {
 // ---------------------------
 export const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const email = normalizeEmail(req.body?.email);
+    const password = String(req.body?.password || "");
+
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" });
+    }
 
     const user = await User.findOne({ where: { email } });
     if (!user)
@@ -71,7 +105,7 @@ export const login = async (req, res, next) => {
     if (!isMatch)
       return res.status(401).json({ error: "Invalid email or password" });
 
-    res.status(200).json({ message: "Login successful", user });
+    res.status(200).json({ message: "Login successful", user: toSafeUser(user) });
   } catch (err) {
     next(err);
   }
@@ -82,10 +116,18 @@ export const login = async (req, res, next) => {
 // ---------------------------
 export const getUserById = async (req, res, next) => {
   try {
-    const { userId } = req.params;
+    const userId = parsePositiveInt(req.params?.userId);
+    if (!userId) {
+      return res.status(400).json({ error: "Invalid userId" });
+    }
+
+    if (!canAccessUser(req, userId)) {
+      return res.status(403).json({ error: "Access denied" });
+    }
+
     const user = await User.findByPk(userId);
     if (!user) return res.status(404).json({ error: "User not found" });
-    res.status(200).json(user);
+    res.status(200).json(toSafeUser(user));
   } catch (err) {
     next(err);
   }
@@ -96,7 +138,15 @@ export const getUserById = async (req, res, next) => {
 // ---------------------------
 export const deleteUser = async (req, res, next) => {
   try {
-    const { userId } = req.params;
+    const userId = parsePositiveInt(req.params?.userId);
+    if (!userId) {
+      return res.status(400).json({ error: "Invalid userId" });
+    }
+
+    if (!canAccessUser(req, userId)) {
+      return res.status(403).json({ error: "Access denied" });
+    }
+
     const user = await User.findByPk(userId);
     if (!user) return res.status(404).json({ error: "User not found" });
     await user.destroy(); // Cascade deletes if associations are set in Sequelize
@@ -130,8 +180,8 @@ export const getMyProfile = async (req, res, next) => {
 // ---------------------------
 export const updateMyProfile = async (req, res, next) => {
   try {
-    const incomingName = String(req.body?.name || "").trim();
-    const hasNameUpdate = incomingName.length > 0;
+    const incomingName = cleanText(req.body?.name, 100);
+    const hasNameUpdate = Boolean(incomingName);
     const hasImageUpdate = Boolean(req.file);
 
     if (!hasNameUpdate && !hasImageUpdate) {
@@ -141,9 +191,6 @@ export const updateMyProfile = async (req, res, next) => {
     }
 
     if (hasNameUpdate) {
-      if (incomingName.length > 100) {
-        return res.status(400).json({ error: "name is too long" });
-      }
       req.user.name = incomingName;
     }
 

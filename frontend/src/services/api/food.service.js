@@ -1,4 +1,5 @@
 // food.service.js
+import { auth } from "../../firebase.js";
 
 const API_BASE = import.meta.env.VITE_API_BASE || "";
 // Example: "http://localhost:5000" if bypassing proxy
@@ -55,6 +56,14 @@ async function handleResponse(res) {
     throw new Error(`API error ${res.status}: ${text}`);
   }
   return res.json();
+}
+
+async function getAuthHeaders() {
+  if (!auth.currentUser) return {};
+  const token = await auth.currentUser.getIdToken();
+  return {
+    Authorization: `Bearer ${token}`,
+  };
 }
 
 // ---------------------------
@@ -144,6 +153,7 @@ export const addFood = async ({
   const res = await fetch(`${API_BASE}/api/foods`, {
     method: "POST",
     credentials: "include",
+    headers: await getAuthHeaders(),
     body: formData,
   });
 
@@ -187,6 +197,7 @@ export const updateFood = async (foodId, data) => {
   const res = await fetch(`${API_BASE}/api/foods/${foodId}`, {
     method: "PUT",
     credentials: "include",
+    headers: await getAuthHeaders(),
     body: formData,
   });
   return handleResponse(res);
@@ -199,6 +210,7 @@ export const deleteFood = async (foodId) => {
   const res = await fetch(`${API_BASE}/api/foods/${foodId}`, {
     method: "DELETE",
     credentials: "include",
+    headers: await getAuthHeaders(),
   });
   return handleResponse(res);
 };

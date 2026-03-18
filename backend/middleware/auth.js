@@ -4,6 +4,7 @@ import User from "../models/user.js";
 import crypto from "crypto";
 import fs from "fs";
 import path from "path";
+import bcrypt from "bcryptjs";
 
 const normalizeEmailList = (value = "") =>
   String(value)
@@ -91,10 +92,11 @@ export const verifyFirebaseToken = async (req, res, next) => {
     if (!user) {
       // User model requires password; generate a random placeholder for OAuth/Firebase users.
       const randomPassword = crypto.randomBytes(24).toString("hex");
+      const hashedPassword = await bcrypt.hash(randomPassword, 10);
       user = await User.create({
         name: decodedToken.name || "User",
         email,
-        password: randomPassword,
+        password: hashedPassword,
         image_url: null,
         image_public_id: null,
       });
@@ -110,4 +112,12 @@ export const verifyFirebaseToken = async (req, res, next) => {
     }
     return res.status(401).json({ error: 'Invalid token' });
   }
+};
+
+export const requireAdmin = (req, res, next) => {
+  if (!req.userIsAdmin) {
+    return res.status(403).json({ error: "Admin access required" });
+  }
+
+  return next();
 };

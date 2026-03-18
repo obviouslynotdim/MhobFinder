@@ -1,14 +1,25 @@
 import { User, Food } from "../models/index.js";
+import { parsePositiveInt } from "../utils/validation.js";
+
+const parseFavoriteParams = (params = {}) => {
+  const userId = parsePositiveInt(params.userId);
+  const foodId = params.foodId == null ? null : parsePositiveInt(params.foodId);
+  return { userId, foodId };
+};
 
 // ---------------------------
 // Get user's favorite foods
 // ---------------------------
 export const getUserFavorites = async (req, res, next) => {
   try {
-    const { userId } = req.params;
+    const { userId } = parseFavoriteParams(req.params);
+
+    if (!userId) {
+      return res.status(400).json({ error: "Invalid userId" });
+    }
 
     // Check if user is accessing their own favorites
-    if (req.user.user_id !== parseInt(userId)) {
+    if (req.user.user_id !== userId) {
       return res.status(403).json({ error: "Access denied" });
     }
 
@@ -37,16 +48,25 @@ export const getUserFavorites = async (req, res, next) => {
 // ---------------------------
 export const addFavorite = async (req, res, next) => {
   try {
-    const { userId, foodId } = req.params;
+    const { userId, foodId } = parseFavoriteParams(req.params);
+
+    if (!userId || !foodId) {
+      return res.status(400).json({ error: "Invalid userId or foodId" });
+    }
 
     // Check if user is accessing their own favorites
-    if (req.user.user_id !== parseInt(userId)) {
+    if (req.user.user_id !== userId) {
       return res.status(403).json({ error: "Access denied" });
     }
 
     const user = await User.findByPk(userId);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
+    }
+
+    const food = await Food.findByPk(foodId);
+    if (!food) {
+      return res.status(404).json({ error: "Food not found" });
     }
 
     // Optional: prevent duplicates
@@ -63,10 +83,14 @@ export const addFavorite = async (req, res, next) => {
 // ---------------------------
 export const removeFavorite = async (req, res, next) => {
   try {
-    const { userId, foodId } = req.params;
+    const { userId, foodId } = parseFavoriteParams(req.params);
+
+    if (!userId || !foodId) {
+      return res.status(400).json({ error: "Invalid userId or foodId" });
+    }
 
     // Check if user is accessing their own favorites
-    if (req.user.user_id !== parseInt(userId)) {
+    if (req.user.user_id !== userId) {
       return res.status(403).json({ error: "Access denied" });
     }
 

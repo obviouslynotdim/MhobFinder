@@ -8,7 +8,7 @@ import {
 	getMyProfile,
 	updateMyProfile,
 } from "../controllers/user.controller.js";
-import { verifyFirebaseToken } from "../middleware/auth.js";
+import { verifyFirebaseToken, requireAdmin } from "../middleware/auth.js";
 import upload from "../middleware/upload.js";
 
 const router = express.Router();
@@ -81,8 +81,8 @@ router.post("/login", login);
  */
 router.get("/me", verifyFirebaseToken, getMyProfile);
 router.patch("/me/profile", verifyFirebaseToken, upload.single("image"), updateMyProfile);
-router.get("/", getAllUsers);
-router.get("/:userId", getUserById);
-router.delete("/:userId", deleteUser);
+router.get("/", verifyFirebaseToken, requireAdmin, getAllUsers);
+router.get("/:userId", verifyFirebaseToken, getUserById);
+router.delete("/:userId", verifyFirebaseToken, deleteUser);
 
 export default router;

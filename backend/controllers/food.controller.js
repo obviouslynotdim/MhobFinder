@@ -3,6 +3,7 @@ import Ingredient from "../models/ingredient.js";
 import Category from "../models/category.js";
 import { Op } from "sequelize";
 import cloudinary from "../config/cloudinary.js";
+import { cleanText, parseIdArray, parsePositiveInt } from "../utils/validation.js";
 
 // ---------------------------
 // Helper: Upload to Cloudinary
@@ -22,21 +23,14 @@ const uploadImage = async (file) => {
   };
 };
 
-const parseIds = (data) => {
-  if (!data) return [];
-
-  if (typeof data === "string") {
-    return data
-      .split(",")
-      .map((id) => parseInt(id, 10))
-      .filter(Boolean);
+const isValidHttpUrl = (value) => {
+  if (!value) return true;
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
   }
-
-  if (Array.isArray(data)) {
-    return data.map((id) => parseInt(id, 10)).filter(Boolean);
-  }
-
-  return [];
 };
 
 // ---------------------------
@@ -71,7 +65,10 @@ export const getAllFoods = async (req, res, next) => {
 // ---------------------------
 export const getFoodById = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const id = parsePositiveInt(req.params?.id);
+    if (!id) {
+      return res.status(400).json({ message: "Invalid food id" });
+    }
 
     const food = await Food.findByPk(id, {
       include: [
@@ -103,9 +100,9 @@ export const getFoodById = async (req, res, next) => {
 // ---------------------------
 export const getMatchedFoods = async (req, res, next) => {
   try {
-    const { ingredientIds } = req.body;
+    const ingredientIds = parseIdArray(req.body?.ingredientIds);
 
-    if (!Array.isArray(ingredientIds) || ingredientIds.length === 0) {
+    if (ingredientIds.length === 0) {
       return res.json([]);
     }
 
@@ -136,12 +133,26 @@ export const getMatchedFoods = async (req, res, next) => {
 // ---------------------------
 export const createFood = async (req, res, next) => {
   try {
-    const { title, description, link_url } = req.body;
+    const title = cleanText(req.body?.title, 150);
+    const description = cleanText(req.body?.description, 3000);
+    const link_url = cleanText(req.body?.link_url, 2048);
+
+    if (!title) {
+      return res.status(400).json({ message: "title is required" });
+    }
+
+    if (req.body?.description != null && !description) {
+      return res.status(400).json({ message: "description is too long or invalid" });
+    }
+
+    if (!isValidHttpUrl(link_url)) {
+      return res.status(400).json({ message: "link_url must be a valid http(s) URL" });
+    }
 
     let { ingredientIds, categoryIds } = req.body;
 
-    ingredientIds = parseIds(ingredientIds);
-    categoryIds = parseIds(categoryIds);
+    ingredientIds = parseIdArray(ingredientIds);
+    categoryIds = parseIdArray(categoryIds);
 
     let image_url = null;
     let public_id = null;
@@ -194,9 +205,27 @@ export const createFood = async (req, res, next) => {
 // ---------------------------
 export const updateFood = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const { title, description, link_url } = req.body;
+    const id = parsePositiveInt(req.params?.id);
+    if (!id) {
+      return res.status(400).json({ message: "Invalid food id" });
+    }
+
+    const title = cleanText(req.body?.title, 150);
+    const description = cleanText(req.body?.description, 3000);
+    const link_url = cleanText(req.body?.link_url, 2048);
     let { ingredientIds, categoryIds } = req.body;
+
+    if (req.body?.title != null && !title) {
+      return res.status(400).json({ message: "title is invalid" });
+    }
+
+    if (req.body?.description != null && !description) {
+      return res.status(400).json({ message: "description is too long or invalid" });
+    }
+
+    if (req.body?.link_url != null && !isValidHttpUrl(link_url)) {
+      return res.status(400).json({ message: "link_url must be a valid http(s) URL" });
+    }
 
     const food = await Food.findByPk(id);
 
@@ -215,17 +244,39 @@ export const updateFood = async (req, res, next) => {
       food.public_id = upload.public_id;
     }
 
-    food.title = title ?? food.title;
-    food.description = description ?? food.description;
-    food.link_url = link_url ?? food.link_url;
+    if (req.body?.title != null) {
+      food.title = title;
+    }
+
+    if (req.body?.description != null) {
+      food.description = description;
+    }
+
+    if (req.body?.link_url != null) {
+      food.link_url = link_url;
+    }
 
     await food.save();
 
-    ingredientIds = parseIds(ingredientIds);
-    categoryIds = parseIds(categoryIds);
+    const hasIngredientPayload = Object.prototype.hasOwnProperty.call(
+      req.body,
+      "ingredientIds",
+    );
+    const hasCategoryPayload = Object.prototype.hasOwnProperty.call(
+      req.body,
+      "categoryIds",
+    );
 
-    await food.setIngredients(ingredientIds);
-    await food.setCategories(categoryIds);
+    ingredientIds = parseIdArray(ingredientIds);
+    categoryIds = parseIdArray(categoryIds);
+
+    if (hasIngredientPayload) {
+      await food.setIngredients(ingredientIds);
+    }
+
+    if (hasCategoryPayload) {
+      await food.setCategories(categoryIds);
+    }
 
     const updatedFood = await Food.findByPk(id, {
       include: [
@@ -253,7 +304,10 @@ export const updateFood = async (req, res, next) => {
 // ---------------------------
 export const deleteFood = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const id = parsePositiveInt(req.params?.id);
+    if (!id) {
+      return res.status(400).json({ message: "Invalid food id" });
+    }
 
     const food = await Food.findByPk(id);
 

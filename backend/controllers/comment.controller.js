@@ -1,16 +1,21 @@
 import Comment from "../models/comment.js";
 import User from "../models/user.js";
+import { cleanText, parsePositiveInt } from "../utils/validation.js";
 
 export const getCommentsByFood = async (req, res, next) => {
   try {
-    const { foodId } = req.params;
+    const foodId = parsePositiveInt(req.params?.foodId);
+    if (!foodId) {
+      return res.status(400).json({ message: "Invalid foodId" });
+    }
+
     const comments = await Comment.findAll({
       where: { food_id: foodId },
       include: [
         {
           model: User,
           as: "user",
-          attributes: ["user_id", "name", "email", "image_url"],
+          attributes: ["user_id", "name", "image_url"],
         },
         { model: Comment, as: "replies" }, // optional: include replies
       ],
@@ -24,10 +29,20 @@ export const getCommentsByFood = async (req, res, next) => {
 
 export const addComment = async (req, res, next) => {
   try {
-    const { parent_id, comment_text } = req.body;
-    const { foodId } = req.params;
+    const foodId = parsePositiveInt(req.params?.foodId);
+    const parentIdRaw = req.body?.parent_id;
+    const parent_id = parentIdRaw == null ? null : parsePositiveInt(parentIdRaw);
+    const comment_text = cleanText(req.body?.comment_text, 1500);
 
-    if (!comment_text || !String(comment_text).trim()) {
+    if (!foodId) {
+      return res.status(400).json({ message: "Invalid foodId" });
+    }
+
+    if (parentIdRaw != null && !parent_id) {
+      return res.status(400).json({ message: "Invalid parent_id" });
+    }
+
+    if (!comment_text) {
       return res.status(400).json({ message: "comment_text is required" });
     }
 
@@ -54,7 +69,7 @@ export const addComment = async (req, res, next) => {
       user_id: req.user.user_id,
       food_id: foodId,
       parent_id,
-      comment_text: String(comment_text).trim(),
+      comment_text,
     });
 
     res.status(201).json(comment);
@@ -65,10 +80,14 @@ export const addComment = async (req, res, next) => {
 
 export const updateComment = async (req, res, next) => {
   try {
-    const { commentId } = req.params;
-    const { comment_text } = req.body;
+    const commentId = parsePositiveInt(req.params?.commentId);
+    const comment_text = cleanText(req.body?.comment_text, 1500);
 
-    if (!comment_text || !String(comment_text).trim()) {
+    if (!commentId) {
+      return res.status(400).json({ message: "Invalid commentId" });
+    }
+
+    if (!comment_text) {
       return res.status(400).json({ message: "comment_text is required" });
     }
 
@@ -81,7 +100,7 @@ export const updateComment = async (req, res, next) => {
       return res.status(403).json({ message: "You can only edit your own comment" });
     }
 
-    comment.comment_text = String(comment_text).trim();
+    comment.comment_text = comment_text;
     await comment.save();
 
     return res.json(comment);
@@ -92,7 +111,11 @@ export const updateComment = async (req, res, next) => {
 
 export const deleteComment = async (req, res, next) => {
   try {
-    const { commentId } = req.params;
+    const commentId = parsePositiveInt(req.params?.commentId);
+    if (!commentId) {
+      return res.status(400).json({ message: "Invalid commentId" });
+    }
+
     const comment = await Comment.findByPk(commentId);
 
     if (!comment) {
