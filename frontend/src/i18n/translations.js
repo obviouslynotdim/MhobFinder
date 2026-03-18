@@ -76,6 +76,28 @@ export const translations = {
         soup: "Soup",
       },
     },
+    about: {
+      badge: "About Us",
+      heroTitle: "Building Smarter Cooking with MhobFinder",
+      heroDescription:
+        "MhobFinder is a recipe discovery platform that helps people cook with what they already have. We focus on practical ingredient matching, clear user flows, and a polished experience that supports everyday decisions in the kitchen.",
+      tryApp: "Try App",
+      viewFeatures: "View Features",
+      featureTitle: "Feature Highlights",
+      featureDescription: "Explore some key capabilities in MhobFinder.",
+      features: {
+        smartMatching: "Smart Ingredient Matching",
+        recipeDetails: "View Full Recipe Details",
+        multiLanguage: "Multiple Language / Login with Google",
+      },
+      teamTitle: "Our Team Members",
+      teamDescription: "Meet the people building and improving MhobFinder.",
+      footer: {
+        copyright: "Copyright {year} MhobFinder. All rights reserved.",
+        about: "About",
+        home: "Home",
+      },
+    },
   },
   kh: {
     common: {
@@ -145,6 +167,28 @@ export const translations = {
         streetFood: "ម្ហូបតាមផ្លូវ",
         curry: "ការី",
         soup: "ស៊ុប",
+      },
+    },
+    about: {
+      badge: "អំពីពួកយើង",
+      heroTitle: "កំពុងសាងសង់បទពិសោធន៍ចម្អិនអាហារឆ្លាតវៃជាមួយ MhobFinder",
+      heroDescription:
+        "MhobFinder គឺជាវេទិកាស្វែងរកមុខម្ហូប ដែលជួយអ្នកចម្អិនអាហារជាមួយគ្រឿងផ្សំដែលមានស្រាប់។ យើងផ្តោតលើការផ្គូផ្គងគ្រឿងផ្សំឲ្យមានប្រសិទ្ធភាព លំហូរប្រើប្រាស់ច្បាស់លាស់ និងបទពិសោធន៍រលូនសម្រាប់ការសម្រេចចិត្តប្រចាំថ្ងៃក្នុងផ្ទះបាយ។",
+      tryApp: "សាកល្បងកម្មវិធី",
+      viewFeatures: "មើលមុខងារ",
+      featureTitle: "មុខងារសំខាន់ៗ",
+      featureDescription: "ស្វែងយល់ពីសមត្ថភាពសំខាន់ៗរបស់ MhobFinder។",
+      features: {
+        smartMatching: "ការផ្គូផ្គងគ្រឿងផ្សំឆ្លាតវៃ",
+        recipeDetails: "មើលព័ត៌មានលម្អិតមុខម្ហូបពេញលេញ",
+        multiLanguage: "គាំទ្រច្រើនភាសា / ចូលដោយ Google",
+      },
+      teamTitle: "សមាជិកក្រុមរបស់យើង",
+      teamDescription: "ស្គាល់សមាជិកដែលកំពុងអភិវឌ្ឍ និងកែលម្អ MhobFinder។",
+      footer: {
+        copyright: "រក្សាសិទ្ធិ {year} MhobFinder. រក្សាសិទ្ធិគ្រប់យ៉ាង។",
+        about: "អំពី",
+        home: "ទំព័រដើម",
       },
     },
   },

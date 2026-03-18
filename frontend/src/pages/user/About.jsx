@@ -1,67 +1,317 @@
-import { Box, SimpleGrid, Text, VStack, Image } from "@chakra-ui/react";
+import {
+  Avatar,
+  Badge,
+  Box,
+  Button,
+  HStack,
+  Image,
+  Link,
+  SimpleGrid,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
+import { FiArrowUpRight, FiGlobe, FiGithub } from "react-icons/fi";
+import { Link as RouterLink } from "react-router-dom";
+import { useTranslation } from "../../context/useTranslation.js";
+import { colors } from "../../theme/tokens.js";
+import nakImage from "../../assets/members/nak.png";
+import featureImageOne from "../../assets/feature/mhohfinder.jpg";
+import featureImageTwo from "../../assets/feature/mhobfinder2.jpg";
+import featureImageThree from "../../assets/feature/mhobfinder3.jpg";
 
-const TEAM = [
+const MEMBERS = [
   {
-    name: "Sokha",
+    name: "Sao Sethavathanak",
+    role: "Full Stack Developer / Team Lead",
+    image: nakImage,
+    website: "https://sethavathanak-portfolio.vercel.app/",
+    github: "https://github.com/obviouslynotdim",
+  },
+  {
+    name: "Pov Davin",
+    role: "Backend Developer / API Integration",
+    image: "",
+    website: "https://example.com",
+    github: "https://github.com",
+  },
+  {
+    name: "Kimhong Chhour",
+    role: "Frontend Developer",
+    image: "",
+    website: "https://example.com",
+    github: "https://github.com",
+  },
+  {
+    name: "Khorn Vannda",
+    role: "Database",
+    image: "",
+    website: "https://example.com",
+    github: "https://github.com",
+  },
+  {
+    name: "Mok Chytasenasak",
     role: "Frontend",
-    img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80",
+    image: "",
+    website: "https://example.com",
+    github: "https://github.com",
   },
   {
-    name: "Dara",
-    role: "Backend",
-    img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    name: "Maly",
-    role: "UI/UX",
-    img: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    name: "Vannak",
-    role: "Product",
-    img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80",
+    name: "Luy Virak",
+    role: "Frontend",
+    image: "",
+    website: "https://example.com",
+    github: "https://github.com",
   },
 ];
 
-function TeamCard({ name, role, img }) {
+const FEATURE_PLACEHOLDERS = [
+  {
+    titleKey: "about.features.smartMatching",
+    image: featureImageOne,
+  },
+  {
+    titleKey: "about.features.recipeDetails",
+    image: featureImageTwo,
+  },
+  {
+    titleKey: "about.features.multiLanguage",
+    image: featureImageThree,
+  },
+];
+
+function FadeInCard({ children, delay = 0, ...props }) {
   return (
     <Box
-      borderRadius="2xl"
-      overflow="hidden"
-      boxShadow="lg"
-      bg="white"
-      position="relative"
+      animation="fadeSlideIn 0.55s ease both"
+      animationDelay={`${delay}ms`}
+      transition="transform 0.2s ease, box-shadow 0.2s ease"
+      _hover={{ transform: "translateY(-3px)", boxShadow: "0 14px 26px rgba(31,61,102,0.14)" }}
+      {...props}
     >
-      <Image src={img} alt={name} w="full" h="280px" objectFit="cover" />
-      <Box position="absolute" left="0" right="0" bottom="0" bg="#C78B6B" p="4">
-        <Text color="white" fontWeight="bold" fontSize="lg">
-          {name}
-        </Text>
-        <Text color="whiteAlpha.900" fontSize="sm">
-          {role}
-        </Text>
-      </Box>
+      {children}
     </Box>
   );
 }
 
-export default function About() {
+function MemberCard({ member, delay }) {
   return (
-    <Box p={{ base: 4, md: 6 }}>
-      <VStack align="start" gap="1" mb="5">
-        <Text fontSize={{ base: "xl", md: "2xl" }} fontWeight="bold">
-          About Us
-        </Text>
-        <Text fontSize="sm" opacity="0.75">
-          A simple team section styled like the video.
-        </Text>
-      </VStack>
+    <FadeInCard
+      delay={delay}
+      bg="white"
+      border="1.5px solid"
+      borderColor="#D4E3F8"
+      borderRadius="3xl"
+      p={{ base: 5, md: 6 }}
+      boxShadow="0 10px 22px rgba(31,61,102,0.10)"
+      minH={{ base: "auto", md: "300px" }}
+      _hover={{
+        transform: "translateY(-4px)",
+        boxShadow: "0 16px 28px rgba(31,61,102,0.18)",
+      }}
+    >
+      <VStack align="center" justify="center" textAlign="center" gap="4" h="100%">
+        <Avatar.Root
+          size="2xl"
+          border="2px solid"
+          borderColor={colors.primary}
+          boxShadow="0 8px 18px rgba(31,61,102,0.16)"
+        >
+            {member.image ? <Avatar.Image src={member.image} alt={member.name} /> : null}
+            <Avatar.Fallback name={member.name} bg={colors.chipBg} color={colors.darkest} />
+          </Avatar.Root>
 
-      <SimpleGrid columns={{ base: 1, md: 2 }} gap={{ base: 4, md: 6 }}>
-        {TEAM.map((m) => (
-          <TeamCard key={m.name} {...m} />
-        ))}
-      </SimpleGrid>
+        <Box>
+          <Text
+            fontSize={{ base: "lg", md: "xl" }}
+            fontWeight="800"
+            color={colors.darkest}
+            lineHeight="1.35"
+            maxW="260px"
+          >
+            {member.name}
+          </Text>
+          <Text
+            mt="1"
+            fontSize={{ base: "sm", md: "md" }}
+            fontWeight="700"
+            color={colors.primary}
+            lineHeight="1.45"
+            maxW="260px"
+          >
+            {member.role}
+          </Text>
+        </Box>
+
+        <HStack gap="4" pt="1">
+          <Link
+            href={member.website}
+            target="_blank"
+            rel="noopener noreferrer"
+            color={colors.dark}
+            _hover={{ color: colors.primary, transform: "translateY(-1px)" }}
+            transition="all 0.2s ease"
+            aria-label={`${member.name} website`}
+          >
+            <FiGlobe size={22} />
+          </Link>
+
+          <Link
+            href={member.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            color={colors.dark}
+            _hover={{ color: colors.primary, transform: "translateY(-1px)" }}
+            transition="all 0.2s ease"
+            aria-label={`${member.name} github`}
+          >
+            <FiGithub size={22} />
+          </Link>
+        </HStack>
+      </VStack>
+    </FadeInCard>
+  );
+}
+
+export default function About() {
+  const { t } = useTranslation();
+
+  return (
+    <Box
+      p={{ base: 4, md: 6 }}
+      sx={{
+        "@keyframes fadeSlideIn": {
+          from: { opacity: 0, transform: "translateY(14px)" },
+          to: { opacity: 1, transform: "translateY(0)" },
+        },
+      }}
+    >
+      <Box maxW="1120px" mx="auto" w="full">
+        <FadeInCard
+          delay={30}
+          id="overview"
+          border="1px solid"
+          borderColor="#CFE0FA"
+          borderRadius="2xl"
+          bg="linear-gradient(135deg, #F8FBFF 0%, #EDF4FF 60%, #E5EFFF 100%)"
+          px={{ base: 5, md: 8 }}
+          py={{ base: 6, md: 8 }}
+          boxShadow="0 12px 28px rgba(43,76,126,0.1)"
+          _hover={{ transform: "none", boxShadow: "0 12px 28px rgba(43,76,126,0.1)" }}
+        >
+          <VStack align="start" gap="3" maxW="780px">
+            <Badge bg={colors.primary} color="white" px="3" py="1" borderRadius="full">
+              {t("about.badge")}
+            </Badge>
+            <Text fontSize={{ base: "2xl", md: "4xl" }} fontWeight="800" color={colors.darkest} lineHeight="1.15">
+              {t("about.heroTitle")}
+            </Text>
+            <Text fontSize={{ base: "sm", md: "md" }} color={colors.dark} lineHeight="1.85">
+              {t("about.heroDescription")}
+            </Text>
+
+            <HStack gap="3" pt="2" wrap="wrap">
+              <Button
+                as={RouterLink}
+                to="/home"
+                bg={colors.primary}
+                color="white"
+                _hover={{ bg: colors.dark }}
+                rightIcon={<FiArrowUpRight />}
+              >
+                {t("about.tryApp")}
+              </Button>
+              <Button
+                as="a"
+                href="#features"
+                variant="outline"
+                borderColor="#BFD3F3"
+                color={colors.dark}
+                _hover={{ bg: colors.chipBg }}
+              >
+                {t("about.viewFeatures")}
+              </Button>
+            </HStack>
+          </VStack>
+        </FadeInCard>
+
+        <Box id="features" mt="7">
+          <Text fontSize={{ base: "xl", md: "2xl" }} fontWeight="800" color={colors.darkest}>
+            {t("about.featureTitle")}
+          </Text>
+          <Text fontSize="sm" color={colors.dark} mt="1">
+            {t("about.featureDescription")}
+          </Text>
+
+          <SimpleGrid columns={{ base: 1, md: 3 }} gap="4" mt="4">
+            {FEATURE_PLACEHOLDERS.map((item, index) => (
+              <FadeInCard
+                key={`${item.titleKey}-${index}`}
+                delay={220 + index * 70}
+                border="1px solid"
+                borderColor="#CFE0FA"
+                borderRadius="xl"
+                bg="white"
+                overflow="hidden"
+                p="0"
+                minH="180px"
+                _hover={{
+                  transform: "translateY(-2px)",
+                  borderColor: colors.primary,
+                  boxShadow: "0 10px 20px rgba(31,61,102,0.08)",
+                }}
+              >
+                <Box position="relative">
+                  <Image src={item.image} alt={t(item.titleKey)} w="100%" h="190px" objectFit="cover" />
+                  <Box
+                    position="absolute"
+                    left="0"
+                    right="0"
+                    bottom="0"
+                    px="3"
+                    py="2.5"
+                    bg="linear-gradient(180deg, rgba(31,61,102,0.02) 0%, rgba(31,61,102,0.78) 100%)"
+                  >
+                    <Text fontSize="sm" color="white" fontWeight="700" lineHeight="1.4">
+                      {t(item.titleKey)}
+                    </Text>
+                  </Box>
+                </Box>
+              </FadeInCard>
+            ))}
+          </SimpleGrid>
+        </Box>
+
+        <Box id="team" mt="7">
+          <Text fontSize={{ base: "xl", md: "2xl" }} fontWeight="800" color={colors.darkest}>
+            {t("about.teamTitle")}
+          </Text>
+          <Text fontSize="sm" color={colors.dark} mt="1">
+            {t("about.teamDescription")}
+          </Text>
+
+          <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} gap={{ base: 4, md: 5 }} mt="4">
+            {MEMBERS.map((member, index) => (
+              <MemberCard key={member.name} member={member} delay={100 + index * 80} />
+            ))}
+          </SimpleGrid>
+        </Box>
+
+        <Box id="footer" mt="8" pt="5" borderTop="1px solid" borderColor="#D9E6F8">
+          <HStack justify="space-between" wrap="wrap" gap="2">
+            <Text fontSize="sm" color="gray.600">
+              {t("about.footer.copyright", { year: new Date().getFullYear() })}
+            </Text>
+            <HStack gap="3">
+              <Link href="/about" fontSize="sm" color={colors.dark} _hover={{ color: colors.primary }}>
+                {t("about.footer.about")}
+              </Link>
+              <Link href="/home" fontSize="sm" color={colors.dark} _hover={{ color: colors.primary }}>
+                {t("about.footer.home")}
+              </Link>
+            </HStack>
+          </HStack>
+        </Box>
+      </Box>
     </Box>
   );
 }
