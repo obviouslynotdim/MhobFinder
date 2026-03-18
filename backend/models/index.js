@@ -7,6 +7,7 @@ import Comment from "./comment.js";
 import Rating from "./rating.js";
 import Favorite from "./favorite.js";
 import IngredientType from "./ingredientType.js";
+import BugReport from "./bugReport.js";
 
 // ---------------------------
 // Food ↔ Ingredient
@@ -87,6 +88,18 @@ Rating.belongsTo(User, { foreignKey: "user_id", as: "user" });
 Rating.belongsTo(Food, { foreignKey: "food_id", as: "food" });
 
 // ---------------------------
+// Bug Reports
+// ---------------------------
+User.hasMany(BugReport, { foreignKey: "user_id", as: "bugReports" });
+BugReport.belongsTo(User, { foreignKey: "user_id", as: "reporter" });
+
+Food.hasMany(BugReport, { foreignKey: "food_id", as: "bugReports" });
+BugReport.belongsTo(Food, { foreignKey: "food_id", as: "food" });
+
+User.hasMany(BugReport, { foreignKey: "handled_by", as: "handledBugReports" });
+BugReport.belongsTo(User, { foreignKey: "handled_by", as: "handledBy" });
+
+// ---------------------------
 // Export
 // ---------------------------
 export {
@@ -99,4 +112,5 @@ export {
   Rating,
   Favorite,
   IngredientType,
+  BugReport,
 };

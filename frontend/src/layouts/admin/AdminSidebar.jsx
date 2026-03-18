@@ -8,6 +8,7 @@ import {
   FiPlusSquare,
   FiUsers,
   FiBarChart2,
+  FiFlag,
 } from "react-icons/fi";
 import { colors } from "../../theme/tokens.js";
 
@@ -21,6 +22,7 @@ export default function AdminSidebar({ expanded, onToggle }) {
     { icon: FiGrid, label: "All Food", path: "/admin/foods", key: "foods" },
     { icon: FiPlusSquare, label: "Add Food", path: "/admin/add-food", key: "add-food" },
     { icon: FiUsers, label: "Manage User", path: "/admin/manage-user", key: "manage-user" },
+    { icon: FiFlag, label: "Bug Reports", path: "/admin/bug-reports", key: "bug-reports" },
     { icon: FiBarChart2, label: "Analytical", path: "/admin/analytical", key: "analytical" },
   ];
 

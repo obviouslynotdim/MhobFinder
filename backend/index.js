@@ -15,6 +15,7 @@ import ratingRoutes from "./routes/rating.routes.js";
 import categoriesRoutes from "./routes/categories.routes.js";
 import ingredientTypeRoutes from "./routes/ingredientType.routes.js";
 import usersRoutes from "./routes/user.routes.js";
+import bugReportRoutes from "./routes/bugReport.routes.js";
 
 const app = express();
 
@@ -87,6 +88,7 @@ app.use("/api/ratings", ratingRoutes);
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/ingredient-types", ingredientTypeRoutes);
 app.use("/api/users", usersRoutes);
+app.use("/api/bug-reports", bugReportRoutes);
 
 // ---------------------------
 // ERROR HANDLING
@@ -128,6 +130,20 @@ async function ensureUserProfileColumns() {
   }
 }
 
+async function ensureBugReportColumns() {
+  const queryInterface = sequelize.getQueryInterface();
+  const tableDefinition = await queryInterface.describeTable("bug_reports");
+
+  if (!tableDefinition.reason_code) {
+    await queryInterface.addColumn("bug_reports", "reason_code", {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: "other",
+    });
+    console.log("✅ Added bug_reports.reason_code column");
+  }
+}
+
 
 async function startServer() {
   try {
@@ -135,6 +151,7 @@ async function startServer() {
     console.log("✅ Database connected successfully");
 
     await ensureUserProfileColumns();
+    await ensureBugReportColumns();
 
     await sequelize.sync();
     console.log("✅ Tables synced successfully");

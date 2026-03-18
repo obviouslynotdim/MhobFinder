@@ -4,6 +4,7 @@ import AdminLayout from "./layouts/admin/AdminLayout.jsx";
 import { AppProvider } from "./context/AppProvider.jsx";
 import { UserProvider, useUser } from "./context/UserProvider.jsx";
 import { LanguageProvider } from "./context/LanguageProvider.jsx";
+import { UserAlertProvider } from "./context/UserAlertContext.jsx";
 
 import Start from "./pages/user/Start.jsx";
 import Home from "./pages/user/Home.jsx";
@@ -20,6 +21,7 @@ import EditFood from "./pages/admin/EditFood.jsx";
 import ManageUser from "./pages/admin/ManageUser.jsx";
 import Analytical from "./pages/admin/Analytical.jsx";
 import UserDetail from "./pages/admin/UserDetail.jsx";
+import BugReports from "./pages/admin/BugReports.jsx";
 import AppLoadingState from "./components/common/AppLoadingState.jsx";
 
 function ProtectedRoute({ children }) {
@@ -60,7 +62,8 @@ export default function App() {
     <UserProvider>
       <LanguageProvider>
         <AppProvider>
-          <Routes>
+          <UserAlertProvider>
+            <Routes>
             <Route element={<AppShell />}>
               <Route index element={<Start />} />
               <Route path="/home" element={<Home />} />
@@ -111,11 +114,13 @@ export default function App() {
               <Route path="edit-food/:id" element={<EditFood />} />
               <Route path="manage-user" element={<ManageUser />} />
               <Route path="analytical" element={<Analytical />} />
+              <Route path="bug-reports" element={<BugReports />} />
               <Route path="users/:id" element={<UserDetail />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+            </Routes>
+          </UserAlertProvider>
         </AppProvider>
       </LanguageProvider>
     </UserProvider>

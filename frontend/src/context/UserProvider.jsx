@@ -32,7 +32,7 @@ export function UserProvider({ children }) {
           import.meta.env.VITE_ADMIN_EMAILS || "",
         );
         const email = firebaseUser.email || "";
-        const isAdmin = adminEmails.includes(email.toLowerCase());
+        const isAdminByEnv = adminEmails.includes(email.toLowerCase());
 
         let dbProfile = null;
         try {
@@ -48,7 +48,10 @@ export function UserProvider({ children }) {
           name: dbProfile?.name || firebaseUser.displayName || "User",
           email,
           photoURL: dbProfile?.image_url || firebaseUser.photoURL || "",
-          isAdmin,
+          isAdmin:
+            typeof dbProfile?.isAdmin === "boolean"
+              ? dbProfile.isAdmin
+              : isAdminByEnv,
         };
 
         setUser(userData);

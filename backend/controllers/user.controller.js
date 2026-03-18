@@ -117,6 +117,7 @@ export const getMyProfile = async (req, res, next) => {
         name: req.user.name,
         email: req.user.email,
         image_url: req.user.image_url || null,
+        isAdmin: Boolean(req.userIsAdmin),
       },
     });
   } catch (err) {

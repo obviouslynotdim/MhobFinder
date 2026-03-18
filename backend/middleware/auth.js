@@ -2,6 +2,8 @@
 import admin from "../config/firebase.js";
 import User from "../models/user.js";
 import crypto from "crypto";
+import fs from "fs";
+import path from "path";
 
 const normalizeEmailList = (value = "") =>
   String(value)
@@ -9,9 +11,51 @@ const normalizeEmailList = (value = "") =>
     .map((email) => email.trim().toLowerCase())
     .filter(Boolean);
 
+let cachedEnvAdminEmails = null;
+
+const readAdminEmailsFromDotenv = () => {
+  if (cachedEnvAdminEmails) {
+    return cachedEnvAdminEmails;
+  }
+
+  const envFilePath = path.resolve(process.cwd(), ".env");
+  let fileContent = "";
+  try {
+    fileContent = fs.readFileSync(envFilePath, "utf8");
+  } catch {
+    cachedEnvAdminEmails = [];
+    return cachedEnvAdminEmails;
+  }
+
+  const adminKeys = new Set([
+    "ADMIN_EMAILS",
+    "ADMIN_EMAIL",
+    "VITE_ADMIN_EMAILS",
+    "VITE_ADMIN_EMAIL",
+  ]);
+
+  const emails = [];
+  for (const rawLine of fileContent.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith("#")) continue;
+
+    const eqIndex = line.indexOf("=");
+    if (eqIndex < 0) continue;
+
+    const key = line.slice(0, eqIndex).trim();
+    if (!adminKeys.has(key)) continue;
+
+    const value = line.slice(eqIndex + 1).trim().replace(/^['\"]|['\"]$/g, "");
+    emails.push(...normalizeEmailList(value));
+  }
+
+  cachedEnvAdminEmails = Array.from(new Set(emails));
+  return cachedEnvAdminEmails;
+};
+
 const isAdminEmail = (email = "") => {
   const normalizedEmail = String(email).trim().toLowerCase();
-  const adminEmails = normalizeEmailList(
+  const envAdminEmails = normalizeEmailList(
     [
       process.env.ADMIN_EMAILS,
       process.env.ADMIN_EMAIL,
@@ -21,7 +65,10 @@ const isAdminEmail = (email = "") => {
       .filter(Boolean)
       .join(","),
   );
-  return adminEmails.includes(normalizedEmail);
+
+  const fileAdminEmails = readAdminEmailsFromDotenv();
+  const allAdminEmails = new Set([...envAdminEmails, ...fileAdminEmails]);
+  return allAdminEmails.has(normalizedEmail);
 };
 
 export const verifyFirebaseToken = async (req, res, next) => {
