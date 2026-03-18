@@ -11,12 +11,14 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { FiArrowLeft } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import { useUserAlert } from "../../context/UserAlertContext.jsx";
 import { useUser } from "../../context/UserProvider.jsx";
 import { colors } from "../../theme/tokens.js";
 import AppLoadingState from "../../components/common/AppLoadingState.jsx";
 
 export default function EditProfile() {
   const { user, loading, updateUserProfile } = useUser();
+  const { showAlert } = useUserAlert();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
@@ -58,12 +60,39 @@ export default function EditProfile() {
   };
 
   const handleSaveProfile = async () => {
+    if (saving) return;
+
     setMessage("");
+
+    const trimmedName = String(name || "").trim();
+    const currentName = String(user?.name || "").trim();
+    const changedName = Boolean(trimmedName) && trimmedName !== currentName;
+    const changedImage = Boolean(selectedImage);
+
+    if (!changedName && !changedImage) {
+      setMessage("No changes to save.");
+      return;
+    }
+
     setSaving(true);
     try {
-      await updateUserProfile({ name, imageFile: selectedImage });
+      await updateUserProfile({
+        name: changedName ? trimmedName : "",
+        imageFile: changedImage ? selectedImage : null,
+      });
       setSelectedImage(null);
-      setMessage("Profile updated successfully.");
+
+      const successDescription = changedName && changedImage
+        ? "Your name and photo were saved successfully."
+        : changedName
+          ? "Your name was saved successfully."
+          : "Your photo was saved successfully.";
+
+      showAlert({
+        tone: "success",
+        title: "Profile updated",
+        description: successDescription,
+      });
       navigate("/profile");
     } catch (error) {
       const msg =
@@ -128,6 +157,7 @@ export default function EditProfile() {
               color={colors.darkest}
               _hover={{ bg: colors.chipBg }}
               onClick={() => navigate("/profile")}
+              isDisabled={saving}
             >
               <FiArrowLeft />
             </IconButton>
@@ -155,6 +185,7 @@ export default function EditProfile() {
                 bg="white"
                 borderColor="#CFE0FA"
                 _focusVisible={{ borderColor: colors.primary }}
+                isDisabled={saving}
               />
             </Box>
 
@@ -170,24 +201,32 @@ export default function EditProfile() {
                 py="6"
                 bg={isDragging ? "#EDF4FF" : "#F8FBFF"}
                 transition="all 0.2s ease"
-                cursor="pointer"
-                onClick={() => fileInputRef.current?.click()}
+                cursor={saving ? "not-allowed" : "pointer"}
+                opacity={saving ? 0.7 : 1}
+                onClick={() => {
+                  if (saving) return;
+                  fileInputRef.current?.click();
+                }}
                 onDragOver={(e) => {
+                  if (saving) return;
                   e.preventDefault();
                   e.stopPropagation();
                   setIsDragging(true);
                 }}
                 onDragEnter={(e) => {
+                  if (saving) return;
                   e.preventDefault();
                   e.stopPropagation();
                   setIsDragging(true);
                 }}
                 onDragLeave={(e) => {
+                  if (saving) return;
                   e.preventDefault();
                   e.stopPropagation();
                   setIsDragging(false);
                 }}
                 onDrop={(e) => {
+                  if (saving) return;
                   e.preventDefault();
                   e.stopPropagation();
                   setIsDragging(false);
@@ -214,6 +253,7 @@ export default function EditProfile() {
                   accept="image/*"
                   onChange={(e) => handleSelectImage(e.target.files?.[0] || null)}
                   display="none"
+                  disabled={saving}
                 />
               </Box>
 
@@ -224,11 +264,18 @@ export default function EditProfile() {
                   variant="outline"
                   borderColor="#BFD3F3"
                   onClick={clearSelectedImage}
+                  isDisabled={saving}
                 >
                   Remove Selected Image
                 </Button>
               )}
             </Box>
+
+            {saving && (
+              <Text fontSize="sm" color={colors.dark}>
+                Saving profile changes. Please wait...
+              </Text>
+            )}
 
             {message && (
               <Text
@@ -250,6 +297,7 @@ export default function EditProfile() {
                 color={colors.dark}
                 _hover={{ bg: colors.chipBg }}
                 onClick={() => navigate("/profile")}
+                isDisabled={saving}
               >
                 Cancel
               </Button>
@@ -260,6 +308,8 @@ export default function EditProfile() {
                 _hover={{ bg: colors.dark }}
                 onClick={handleSaveProfile}
                 isLoading={saving}
+                loadingText="Saving..."
+                isDisabled={saving}
               >
                 Save Profile
               </Button>

@@ -13,9 +13,10 @@ import {
 } from "@chakra-ui/react";
 import { FiExternalLink, FiHeart, FiSearch } from "react-icons/fi";
 import { MdOutlineFoodBank } from "react-icons/md";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "../../context/AppProvider.jsx";
+import { getFoodById } from "../../services/api/food.service.js";
 import { colors } from "../../theme/tokens.js";
 import FullRecipe from "../fullRecipePage/FullRecipe.jsx";
 
@@ -25,6 +26,15 @@ function formatDomain(url) {
   } catch {
     return url;
   }
+}
+
+function countMatchingIngredients(food, selectedIngredientIds) {
+  const selectedSet = new Set(selectedIngredientIds.map(Number));
+
+  return (food.ingredients || []).reduce((count, ingredient) => {
+    const ingredientId = Number(ingredient?.ingredient_id ?? ingredient);
+    return selectedSet.has(ingredientId) ? count + 1 : count;
+  }, 0);
 }
 
 function FavoriteCard({ food, selectedIds, onToggleFavorite, onView }) {
@@ -179,8 +189,88 @@ export default function Favorites() {
   const { favorites, rawFoods, selectedIds, toggleFavorite } = useApp();
   const [query, setQuery] = useState("");
   const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [resolvedFavoriteFoods, setResolvedFavoriteFoods] = useState([]);
 
-  const favoriteFoods = rawFoods.filter((f) => favorites.includes(f.food_id));
+  const rawFoodsById = useMemo(() => {
+    return new Map(rawFoods.map((food) => [Number(food.food_id), food]));
+  }, [rawFoods]);
+
+  useEffect(() => {
+    let active = true;
+
+    async function resolveFavoriteFoods() {
+      if (favorites.length === 0) {
+        setResolvedFavoriteFoods([]);
+        return;
+      }
+
+      const orderedIds = favorites.map((id) => Number(id));
+      const foodsFromCurrentList = orderedIds
+        .map((id) => rawFoodsById.get(id))
+        .filter(Boolean);
+
+      const existingIds = new Set(
+        foodsFromCurrentList.map((food) => Number(food.food_id)),
+      );
+      const missingIds = orderedIds.filter((id) => !existingIds.has(id));
+
+      if (missingIds.length === 0) {
+        setResolvedFavoriteFoods(foodsFromCurrentList);
+        return;
+      }
+
+      try {
+        const missingFoods = await Promise.all(
+          missingIds.map(async (id) => {
+            try {
+              return await getFoodById(id);
+            } catch {
+              return null;
+            }
+          }),
+        );
+
+        if (!active) return;
+
+        const combined = [...foodsFromCurrentList, ...missingFoods.filter(Boolean)];
+        const byId = new Map(
+          combined.map((food) => [Number(food.food_id), food]),
+        );
+
+        setResolvedFavoriteFoods(
+          orderedIds.map((id) => byId.get(id)).filter(Boolean),
+        );
+      } catch {
+        if (!active) return;
+        setResolvedFavoriteFoods(foodsFromCurrentList);
+      }
+    }
+
+    resolveFavoriteFoods();
+
+    return () => {
+      active = false;
+    };
+  }, [favorites, rawFoodsById]);
+
+  const favoriteFoods = useMemo(() => {
+    if (selectedIds.length === 0) {
+      return resolvedFavoriteFoods;
+    }
+
+    return [...resolvedFavoriteFoods].sort((leftFood, rightFood) => {
+      const rightMatches = countMatchingIngredients(rightFood, selectedIds);
+      const leftMatches = countMatchingIngredients(leftFood, selectedIds);
+
+      if (rightMatches !== leftMatches) {
+        return rightMatches - leftMatches;
+      }
+
+      return String(leftFood.title || "").localeCompare(
+        String(rightFood.title || ""),
+      );
+    });
+  }, [resolvedFavoriteFoods, selectedIds]);
 
   const displayedFoods = query.trim()
     ? favoriteFoods.filter((f) =>
