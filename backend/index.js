@@ -82,6 +82,11 @@ app.get("/", (req, res) => {
   res.send("Backend is working");
 });
 
+// Add /home route for frontend compatibility
+app.get("/home", (req, res) => {
+  res.status(200).json({ message: "Home endpoint working" });
+});
+
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok" });
 });

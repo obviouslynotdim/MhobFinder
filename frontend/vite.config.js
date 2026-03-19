@@ -8,7 +8,8 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-          target: "https://mhobfinder-backend.onrender.com/",
+        // Use environment variable for backend URL
+        target: process.env.VITE_API_BASE || "http://localhost:5000",
         changeOrigin: true,
         secure: false,
       },
