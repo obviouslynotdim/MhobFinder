@@ -15,6 +15,11 @@ import { Link as RouterLink } from "react-router-dom";
 import { useTranslation } from "../../context/useTranslation.js";
 import { colors } from "../../theme/tokens.js";
 import nakImage from "../../assets/members/nak.png";
+import davinImage from "../../assets/members/davin.png";
+import kimhongImage from "../../assets/members/kimhong.png";
+import vanndaImage from "../../assets/members/vannda.png";
+// import sakImage from "../../assets/members/chytasenasak.png";
+import virakImage from "../../assets/members/virak.png";    
 import featureImageOne from "../../assets/feature/mhohfinder.jpg";
 import featureImageTwo from "../../assets/feature/mhobfinder2.jpg";
 import featureImageThree from "../../assets/feature/mhobfinder3.jpg";
@@ -30,37 +35,37 @@ const MEMBERS = [
   {
     name: "Pov Davin",
     role: "Backend Developer / API Integration",
-    image: "",
+    image: davinImage,
     website: "https://example.com",
-    github: "https://github.com",
+    github: "https://github.com/Jer1ckk",
   },
   {
     name: "Kimhong Chhour",
     role: "Frontend Developer",
-    image: "",
+    image: kimhongImage,
     website: "https://example.com",
-    github: "https://github.com",
+    github: "https://github.com/jin-kimhong646",
   },
   {
     name: "Khorn Vannda",
     role: "Database",
-    image: "",
+    image: vanndaImage,
     website: "https://example.com",
-    github: "https://github.com",
+    github: "https://github.com/kingvaxxda3103",
   },
   {
     name: "Mok Chytasenasak",
     role: "Frontend",
-    image: "",
+    image: '',
     website: "https://example.com",
-    github: "https://github.com",
+    github: "https://github.com/Sakk-pk",
   },
   {
     name: "Luy Virak",
     role: "Frontend",
-    image: "",
+    image: virakImage,
     website: "https://example.com",
-    github: "https://github.com",
+    github: "https://github.com/luy-virak",
   },
 ];
 
@@ -115,10 +120,11 @@ function MemberCard({ member, delay }) {
           border="2px solid"
           borderColor={colors.primary}
           boxShadow="0 8px 18px rgba(31,61,102,0.16)"
+          style={{ width: '80px', height: '80px', minWidth: '80px', minHeight: '80px', borderRadius: '50%' }}
         >
-            {member.image ? <Avatar.Image src={member.image} alt={member.name} /> : null}
+            {member.image ? <Avatar.Image src={member.image} alt={member.name} style={{ width: '80px', height: '80px', borderRadius: '50%' }} /> : null}
             <Avatar.Fallback name={member.name} bg={colors.chipBg} color={colors.darkest} />
-          </Avatar.Root>
+        </Avatar.Root>
 
         <Box>
           <Text

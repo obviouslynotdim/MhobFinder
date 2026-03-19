@@ -34,6 +34,7 @@ import fruitsImg from "../../assets/type/fruits.png";
 import spicesImg from "../../assets/type/spices.png";
 import saucesImg from "../../assets/type/sauces.png";
 import grainsImg from "../../assets/type/grains.png";
+import backgroundImage from "../../assets/bg.png";
 
 function chipBg(color) {
   // Muted palette to keep chips readable and consistent with the blue brand theme.
@@ -241,7 +242,7 @@ export default function Sidebar({ collapsed }) {
     const aboutItem = { to: "/about", icon: <FiInfo />, label: "About" };
 
     return (
-      <Box position="relative" h="calc(100vh - 120px)" px="4">
+      <Box position="relative" h="calc(100vh - 120px)" px="4" bg="#4975BB">
         <VStack
           w="full"
           gap="2"
@@ -271,182 +272,200 @@ export default function Sidebar({ collapsed }) {
   const grouped = groupByCategory(ingredients);
 
   return (
-    <Box px="4" py="5" color={colors.darkest}>
-      {CATEGORY_ORDER.map((cat) => {
-        const list = grouped.get(cat) || [];
-        if (list.length === 0) return null;
+    <Box
+      px="4"
+      py="5"
+      color={colors.darkest}
+      position="relative"
+      bg="linear-gradient(180deg, #F8FAFF 0%, #EEF4FF 100%)"
+    >
+      <Box
+        position="absolute"
+        inset="0"
+        bgImage={`url(${backgroundImage})`}
+        bgRepeat="repeat"
+        bgSize="320px"
+        opacity={0.18}
+        pointerEvents="none"
+        zIndex={0}
+      />
+      <Box position="relative" zIndex={1}>
+        {CATEGORY_ORDER.map((cat) => {
+          const list = grouped.get(cat) || [];
+          if (list.length === 0) return null;
 
-        const hasOverflow = list.length > CACHE_LIMIT;
-        const isExpanded = expandedCats.has(cat);
-        const visibleList =
-          hasOverflow && !isExpanded ? list.slice(0, CACHE_LIMIT) : list;
-        const hiddenCount = list.length - CACHE_LIMIT;
+          const hasOverflow = list.length > CACHE_LIMIT;
+          const isExpanded = expandedCats.has(cat);
+          const visibleList =
+            hasOverflow && !isExpanded ? list.slice(0, CACHE_LIMIT) : list;
+          const hiddenCount = list.length - CACHE_LIMIT;
 
-        const selectedCount = list.filter((x) =>
-          selectedIds.includes(x.ingredient_id),
-        ).length;
+          const selectedCount = list.filter((x) =>
+            selectedIds.includes(x.ingredient_id),
+          ).length;
 
-        const img = getCategoryImage(cat);
+          const img = getCategoryImage(cat);
 
-        return (
-          <Box
-            key={cat}
-            mb="4"
-            borderRadius="2xl"
-            p="4"
-            bg="white"
-            border="1px solid"
-            borderColor={
-              selectedCount > 0 ? `${colors.primary}40` : `${colors.primary}18`
-            }
-            boxShadow={
-              selectedCount > 0
-                ? "0 4px 14px rgba(73,117,187,0.14)"
-                : "0 2px 8px rgba(43,76,126,0.07)"
-            }
-            transition="box-shadow 0.2s, border-color 0.2s"
-          >
-            {/* Category header */}
-            <HStack align="center" mb="3" gap="3">
-              {img && (
-                <Box
-                  bg="#f5f5f5"
-                  borderRadius="xl"
-                  p="2"
-                  flexShrink={0}
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  boxSize="62px"
-                >
-                  <Image
-                    src={img}
-                    alt={cat}
-                    boxSize="46px"
-                    objectFit="contain"
-                  />
-                </Box>
-              )}
-
-              <Box flex="1" minW="0">
-                <Text
-                  fontWeight="700"
-                  fontSize="sm"
-                  color={colors.darkest}
-                  lineHeight="1.3"
-                >
-                  {cat}
-                </Text>
-                <Text fontSize="xs" color={colors.dark} lineHeight="1.3">
-                  {selectedCount}/{list.length} Ingredients
-                </Text>
-              </Box>
-
-              {hasOverflow && (
-                <IconButton
-                  aria-label={isExpanded ? "Show less" : "Show more"}
-                  size="xs"
-                  variant="ghost"
-                  color={colors.dark}
-                  _hover={{ bg: colors.pageBg }}
-                  onClick={() => toggleCat(cat)}
-                >
-                  {isExpanded ? <FiChevronUp /> : <FiChevronDown />}
-                </IconButton>
-              )}
-            </HStack>
-
-            {/* Divider */}
-            <Box h="1px" bg={`${colors.primary}18`} mb="3" />
-
-            {/* Chips */}
-            <Wrap spacing="1.5" spacingY="1.5">
-              {visibleList.map((item) => (
-                <WrapItem key={item.ingredient_id}>
-                  <IngredientChip
-                    item={item}
-                    selected={selectedIds.includes(item.ingredient_id)}
-                    onClick={() => toggleIngredient(item.ingredient_id)}
-                  />
-                </WrapItem>
-              ))}
-
-              {hasOverflow && !isExpanded && (
-                <WrapItem>
+          return (
+            <Box
+              key={cat}
+              mb="4"
+              borderRadius="2xl"
+              p="4"
+              bg="white"
+              border="1px solid"
+              borderColor={
+                selectedCount > 0 ? `${colors.primary}40` : `${colors.primary}18`
+              }
+              boxShadow={
+                selectedCount > 0
+                  ? "0 4px 14px rgba(73,117,187,0.14)"
+                  : "0 2px 8px rgba(43,76,126,0.07)"
+              }
+              transition="box-shadow 0.2s, border-color 0.2s"
+            >
+              {/* Category header */}
+              <HStack align="center" mb="3" gap="3">
+                {img && (
                   <Box
-                    px="3"
-                    py="1"
-                    borderRadius="full"
-                    fontSize="xs"
-                    fontWeight="500"
-                    border="1.5px dashed"
-                    borderColor={colors.dark}
+                    bg="#f5f5f5"
+                    borderRadius="xl"
+                    p="2"
+                    flexShrink={0}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    boxSize="62px"
+                  >
+                    <Image
+                      src={img}
+                      alt={cat}
+                      boxSize="46px"
+                      objectFit="contain"
+                    />
+                  </Box>
+                )}
+
+                <Box flex="1" minW="0">
+                  <Text
+                    fontWeight="700"
+                    fontSize="sm"
+                    color={colors.darkest}
+                    lineHeight="1.3"
+                  >
+                    {cat}
+                  </Text>
+                  <Text fontSize="xs" color={colors.dark} lineHeight="1.3">
+                    {selectedCount}/{list.length} Ingredients
+                  </Text>
+                </Box>
+
+                {hasOverflow && (
+                  <IconButton
+                    aria-label={isExpanded ? "Show less" : "Show more"}
+                    size="xs"
+                    variant="ghost"
                     color={colors.dark}
-                    cursor="pointer"
-                    _hover={{ bg: colors.pageBg, borderStyle: "solid" }}
-                    transition="all 0.15s ease"
+                    _hover={{ bg: colors.pageBg }}
                     onClick={() => toggleCat(cat)}
                   >
-                    +{hiddenCount} more
-                  </Box>
-                </WrapItem>
-              )}
-            </Wrap>
-          </Box>
-        );
-      })}
+                    {isExpanded ? <FiChevronUp /> : <FiChevronDown />}
+                  </IconButton>
+                )}
+              </HStack>
 
-      {/* Uncategorized ingredients */}
-      {(() => {
-        const other = grouped.get("Other") || [];
-        if (!other.length) return null;
+              {/* Divider */}
+              <Box h="1px" bg={`${colors.primary}18`} mb="3" />
 
-        const selectedCount = other.filter((x) =>
-          selectedIds.includes(x.ingredient_id),
-        ).length;
+              {/* Chips */}
+              <Wrap spacing="1.5" spacingY="1.5">
+                {visibleList.map((item) => (
+                  <WrapItem key={item.ingredient_id}>
+                    <IngredientChip
+                      item={item}
+                      selected={selectedIds.includes(item.ingredient_id)}
+                      onClick={() => toggleIngredient(item.ingredient_id)}
+                    />
+                  </WrapItem>
+                ))}
 
-        return (
-          <Box
-            mb="4"
-            borderRadius="2xl"
-            p="4"
-            bg="white"
-            border="1px solid"
-            borderColor={
-              selectedCount > 0 ? `${colors.primary}40` : `${colors.primary}18`
-            }
-            boxShadow="0 2px 8px rgba(43,76,126,0.07)"
-          >
-            <HStack align="center" mb="3" gap="3">
-              <Box flex="1" minW="0">
-                <Text
-                  fontWeight="700"
-                  fontSize="sm"
-                  color={colors.darkest}
-                  lineHeight="1.3"
-                >
-                  Other
-                </Text>
-                <Text fontSize="xs" color={colors.dark} lineHeight="1.3">
-                  {selectedCount}/{other.length} Ingredients
-                </Text>
-              </Box>
-            </HStack>
-            <Box h="1px" bg={`${colors.primary}18`} mb="3" />
-            <Wrap spacing="1.5" spacingY="1.5">
-              {other.map((item) => (
-                <WrapItem key={item.ingredient_id}>
-                  <IngredientChip
-                    item={item}
-                    selected={selectedIds.includes(item.ingredient_id)}
-                    onClick={() => toggleIngredient(item.ingredient_id)}
-                  />
-                </WrapItem>
-              ))}
-            </Wrap>
-          </Box>
-        );
-      })()}
+                {hasOverflow && !isExpanded && (
+                  <WrapItem>
+                    <Box
+                      px="3"
+                      py="1"
+                      borderRadius="full"
+                      fontSize="xs"
+                      fontWeight="500"
+                      border="1.5px dashed"
+                      borderColor={colors.dark}
+                      color={colors.dark}
+                      cursor="pointer"
+                      _hover={{ bg: colors.pageBg, borderStyle: "solid" }}
+                      transition="all 0.15s ease"
+                      onClick={() => toggleCat(cat)}
+                    >
+                      +{hiddenCount} more
+                    </Box>
+                  </WrapItem>
+                )}
+              </Wrap>
+            </Box>
+          );
+        })}
+
+        {/* Uncategorized ingredients */}
+        {(() => {
+          const other = grouped.get("Other") || [];
+          if (!other.length) return null;
+
+          const selectedCount = other.filter((x) =>
+            selectedIds.includes(x.ingredient_id),
+          ).length;
+
+          return (
+            <Box
+              mb="4"
+              borderRadius="2xl"
+              p="4"
+              bg="white"
+              border="1px solid"
+              borderColor={
+                selectedCount > 0 ? `${colors.primary}40` : `${colors.primary}18`
+              }
+              boxShadow="0 2px 8px rgba(43,76,126,0.07)"
+            >
+              <HStack align="center" mb="3" gap="3">
+                <Box flex="1" minW="0">
+                  <Text
+                    fontWeight="700"
+                    fontSize="sm"
+                    color={colors.darkest}
+                    lineHeight="1.3"
+                  >
+                    Other
+                  </Text>
+                  <Text fontSize="xs" color={colors.dark} lineHeight="1.3">
+                    {selectedCount}/{other.length} Ingredients
+                  </Text>
+                </Box>
+              </HStack>
+              <Box h="1px" bg={`${colors.primary}18`} mb="3" />
+              <Wrap spacing="1.5" spacingY="1.5">
+                {other.map((item) => (
+                  <WrapItem key={item.ingredient_id}>
+                    <IngredientChip
+                      item={item}
+                      selected={selectedIds.includes(item.ingredient_id)}
+                      onClick={() => toggleIngredient(item.ingredient_id)}
+                    />
+                  </WrapItem>
+                ))}
+              </Wrap>
+            </Box>
+          );
+        })()}
+      </Box>
     </Box>
   );
 }
