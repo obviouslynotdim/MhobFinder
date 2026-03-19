@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { auth } from '../../firebase.js';
 
-const API_ROOT = (import.meta.env.VITE_API_BASE || 'http://localhost:5000').replace(/\/$/, '');
+const API_ROOT = (import.meta.env.VITE_API_BASE || 'https://mhobfinder-backend.onrender.com').replace(/\/$/, '');
 
 const apiClient = axios.create({
   baseURL: `${API_ROOT}/api`,
