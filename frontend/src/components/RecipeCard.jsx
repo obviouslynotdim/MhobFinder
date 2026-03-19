@@ -29,6 +29,11 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
     }
   }
 
+  // Sanitize image_url to fix 'hhttps' typo
+  const sanitizedImageUrl = typeof food.image_url === "string"
+    ? food.image_url.replace(/^hhttps:/, "https:")
+    : food.image_url;
+
   return (
     <>
     <Flex
@@ -54,7 +59,7 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
         overflow="hidden"
       >
         <Image
-          src={food.image_url}
+          src={sanitizedImageUrl}
           alt={food.title}
           w="100%"
           h="100%"
