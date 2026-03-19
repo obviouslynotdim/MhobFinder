@@ -96,33 +96,62 @@ const CATEGORY_ORDER = [
 function groupByCategory(ingredients) {
   const map = new Map();
 
-  // Mapping from ingredient type to category
+  // Match EXACT database values (case-insensitive safe)
   const typeToCategory = {
-    Meat: "Meats",
-    Seafood: "Seafood",
-    Vegetable: "Vegetables & Greens",
-    Herb: "Vegetables & Greens",
-    Fruit: "Fruits",
-    Grain: "Noodles & Grains",
-    Dairy: "Dairy",
-    Egg: "Meats",
-    Spice: "Spices & Heat",
-    Sauce: "Sauces & Condiments",
-    Sweetener: "Pantry Essentials",
-    Oil: "Pantry Essentials",
-    "Flour & Starch": "Pantry Essentials",
+    "meat & protein": "Meats",
+    "vegetable & green": "Vegetables & Greens",
+    "pantry essentials": "Pantry Essentials",
+    "spices & herbs": "Spices & Heat",
   };
 
   for (const ing of ingredients) {
-    const typeName = (ing.type?.name || "").trim();
+    // Safe access + normalize text
+    const rawType = ing.type?.name || "";
+    const typeName = rawType.toLowerCase().trim();
+
+    // Map to UI category
     const cat = typeToCategory[typeName] || "Other";
 
-    if (!map.has(cat)) map.set(cat, []);
+    if (!map.has(cat)) {
+      map.set(cat, []);
+    }
+
     map.get(cat).push(ing);
   }
 
   return map;
 }
+
+// function groupByCategory(ingredients) {
+//   const map = new Map();
+
+//   // Mapping from ingredient type to category
+//   const typeToCategory = {
+//     Meat: "Meats",
+//     Seafood: "Seafood",
+//     Vegetable: "Vegetables & Greens",
+//     Herb: "Vegetables & Greens",
+//     Fruit: "Fruits",
+//     Grain: "Noodles & Grains",
+//     Dairy: "Dairy",
+//     Egg: "Meats",
+//     Spice: "Spices & Heat",
+//     Sauce: "Sauces & Condiments",
+//     Sweetener: "Pantry Essentials",
+//     Oil: "Pantry Essentials",
+//     "Flour & Starch": "Pantry Essentials",
+//   };
+
+//   for (const ing of ingredients) {
+//     const typeName = (ing.type?.name || "").trim();
+//     const cat = typeToCategory[typeName] || "Other";
+
+//     if (!map.has(cat)) map.set(cat, []);
+//     map.get(cat).push(ing);
+//   }
+
+//   return map;
+// }
 
 function RailItem({ item, isActive }) {
   return (
