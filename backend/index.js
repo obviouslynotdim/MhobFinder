@@ -40,7 +40,7 @@ requiredEnvs.forEach((env) => {
 // MIDDLEWARE
 // ---------------------------
 
-const corsOrigins = (process.env.CORS_ORIGINS || "http://localhost:5173")
+const corsOrigins = (process.env.CORS_ORIGINS || "https://mhobfinder-frontend.onrender.com")
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
@@ -173,7 +173,7 @@ async function startServer() {
     console.log("✅ Tables synced successfully");
 
     app.listen(PORT, () => {
-      console.log(`🚀 Backend running on http://localhost:${PORT}`);
+      console.log(`🚀 Backend running on https://mhobfinder-backend.onrender.com:${PORT}`);
     });
   } catch (err) {
     console.error("❌ Startup failed:", err);
