@@ -76,7 +76,8 @@ const FullRecipe = ({ foodId, onClose }) => {
     setLoading(true);
     setError(null);
 
-    fetch(`/api/foods/${activeFoodId}`, { credentials: "include" })
+    const API_BASE = import.meta.env.VITE_API_BASE || "";
+    fetch(`${API_BASE}/api/foods/${activeFoodId}`, { credentials: "include" })
       .then((res) => {
         if (!res.ok) throw new Error(`fetch failed ${res.status}`);
         return res.json();
