@@ -8,7 +8,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-          target: "https://your-render-backend-url.onrender.com",
+          target: "https://mhobfinder-backend.onrender.com/",
         changeOrigin: true,
         secure: false,
       },
