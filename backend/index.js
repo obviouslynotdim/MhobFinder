@@ -97,12 +97,12 @@ app.use("/api/bug-reports", bugReportRoutes);
 // 2. STATIC FILES
 app.use(express.static(frontendDistPath));
 
-// 3. SPA FALLBACK (must be after API and static)
-app.get("/*", (req, res, next) => {
-  // If the request starts with /api, return 404 (not found for API)
-  if (req.path.startsWith("/api")) {
-    return res.status(404).json({ error: "Not Found" });
-  }
+// 3. SPA FALLBACK (middleware, not app.get)
+app.use((req, res, next) => {
+  // If the request is for an API route, skip to next middleware (404 handler)
+  if (req.path.startsWith("/api")) return next();
+  // If the request is for a static file (has a dot), skip to next middleware (404 handler)
+  if (req.path.includes('.')) return next();
   // Otherwise, serve index.html for SPA routes
   res.sendFile(path.join(frontendDistPath, "index.html"));
 });
