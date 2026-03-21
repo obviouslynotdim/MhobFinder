@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import { fileURLToPath } from 'url';
 import cors from "cors";
 import helmet from "helmet";
 import { DataTypes } from "sequelize";
@@ -37,9 +38,7 @@ requiredEnvs.forEach((env) => {
   }
 });
 
-// ---------------------------
 // MIDDLEWARE
-// ---------------------------
 
 const corsOrigins = (process.env.CORS_ORIGINS || "https://mhobfinder-frontend.onrender.com")
   .split(",")
@@ -75,23 +74,16 @@ app.use((req, res, next) => {
   next();
 });
 
-// ---------------------------
-// ROUTES
-// ---------------------------
 
-// Serve static files from frontend/dist
+// PATHS
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const frontendDistPath = path.resolve(__dirname, '../frontend/dist');
-app.use(express.static(frontendDistPath));
 
-app.get("/", (req, res) => {
-  res.send("Backend is working");
-});
-
+// 1. API ROUTES
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok" });
 });
-
-// API routes
 app.use("/api/foods", foodRoutes);
 app.use("/api/ingredients", ingredientRoutes);
 app.use("/api/comments", commentRoutes);
@@ -102,14 +94,17 @@ app.use("/api/ingredient-types", ingredientTypeRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/bug-reports", bugReportRoutes);
 
-// Catch-all route for SPA (must be after all other routes)
-app.get('*', (req, res) => {
-  // Only handle non-API routes
-  if (!req.path.startsWith('/api')) {
-    res.sendFile(path.join(frontendDistPath, 'index.html'));
-  } else {
-    res.status(404).json({ error: 'Not Found' });
+// 2. STATIC FILES
+app.use(express.static(frontendDistPath));
+
+// 3. SPA FALLBACK (must be after API and static)
+app.get("*", (req, res, next) => {
+  // If the request starts with /api, return 404 (not found for API)
+  if (req.path.startsWith("/api")) {
+    return res.status(404).json({ error: "Not Found" });
   }
+  // Otherwise, serve index.html for SPA routes
+  res.sendFile(path.join(frontendDistPath, "index.html"));
 });
 
 // ---------------------------
@@ -197,22 +192,3 @@ async function startServer() {
 }
 
 startServer();
-
-// (async () => {
-//   try {
-//     // Test DB connection
-//     await sequelize.authenticate();
-//     console.log("✅ Database connected successfully");
-
-//     // Sync tables (development only)
-//     await sequelize.sync();
-//     console.log("✅ Tables synced successfully");
-
-//     app.listen(PORT, () =>
-//       console.log(`🚀 Backend running on http://localhost:${PORT}`),
-//     );
-//   } catch (err) {
-//     console.error("❌ Database connection failed:", err.message);
-//     process.exit(1);
-//   }
-// })();
