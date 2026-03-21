@@ -99,17 +99,13 @@ app.use("/api/ingredient-types", ingredientTypeRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/bug-reports", bugReportRoutes);
 
-// SPA fallback: serve index.html for any non-API, non-static route (for React Router)
-app.use((req, res, next) => {
-  // Only handle GET requests that are not API or static asset requests
-  if (req.method !== 'GET') return next();
-  if (req.path.startsWith('/api/')) return next();
-  // If the request accepts HTML, serve index.html
-  if (req.accepts('html')) {
-    res.sendFile(path.join(frontendDistPath, 'index.html'));
-    } else {
-    next();
+// SPA fallback: serve React index.html for all non-API GET requests
+app.get('*', (req, res) => {
+  if (req.path.startsWith('/api')) {
+    return res.status(404).json({ error: 'API route not found' });
   }
+
+  res.sendFile(path.join(frontendDistPath, 'index.html'));
 });
 
 // ERROR HANDLING
