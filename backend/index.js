@@ -8,6 +8,11 @@ import sequelize from "./config/database.js";
 import "./models/index.js";
 import "dotenv/config";
 
+// Polyfill __dirname and __filename for ES modules
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // Routes
 import foodRoutes from "./routes/food.routes.js";
 import ingredientRoutes from "./routes/ingredient.routes.js";
