@@ -1,6 +1,5 @@
 import express from "express";
 import path from "path";
-import { fileURLToPath } from 'url';
 import cors from "cors";
 import helmet from "helmet";
 import { DataTypes } from "sequelize";
@@ -22,9 +21,7 @@ import bugReportRoutes from "./routes/bugReport.routes.js";
 
 const app = express();
 
-// ---------------------------
 // ENVIRONMENT VALIDATION
-// ---------------------------
 const requiredEnvs = [
   "DB_NAME",
   "DB_USER",
@@ -39,7 +36,6 @@ requiredEnvs.forEach((env) => {
 });
 
 // MIDDLEWARE
-
 const corsOrigins = (process.env.CORS_ORIGINS || "https://mhobfinder-frontend.onrender.com")
   .split(",")
   .map((origin) => origin.trim())
@@ -74,16 +70,20 @@ app.use((req, res, next) => {
   next();
 });
 
-
-// PATHS
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// ROUTES
+// Serve static files from frontend/dist
 const frontendDistPath = path.resolve(__dirname, '../frontend/dist');
+        app.use(express.static(frontendDistPath));
 
-// 1. API ROUTES
+app.get("/", (req, res) => {
+  res.send("Backend is working");
+});
+
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok" });
 });
+
+// API routes
 app.use("/api/foods", foodRoutes);
 app.use("/api/ingredients", ingredientRoutes);
 app.use("/api/comments", commentRoutes);
@@ -94,22 +94,20 @@ app.use("/api/ingredient-types", ingredientTypeRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/bug-reports", bugReportRoutes);
 
-// 2. STATIC FILES
-app.use(express.static(frontendDistPath));
-
-// 3. SPA FALLBACK (middleware, not app.get)
+// SPA fallback: serve index.html for any non-API, non-static route (for React Router)
 app.use((req, res, next) => {
-  // If the request is for an API route, skip to next middleware (404 handler)
-  if (req.path.startsWith("/api")) return next();
-  // If the request is for a static file (has a dot), skip to next middleware (404 handler)
-  if (req.path.includes('.')) return next();
-  // Otherwise, serve index.html for SPA routes
-  res.sendFile(path.join(frontendDistPath, "index.html"));
+  // Only handle GET requests that are not API or static asset requests
+  if (req.method !== 'GET') return next();
+  if (req.path.startsWith('/api/')) return next();
+  // If the request accepts HTML, serve index.html
+  if (req.accepts('html')) {
+    res.sendFile(path.join(frontendDistPath, 'index.html'));
+    } else {
+    next();
+  }
 });
 
-// ---------------------------
 // ERROR HANDLING
-// ---------------------------
 app.use((err, req, res, next) => {
   console.error(err);
   const statusCode = err.status || 500;
@@ -121,9 +119,7 @@ app.use((err, req, res, next) => {
   res.status(statusCode).json({ error: message });
 });
 
-// ---------------------------
 // START SERVER
-// ---------------------------
 const PORT = process.env.PORT || 5000;
 
 async function ensureUserProfileColumns() {
