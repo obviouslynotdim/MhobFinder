@@ -81,7 +81,7 @@ app.use((req, res, next) => {
 
 // Serve static files from frontend/dist
 const frontendDistPath = path.resolve(__dirname, '../frontend/dist');
-app.use(express.static(frontendDistPath));
+        app.use(express.static(frontendDistPath));
 
 app.get("/", (req, res) => {
   res.send("Backend is working");
@@ -102,13 +102,16 @@ app.use("/api/ingredient-types", ingredientTypeRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/bug-reports", bugReportRoutes);
 
-// Catch-all route for SPA (must be after all other routes)
-app.get('*', (req, res) => {
-  // Only handle non-API routes
-  if (!req.path.startsWith('/api')) {
+// SPA fallback: serve index.html for any non-API, non-static route (for React Router)
+app.use((req, res, next) => {
+  // Only handle GET requests that are not API or static asset requests
+  if (req.method !== 'GET') return next();
+  if (req.path.startsWith('/api/')) return next();
+  // If the request accepts HTML, serve index.html
+  if (req.accepts('html')) {
     res.sendFile(path.join(frontendDistPath, 'index.html'));
-  } else {
-    res.status(404).json({ error: 'Not Found' });
+    } else {
+    next();
   }
 });
 
