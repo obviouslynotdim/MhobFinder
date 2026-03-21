@@ -75,11 +75,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// ROUTES
-// Serve static files from frontend/dist
-const frontendDistPath = path.resolve(__dirname, '../frontend/dist');
-        app.use(express.static(frontendDistPath));
 
+// ROUTES
 app.get("/", (req, res) => {
   res.send("Backend is working");
 });
@@ -98,13 +95,6 @@ app.use("/api/categories", categoriesRoutes);
 app.use("/api/ingredient-types", ingredientTypeRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/bug-reports", bugReportRoutes);
-
-// Serve index.html for any non-API GET request (for SPA routing)
-app.use((req, res, next) => {
-  if (req.method !== 'GET') return next();
-  if (req.path.startsWith('/api')) return next();
-  res.sendFile(path.join(frontendDistPath, 'index.html'));
-});
 
 // ERROR HANDLING
 app.use((err, req, res, next) => {
