@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path";
 import cors from "cors";
 import helmet from "helmet";
 import { DataTypes } from "sequelize";
@@ -78,13 +79,12 @@ app.use((req, res, next) => {
 // ROUTES
 // ---------------------------
 
+// Serve static files from frontend/dist
+const frontendDistPath = path.resolve(__dirname, '../frontend/dist');
+app.use(express.static(frontendDistPath));
+
 app.get("/", (req, res) => {
   res.send("Backend is working");
-});
-
-// Add /home route for frontend compatibility
-app.get("/home", (req, res) => {
-  res.status(200).json({ message: "Home endpoint working" });
 });
 
 app.get("/health", (req, res) => {
@@ -101,6 +101,16 @@ app.use("/api/categories", categoriesRoutes);
 app.use("/api/ingredient-types", ingredientTypeRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/bug-reports", bugReportRoutes);
+
+// Catch-all route for SPA (must be after all other routes)
+app.get('*', (req, res) => {
+  // Only handle non-API routes
+  if (!req.path.startsWith('/api')) {
+    res.sendFile(path.join(frontendDistPath, 'index.html'));
+  } else {
+    res.status(404).json({ error: 'Not Found' });
+  }
+});
 
 // ---------------------------
 // ERROR HANDLING

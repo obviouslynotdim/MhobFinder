@@ -100,7 +100,7 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
             maxW="full"
             overflow="hidden"
           >
-            <FiExternalLink size={10} flexShrink={0} />
+            <FiExternalLink size={10} style={{ flexShrink: 0 }} />
             <Text fontSize="xs" isTruncated>
               {formatDomain(food.link_url)}
             </Text>

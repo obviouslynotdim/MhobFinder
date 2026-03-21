@@ -15,7 +15,7 @@ import { useTranslation } from "../context/useTranslation.js";
 import { colors } from "../theme/tokens.js";
 
 export default function TopBarLeft({ collapsed, onToggleCollapse }) {
-  const { language } = useTranslation();
+  const { language, t } = useTranslation();
   const { ingredients, selectedIds, toggleIngredient, clearIngredients } =
     useApp();
 
@@ -83,12 +83,10 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
         {/* Center: Pantry + count */}
         <VStack gap="0" align="center">
           <Text fontSize="2xl" fontWeight="bold" color="white" lineHeight="1">
-            {language === "kh" ? "ទូរគ្រឿងផ្សំ" : "Pantry"}
+            {t("topBar.pantryTitle")}
           </Text>
           <Text fontSize="xs" color="whiteAlpha.800">
-            {language === "kh"
-              ? `អ្នកមាន ${selectedIds.length} គ្រឿងផ្សំ`
-              : `You have ${selectedIds.length} ingredient${selectedIds.length !== 1 ? "s" : ""}`}
+            {t("topBar.pantryCount", { count: selectedIds.length })}
           </Text>
         </VStack>
 
@@ -131,7 +129,7 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
                 <HStack gap="2">
                   <FiTrash2 size={13} />
                   <Text fontSize={12}>
-                    {language === "kh" ? "សម្អាតគ្រឿងផ្សំទាំងអស់" : "Clear all ingredients"}
+                    {t("topBar.clearAllIngredients")}
                   </Text>
                 </HStack>
               </Box>
@@ -165,12 +163,10 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
             p="5"
           >
             <Text fontWeight="bold" fontSize="lg" color={colors.darkest} mb="2">
-              {language === "kh" ? "លុបគ្រឿងផ្សំទាំងអស់?" : "Remove all ingredients?"}
+              {t("topBar.removeAllIngredientsTitle")}
             </Text>
             <Text fontSize="sm" color={colors.dark} mb="5">
-              {language === "kh"
-                ? "តើអ្នកប្រាកដថាចង់លុបគ្រឿងផ្សំដែលបានជ្រើសទាំងអស់មែនទេ?"
-                : "Are you sure you want to remove all selected ingredients?"}
+              {t("topBar.removeAllIngredientsDesc")}
             </Text>
 
             <HStack justify="flex-end" gap="2">
@@ -181,10 +177,10 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
                 _hover={{ bg: colors.chipHover }}
                 onClick={() => setConfirmOpen(false)}
               >
-                {language === "kh" ? "បោះបង់" : "Cancel"}
+                {t("common.cancel")}
               </Button>
               <Button bg={colors.primary} color="white" _hover={{ bg: colors.dark }} onClick={handleConfirmClearAll}>
-                {language === "kh" ? "យល់ព្រម" : "OK"}
+                {t("common.ok")}
               </Button>
             </HStack>
           </Box>
@@ -204,7 +200,7 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
             onChange={handleIngSearchChange}
             onFocus={() => ingSearch.length > 0 && setDrawerOpen(true)}
             onBlur={() => setTimeout(() => setDrawerOpen(false), 150)}
-            placeholder={language === "kh" ? "បន្ថែមគ្រឿងផ្សំ..." : "Input ingredient..."}
+            placeholder={t("topBar.inputIngredient")}
             bg="white"
             borderRadius="md"
             h="40px"
@@ -244,7 +240,7 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
                   </Text>
                   {isSelected && (
                     <Text fontSize="xs" color="blue.500">
-                      {language === "kh" ? "✓ បានបន្ថែម" : "✓ added"}
+                      {t("topBar.ingredientAdded")}
                     </Text>
                   )}
                 </HStack>

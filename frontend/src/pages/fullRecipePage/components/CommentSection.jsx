@@ -11,6 +11,7 @@ import {
   Textarea,
   Spinner,
 } from "@chakra-ui/react";
+import AppAlert from "../../../components/common/AppAlert";
 import { keyframes } from "@emotion/react";
 import { FaStar } from "react-icons/fa";
 import { FiEdit2, FiMoreHorizontal, FiTrash2 } from "react-icons/fi";
@@ -55,6 +56,7 @@ const CommentSection = ({
   const [loading, setLoading] = useState(false);
   const [hasReviewed, setHasReviewed] = useState(false);
   const [editFeedback, setEditFeedback] = useState({ type: "idle", message: "" });
+  const [showSuccess, setShowSuccess] = useState(false);
   const [pendingDeleteCommentId, setPendingDeleteCommentId] = useState(null);
   const editFeedbackTimerRef = useRef(null);
 
@@ -94,7 +96,7 @@ const CommentSection = ({
       return;
     }
     if (hasReviewed) {
-      alert("You already reviewed this recipe. Please edit your existing review.");
+      alert("You already reviewed this recipe. Please edit or delete your existing review.");
       return;
     }
 
@@ -115,6 +117,9 @@ const CommentSection = ({
       setNewComment("");
       setNewRating(5);
 
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 2500);
+
       await reloadReviewData();
     } catch (error) {
       console.error("Error submitting comment:", error);
@@ -134,17 +139,34 @@ const CommentSection = ({
     return acc;
   }, {});
 
+
+  // More robust check for comment ownership
   const isOwnComment = (comment) => {
-    if (!user?.email || !comment?.user?.email) return false;
-    return user.email.toLowerCase() === String(comment.user.email).toLowerCase();
+    if (!user) return false;
+    // Try matching by email
+    if (user.email && comment?.user?.email) {
+      if (user.email.toLowerCase() === String(comment.user.email).toLowerCase()) return true;
+    }
+    // Try matching by userName (if email missing)
+    if (user.name && (comment?.user?.name || comment?.userName)) {
+      const commentName = comment?.user?.name || comment?.userName;
+      if (user.name.trim().toLowerCase() === String(commentName).trim().toLowerCase()) return true;
+    }
+    // Try matching by user_id if available
+    if (user.dbUserId && (comment?.user?.user_id || comment?.user_id)) {
+      const commentUserId = comment?.user?.user_id || comment?.user_id;
+      if (String(user.dbUserId) === String(commentUserId)) return true;
+    }
+    return false;
   };
 
+
+
   useEffect(() => {
-    const currentEmail = String(user?.email || "").toLowerCase();
+    // Use isOwnComment for robust detection
     const reviewed = (localComments || []).some((comment) => {
       if (comment?.parent_id != null) return false;
-      const commentEmail = String(comment?.user?.email || "").toLowerCase();
-      return Boolean(currentEmail) && currentEmail === commentEmail;
+      return isOwnComment(comment);
     });
     setHasReviewed(reviewed);
   }, [localComments, user]);
@@ -293,7 +315,10 @@ const CommentSection = ({
       </Flex>
 
       {/* Add Comment Section */}
-      {user ? (
+      {showSuccess && (
+        <AppAlert type="success" message="Your comment has been posted!" sx={{ mb: 4 }} />
+      )}
+      {user && !hasReviewed ? (
         <Box bg={colors.chipBg} p="4" borderRadius="lg" mb="6">
           <Flex align="center" gap="3" mb="4">
             <Avatar.Root shape="full" size="md">
@@ -349,23 +374,22 @@ const CommentSection = ({
             width="100%"
             onClick={handleSubmitComment}
             isLoading={loading}
-            isDisabled={loading || hasReviewed}
             _hover={{ bg: colors.dark }}
           >
-            {hasReviewed ? "You already reviewed (Edit below)" : "Post Comment"}
+            Post Comment
           </Button>
-
-          {hasReviewed && (
-            <Text mt="3" fontSize="sm" color="gray.600">
-              Only one review is allowed per recipe to reduce spam. Edit your existing review from the options menu on your comment.
-            </Text>
-          )}
         </Box>
-      ) : (
+      ) : user && hasReviewed ? (
+        <Box bg={colors.chipBg} p="4" borderRadius="lg" mb="6">
+          <Text color={colors.darkest} fontWeight="500" textAlign="center">
+            You have already commented on this recipe. You can edit or delete your comment below.
+          </Text>
+        </Box>
+      ) : !user ? (
         <Text color="gray.500" fontSize="sm" mb="6" textAlign="center">
           Please login to leave a comment
         </Text>
-      )}
+      ) : null}
 
       {/* Comments List */}
       <Box>
@@ -410,6 +434,7 @@ const CommentSection = ({
                     <Box>
                       <Text fontWeight="600" color={colors.darkest}>
                         {getDisplayName(comment)}
+                        {isOwnComment(comment) ? ' (me)' : ''}
                       </Text>
 
                       <HStack gap="1.5" mt="1">

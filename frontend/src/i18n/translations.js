@@ -3,9 +3,21 @@ export const LANGUAGE_STORAGE_KEY = "mhobfinder:language";
 export const SUPPORTED_LANGUAGES = {
   en: { code: "en", label: "English", shortLabel: "EN" },
   kh: { code: "kh", label: "ខ្មែរ", shortLabel: "KH" },
+  jp: { code: "jp", label: "日本語", shortLabel: "JP" },
 };
 
+// Helper: Route to admin title key
+export function getAdminTitleKey(pathname) {
+  if (pathname.includes("/admin/manage-user")) return "manageUser";
+  if (pathname.includes("/admin/analytical")) return "analytical";
+  if (pathname.includes("/admin/add-food")) return "addFood";
+  if (pathname.includes("/admin/edit-food")) return "editFood";
+  if (pathname.includes("/admin/foods")) return "foods";
+  return "default";
+}
+
 export const translations = {
+  // English translations
   en: {
     common: {
       language: "Language",
@@ -39,6 +51,13 @@ export const translations = {
       profilePage: "Profile Page",
       searchRecipesOrUsers: "Search recipes or users",
       adminBrand: "MhobFinder Admin",
+      pantryTitle: "Pantry",
+      pantryCount: "You have {count} ingredients",
+      clearAllIngredients: "Clear all ingredients",
+      removeAllIngredientsTitle: "Remove all ingredients?",
+      removeAllIngredientsDesc: "Are you sure you want to remove all selected ingredients?",
+      inputIngredient: "Input ingredient...",
+      ingredientAdded: "✓ added",
       auth: {
         checking: "Checking session...",
         loggedInAs: "Logged in: {name}",
@@ -99,6 +118,8 @@ export const translations = {
       },
     },
   },
+
+  // Khmer translations
   kh: {
     common: {
       language: "ភាសា",
@@ -107,6 +128,8 @@ export const translations = {
       categoryLabel: "ប្រភេទ",
       all: "ទាំងអស់",
       loading: "កំពុងផ្ទុក...",
+      cancel: "បោះបង់",
+      ok: "យល់ព្រម",
     },
     start: {
       register: "ចុះឈ្មោះ",
@@ -132,6 +155,13 @@ export const translations = {
       profilePage: "ទំព័រប្រូហ្វាល់",
       searchRecipesOrUsers: "ស្វែងរកមុខម្ហូប ឬអ្នកប្រើ",
       adminBrand: "MhobFinder អេដមិន",
+      pantryTitle: "ទូរគ្រឿងផ្សំ",
+      pantryCount: "អ្នកមាន {count} គ្រឿងផ្សំ",
+      clearAllIngredients: "សម្អាតគ្រឿងផ្សំទាំងអស់",
+      removeAllIngredientsTitle: "លុបគ្រឿងផ្សំទាំងអស់?",
+      removeAllIngredientsDesc: "តើអ្នកប្រាកដថាចង់លុបគ្រឿងផ្សំដែលបានជ្រើសទាំងអស់មែនទេ?",
+      inputIngredient: "បន្ថែមគ្រឿងផ្សំ...",
+      ingredientAdded: "✓ បានបន្ថែម",
       auth: {
         checking: "កំពុងពិនិត្យសម័យ...",
         loggedInAs: "បានចូលជា {name}",
@@ -189,6 +219,119 @@ export const translations = {
         copyright: "រក្សាសិទ្ធិ {year} MhobFinder. រក្សាសិទ្ធិគ្រប់យ៉ាង។",
         about: "អំពី",
         home: "ទំព័រដើម",
+      },
+    },
+  },
+
+  // Japanese translations
+  jp: {
+    common: {
+      language: "言語",
+      searchPlaceholder: "検索...",
+      translationsAria: "翻訳",
+      categoryLabel: "カテゴリー",
+      all: "すべて",
+      loading: "読み込み中...",
+      cancel: "キャンセル",
+      ok: "OK",
+    },
+
+    start: {
+      register: "登録",
+      badge: "100％無料 — 広告なし、サインアップ不要",
+      heroLine1: "今あるもので",
+      heroLine2: "料理しよう。",
+      subtitle:
+        "キッチンにある材料を選ぶだけで、MhobFinderがすぐに作れるレシピを提案します。買い物は不要です。",
+      getStarted: "始める",
+      login: "ログイン",
+      quickStats: {
+        activeRecipes: "公開中のレシピ",
+        pantryIngredients: "食材数",
+        averageSetup: "平均準備時間",
+      },
+      previewTitle: "MhobFinder — プレビュー",
+      yourIngredients: "あなたの食材",
+      matchingRecipes: "一致するレシピ",
+      bestMatch: "最適なレシピ",
+    },
+
+    topBar: {
+      favoritesPage: "お気に入り",
+      profilePage: "プロフィール",
+      searchRecipesOrUsers: "レシピやユーザーを検索",
+      adminBrand: "MhobFinder 管理",
+      pantryTitle: "パントリー",
+      pantryCount: "あなたは{count}個の食材を持っています",
+      clearAllIngredients: "すべての食材をクリア",
+      removeAllIngredientsTitle: "すべての食材を削除しますか？",
+      removeAllIngredientsDesc: "選択したすべての食材を削除してもよろしいですか？",
+      inputIngredient: "食材を追加...",
+      ingredientAdded: "✓ 追加済み",
+      auth: {
+        checking: "セッション確認中...",
+        loggedInAs: "ログイン中: {name}",
+        guest: "ゲスト",
+      },
+      adminTitles: {
+        manageUser: "ユーザー管理",
+        analytical: "分析",
+        addFood: "レシピ追加",
+        editFood: "レシピ編集",
+        foods: "レシピ一覧",
+        default: "管理ダッシュボード",
+      },
+    },
+
+    home: {
+      emptyTitle: "食材を追加して始めましょう",
+      emptySubtitle:
+        "食材を追加するほど、作れるレシピが増えていきます",
+      noRecipesFound: "レシピが見つかりません",
+      noRecipesHint:
+        "食材を追加するか、選択をリセットしてみてください。",
+      clearIngredients: "食材をクリア",
+      loadingRecipes: "レシピを読み込み中...",
+      loadingHint: "食材に合うレシピを探しています。",
+      recipesYouCanMake: "{count}件のレシピが作れます",
+      doYouHave: "持っている食材は？",
+      noRecipesInCategory: "{category}にはレシピがありません",
+      tryAnotherCategory: "別のカテゴリーを試してください。",
+      categories: {
+        all: "すべて",
+        khmerFood: "クメール料理",
+        european: "ヨーロッパ料理",
+        seafood: "シーフード",
+        dessert: "デザート",
+        streetFood: "屋台料理",
+        curry: "カレー",
+        soup: "スープ",
+      },
+    },
+
+    about: {
+      badge: "私たちについて",
+      heroTitle: "MhobFinderでスマートな料理体験を",
+      heroDescription:
+        "MhobFinderは、手元にある食材で作れるレシピを提案するプラットフォームです。実用的な食材マッチング、わかりやすい操作性、日常の料理をサポートする体験を提供します。",
+      tryApp: "アプリを試す",
+      viewFeatures: "機能を見る",
+      featureTitle: "主な機能",
+      featureDescription:
+        "MhobFinderの主な機能をご紹介します。",
+      features: {
+        smartMatching: "スマート食材マッチング",
+        recipeDetails: "レシピ詳細表示",
+        multiLanguage: "多言語対応 / Googleログイン",
+      },
+      teamTitle: "チームメンバー",
+      teamDescription:
+        "MhobFinderを開発・改善しているメンバーです。",
+      footer: {
+        copyright:
+          "Copyright {year} MhobFinder. All rights reserved.",
+        about: "私たちについて",
+        home: "ホーム",
       },
     },
   },

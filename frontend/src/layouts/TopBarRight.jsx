@@ -11,16 +11,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useApp } from "../context/AppProvider.jsx";
 import { useUser } from "../context/UserProvider.jsx";
 import { useTranslation } from "../context/useTranslation.js";
+import { getAdminTitleKey } from "../i18n/translations.js";
 import LanguageSwitcher from "../components/common/LanguageSwitcher.jsx";
 
-function getAdminTitle(pathname, t) {
-  if (pathname.includes("/admin/manage-user")) return t("topBar.adminTitles.manageUser");
-  if (pathname.includes("/admin/analytical")) return t("topBar.adminTitles.analytical");
-  if (pathname.includes("/admin/add-food")) return t("topBar.adminTitles.addFood");
-  if (pathname.includes("/admin/edit-food")) return t("topBar.adminTitles.editFood");
-  if (pathname.includes("/admin/foods")) return t("topBar.adminTitles.foods");
-  return t("topBar.adminTitles.default");
-}
+
 
 export default function TopBarRight() {
   const { search, setSearch } = useApp();
@@ -41,7 +35,7 @@ export default function TopBarRight() {
       <HStack w="full" justify="space-between" gap={{ base: 3, md: 5 }}>
         <Box minW="fit-content">
           <Text fontWeight="800" color="white" fontSize={{ base: "xl", md: "2xl" }} lineHeight="1.1">
-            {getAdminTitle(loc.pathname, t)}
+            {t(`topBar.adminTitles.${getAdminTitleKey(loc.pathname)}`)}
           </Text>
           <Text fontSize="xs" color="whiteAlpha.800" mt={0.5}>
             {t("topBar.adminBrand")}
