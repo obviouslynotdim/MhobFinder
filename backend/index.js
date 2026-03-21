@@ -98,7 +98,7 @@ app.use("/api/bug-reports", bugReportRoutes);
 app.use(express.static(frontendDistPath));
 
 // 3. SPA FALLBACK (must be after API and static)
-app.get("*", (req, res, next) => {
+app.get("/*", (req, res, next) => {
   // If the request starts with /api, return 404 (not found for API)
   if (req.path.startsWith("/api")) {
     return res.status(404).json({ error: "Not Found" });
