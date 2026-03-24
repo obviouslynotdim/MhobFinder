@@ -1,4 +1,4 @@
-import { Box, Button, Flex, HStack, IconButton, Image, Text, VStack } from "@chakra-ui/react";
+import { Box, Button, Flex, HStack, IconButton, Image, Portal, Text, VStack } from "@chakra-ui/react";
 import { FiExternalLink, FiHeart } from "react-icons/fi";
 import { MdOutlineFoodBank } from "react-icons/md";
 import { colors } from "../theme/tokens.js";
@@ -180,12 +180,12 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
 
     {/* Auth required dialog */}
     {showAuthDialog && (
-      <>
+      <Portal>
         <Box
           position="fixed"
           inset="0"
           bg="blackAlpha.400"
-          zIndex="modal"
+          zIndex={1300}
           onClick={() => setShowAuthDialog(false)}
         />
         <Box
@@ -193,7 +193,7 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
           top="50%"
           left="50%"
           transform="translate(-50%, -50%)"
-          zIndex="modal"
+          zIndex={1301}
           bg="white"
           border="1px solid"
           borderColor={`${colors.primary}55`}
@@ -228,7 +228,7 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
             </Button>
           </HStack>
         </Box>
-      </>
+      </Portal>
     )}
     </>
   );

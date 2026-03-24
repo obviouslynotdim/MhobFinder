@@ -16,6 +16,7 @@ import {
 import { FiCheck, FiFlag, FiHeart, FiMoreHorizontal } from "react-icons/fi";
 import { AiOutlineClose } from "react-icons/ai";
 import { FaStar } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import { useUser } from "../../context/UserProvider";
 import { useApp } from "../../context/AppProvider.jsx";
 import { useUserAlert } from "../../context/UserAlertContext.jsx";
@@ -43,6 +44,7 @@ const reasonLabelMap = REPORT_REASON_OPTIONS.reduce((acc, option) => {
 }, {});
 
 const FullRecipe = ({ foodId, onClose }) => {
+  const navigate = useNavigate();
   const { user } = useUser();
   const { selectedIds, favorites, toggleFavorite } = useApp();
   const { showAlert } = useUserAlert();
@@ -59,6 +61,7 @@ const FullRecipe = ({ foodId, onClose }) => {
   const [reportDetails, setReportDetails] = useState("");
   const [reportError, setReportError] = useState("");
   const [submittingReport, setSubmittingReport] = useState(false);
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
 
   useEffect(() => {
     setActiveFoodId(foodId);
@@ -105,11 +108,7 @@ const FullRecipe = ({ foodId, onClose }) => {
   const handleFavoriteClick = async (e) => {
     e.stopPropagation();
     if (!user) {
-      showAlert({
-        tone: "info",
-        title: "Sign in required",
-        description: "Please login to save favorites",
-      });
+      setShowAuthDialog(true);
       return;
     }
 
@@ -211,6 +210,63 @@ const FullRecipe = ({ foodId, onClose }) => {
 
   return (
     <Portal>
+      {showAuthDialog && (
+        <Portal>
+          <Box
+            position="fixed"
+            inset="0"
+            bg="blackAlpha.400"
+            zIndex={1300}
+            onClick={() => setShowAuthDialog(false)}
+          />
+          <Box
+            position="fixed"
+            top="50%"
+            left="50%"
+            transform="translate(-50%, -50%)"
+            zIndex={1301}
+            bg="white"
+            border="1px solid"
+            borderColor={`${colors.primary}55`}
+            borderRadius="xl"
+            boxShadow="0 14px 36px rgba(43,76,126,0.2)"
+            w={{ base: "90vw", sm: "420px" }}
+            p="5"
+          >
+            <Text fontWeight="bold" fontSize="lg" color={colors.darkest} mb="2">
+              You are not registered
+            </Text>
+            <Text fontSize="sm" color={colors.dark} mb="5">
+              You need an account to favorite recipes. Would you like to sign up now?
+            </Text>
+
+            <HStack justify="flex-end" gap="2">
+              <Button
+                variant="outline"
+                borderColor={colors.primary}
+                color={colors.dark}
+                _hover={{ bg: colors.chipHover }}
+                onClick={() => setShowAuthDialog(false)}
+              >
+                No
+              </Button>
+              <Button
+                bg={colors.primary}
+                color="white"
+                _hover={{ bg: colors.dark }}
+                onClick={() => {
+                  setShowAuthDialog(false);
+                  onClose?.();
+                  navigate("/login");
+                }}
+              >
+                Yes
+              </Button>
+            </HStack>
+          </Box>
+        </Portal>
+      )}
+
       <Box
         position="fixed"
         top="0"
