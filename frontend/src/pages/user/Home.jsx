@@ -73,12 +73,12 @@ const HOME_PAGE_BATCH_SIZE = 30;
 
 function HomeEmptyState({ t }) {
   return (
-    <VStack h="full" justify="center" gap="4" textAlign="center" py="20">
-      <Image src={chefImage} alt="Chef" boxSize="160px" opacity="0.9" />
-      <Text fontWeight="normal" fontSize="xl">
+    <VStack h="full" justify="center" gap={{ base: "3", md: "4" }} textAlign="center" py={{ base: "14", md: "20" }}>
+      <Image src={chefImage} alt="Chef" boxSize={{ base: "120px", md: "160px" }} opacity="0.9" />
+      <Text fontWeight="normal" fontSize={{ base: "lg", md: "xl" }}>
         {t("home.emptyTitle")}
       </Text>
-      <Text fontWeight="normal" fontSize="xl">
+      <Text fontWeight="normal" fontSize={{ base: "lg", md: "xl" }}>
         {t("home.emptySubtitle")}
       </Text>
     </VStack>
@@ -87,24 +87,24 @@ function HomeEmptyState({ t }) {
 
 function HomeNoResults({ onClear, t }) {
   return (
-    <Box py="20" px={{ base: 1, md: 4 }}>
+    <Box py={{ base: "14", md: "20" }} px={{ base: 1, md: 4 }}>
       <VStack
         maxW="620px"
         mx="auto"
-        gap="4"
+        gap={{ base: "3", md: "4" }}
         textAlign="center"
         bg="white"
         border="1px solid"
         borderColor={`${colors.primary}33`}
         borderRadius="2xl"
         boxShadow="sm"
-        p={{ base: 5, md: 7 }}
+        p={{ base: 4, md: 7 }}
       >
-        <Image src={chefImage} alt="Chef" boxSize="160px" opacity="0.9" />
-        <Text fontWeight="bold" fontSize="xl" color={colors.darkest}>
+        <Image src={chefImage} alt="Chef" boxSize={{ base: "120px", md: "160px" }} opacity="0.9" />
+        <Text fontWeight="bold" fontSize={{ base: "lg", md: "xl" }} color={colors.darkest}>
           {t("home.noRecipesFound")}
         </Text>
-        <Text opacity="0.8" maxW="460px" color={colors.dark}>
+        <Text opacity="0.8" maxW="460px" color={colors.dark} fontSize={{ base: "sm", md: "md" }}>
           {t("home.noRecipesHint")}
         </Text>
         <Button
@@ -236,17 +236,25 @@ export default function Home() {
 
   return (
     <Box
-      p={{ base: 4, md: 6 }}
+      px={{ base: 3, md: 6 }}
+      pt={{ base: 3, md: 6 }}
+      pb={{ base: "calc(88px + env(safe-area-inset-bottom))", md: 6 }}
       position="relative"
       maxW="1280px"
       mx="auto"
       w="full"
     >
-      <HStack justify="space-between" mb="4" align="start">
+      <HStack
+        justify="space-between"
+        mb={{ base: "3", md: "4" }}
+        align={{ base: "stretch", md: "start" }}
+        direction={{ base: "column", md: "row" }}
+        gap={{ base: "2.5", md: "0" }}
+      >
         <VStack align="start" gap="0">
           <Text
             fontWeight="bold"
-            fontSize={{ base: "lg", md: "2xl" }}
+            fontSize={{ base: "md", md: "2xl" }}
             color={colors.darkest}
           >
             {t("home.recipesYouCanMake", {
@@ -254,13 +262,13 @@ export default function Home() {
               suffix: filteredFoods.length > 1 ? "s" : "",
             })}
           </Text>
-          <Text fontSize="sm" color={colors.dark} opacity="0.85">
+          <Text fontSize={{ base: "xs", md: "sm" }} color={colors.dark} opacity="0.85">
             {t("home.doYouHave")}
           </Text>
 
           {/* Selected ingredient chips */}
           {selectedIngredients.length > 0 && (
-            <Wrap gap="1.5" mt="2">
+            <Wrap gap={{ base: "1", md: "1.5" }} mt="2">
               {selectedIngredients.map((i) => (
                 <WrapItem key={i.ingredient_id}>
                   <IngredientChip
@@ -283,25 +291,25 @@ export default function Home() {
       </HStack>
 
       {filteredFoods.length === 0 && (
-        <Box py="20" px={{ base: 1, md: 4 }}>
+        <Box py={{ base: "14", md: "20" }} px={{ base: 1, md: 4 }}>
           <VStack
             maxW="640px"
             mx="auto"
-            gap="4"
+            gap={{ base: "3", md: "4" }}
             textAlign="center"
             bg="white"
             border="1px solid"
             borderColor={`${colors.primary}33`}
             borderRadius="2xl"
             boxShadow="sm"
-            p={{ base: 5, md: 7 }}
+            p={{ base: 4, md: 7 }}
           >
-            <Text fontWeight="bold" fontSize="xl" color={colors.darkest}>
+            <Text fontWeight="bold" fontSize={{ base: "lg", md: "xl" }} color={colors.darkest}>
               {t("home.noRecipesInCategory", {
                 category: getCategoryLabel(selectedCategory),
               })}
             </Text>
-            <Text opacity="0.8" color={colors.dark}>
+            <Text opacity="0.8" color={colors.dark} fontSize={{ base: "sm", md: "md" }}>
               {t("home.tryAnotherCategory")}
             </Text>
             <HStack gap="2" wrap="wrap" justify="center">
@@ -329,7 +337,7 @@ export default function Home() {
       )}
 
       {/* 2 cards per row + spacing — switch to 2 col only at lg so md viewport has room */}
-      <SimpleGrid columns={{ base: 1, lg: 2 }} gap="3">
+      <SimpleGrid columns={{ base: 1, lg: 2 }} gap={{ base: "2.5", md: "3" }}>
         {visibleFoods.map((food) => (
           <RecipeCard
             key={food.food_id}
@@ -342,7 +350,7 @@ export default function Home() {
       </SimpleGrid>
 
       {hasMoreFoods && (
-        <HStack justify="center" mt="6">
+        <HStack justify="center" mt={{ base: "5", md: "6" }}>
           <Button
             onClick={() => {
               setVisibleCount((prev) =>
@@ -353,6 +361,7 @@ export default function Home() {
             borderColor={colors.primary}
             color={colors.dark}
             _hover={{ bg: colors.chipHover }}
+            size={{ base: "sm", md: "md" }}
           >
             See more
             <FiChevronDown style={{ marginLeft: "6px" }} />

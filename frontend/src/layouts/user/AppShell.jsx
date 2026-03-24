@@ -16,10 +16,10 @@ export default function AppShell() {
   const hideTopBarRight = loc.pathname === "/";
 
   const sidebarW = collapsed
-    ? "72px"
-    : { base: "260px", md: "320px", lg: "380px" };
+    ? { base: "58px", md: "68px" }
+    : { base: "176px", md: "304px", lg: "356px" };
 
-  const headerH = "120px";
+  const headerH = { base: "104px", md: "120px" };
 
   return (
     <Flex h="100vh" overflow="hidden">
@@ -31,7 +31,13 @@ export default function AppShell() {
         transition="width 0.2s ease"
       >
         {/* TopBarLeft */}
-        <Box h={headerH} px="4" display="flex" alignItems="center" bg="#4975BB">
+        <Box
+          h={headerH}
+          px={{ base: "2", md: "4" }}
+          display="flex"
+          alignItems="center"
+          bg="#4975BB"
+        >
           <TopBarLeft
             collapsed={collapsed}
             onToggleCollapse={() => setUserCollapsed((v) => !v)}
@@ -42,14 +48,14 @@ export default function AppShell() {
         <Sidebar collapsed={collapsed} />
       </Box>
 
-      <Box w="4px" bg="blackAlpha.300" />
+      <Box w={{ base: "1px", md: "4px" }} bg="blackAlpha.300" />
 
       {/* RIGHT COLUMN */}
       <Flex flex="1" direction="column" overflow="hidden">
         {!hideTopBarRight && (
           <Box
             h={headerH}
-            px="6"
+            px={{ base: "3", md: "6" }}
             display="flex"
             alignItems="center"
             bg="#4975BB"
@@ -81,8 +87,8 @@ export default function AppShell() {
           <Box
             position="relative"
             zIndex="1"
-            px={hideTopBarRight ? 0 : { base: 2, md: 3 }}
-            py={hideTopBarRight ? 0 : { base: 2, md: 3 }}
+            px={hideTopBarRight ? 0 : { base: 1, md: 3 }}
+            py={hideTopBarRight ? 0 : { base: 1, md: 3 }}
           >
             <Outlet />
           </Box>

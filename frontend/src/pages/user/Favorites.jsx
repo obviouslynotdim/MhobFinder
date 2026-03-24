@@ -72,7 +72,7 @@ function FavoriteCard({ food, selectedIds, onToggleFavorite, onView }) {
     >
       <Box
         w={{ base: "100%", md: "120px" }}
-        h={{ base: "160px", md: "120px" }}
+        h={{ base: "130px", md: "120px" }}
         flexShrink={0}
         overflow="hidden"
         position="relative"
@@ -99,8 +99,8 @@ function FavoriteCard({ food, selectedIds, onToggleFavorite, onView }) {
 
       <Flex
         flex="1"
-        px="4"
-        py="3"
+        px={{ base: "3", md: "4" }}
+        py={{ base: "2.5", md: "3" }}
         direction="column"
         justify="space-between"
         overflow="hidden"
@@ -108,7 +108,7 @@ function FavoriteCard({ food, selectedIds, onToggleFavorite, onView }) {
       >
         <Text
           fontWeight="700"
-          fontSize="sm"
+          fontSize={{ base: "xs", md: "sm" }}
           color={colors.darkest}
           lineClamp={2}
           lineHeight="1.45"
@@ -129,13 +129,13 @@ function FavoriteCard({ food, selectedIds, onToggleFavorite, onView }) {
             maxW="full"
             overflow="hidden"
           >
-            <Text fontSize="xs" isTruncated>
+            <Text fontSize={{ base: "10px", md: "xs" }} isTruncated>
               {formatDomain(food.link_url)}
             </Text>
           </HStack>
         )}
 
-        <Text fontSize="xs" color={metaColor} mt="auto">
+        <Text fontSize={{ base: "10px", md: "xs" }} color={metaColor} mt="auto">
           {matchLabel}
         </Text>
       </Flex>
@@ -150,7 +150,7 @@ function FavoriteCard({ food, selectedIds, onToggleFavorite, onView }) {
       >
         <IconButton
           aria-label="Remove from favorites"
-          size="sm"
+          size={{ base: "xs", md: "sm" }}
           borderRadius="full"
           variant="ghost"
           color="red.400"
@@ -169,7 +169,7 @@ function FavoriteCard({ food, selectedIds, onToggleFavorite, onView }) {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Open recipe source"
-            size="sm"
+            size={{ base: "xs", md: "sm" }}
             borderRadius="full"
             variant="ghost"
             color={colors.darkest}
@@ -280,8 +280,8 @@ export default function Favorites() {
 
   return (
     <Box
-      px={{ base: 4, md: 6 }}
-      py={{ base: 4, md: 6 }}
+      px={{ base: 3, md: 6 }}
+      py={{ base: 3, md: 6 }}
       maxW="1280px"
       mx="auto"
       w="full"
@@ -291,13 +291,13 @@ export default function Favorites() {
         <Box flex="1">
           <Text
             fontWeight="bold"
-            fontSize={{ base: "lg", md: "2xl" }}
+            fontSize={{ base: "md", md: "2xl" }}
             color={colors.darkest}
             lineHeight="1.3"
           >
             My Favorites
           </Text>
-          <Text fontSize="sm" color={colors.dark} opacity="0.85">
+          <Text fontSize={{ base: "xs", md: "sm" }} color={colors.dark} opacity="0.85">
             {favoriteFoods.length} saved recipe
             {favoriteFoods.length === 1 ? "" : "s"}
           </Text>
@@ -313,7 +313,7 @@ export default function Favorites() {
           borderColor="gray.100"
           boxShadow="0 1px 3px rgba(0,0,0,0.05)"
           px="3"
-          py="2"
+          py={{ base: "1.5", md: "2" }}
           gap="2"
           mb={5}
         >
@@ -326,7 +326,7 @@ export default function Favorites() {
             bg="transparent"
             color={colors.darkest}
             _placeholder={{ color: "gray.400" }}
-            fontSize="sm"
+            fontSize={{ base: "xs", md: "sm" }}
             p="0"
             h="auto"
             _focus={{ outline: "none", boxShadow: "none" }}
@@ -336,7 +336,7 @@ export default function Favorites() {
 
       {/* ── States ── */}
       {favoriteFoods.length === 0 ? (
-        <Center py="20">
+        <Center py={{ base: "14", md: "20" }}>
           <VStack gap="5" textAlign="center">
             <Flex
               w="64px"
@@ -349,10 +349,10 @@ export default function Favorites() {
               <FiHeart size={26} color={colors.primary} />
             </Flex>
             <VStack gap="1">
-              <Text fontWeight="700" fontSize="lg" color={colors.darkest}>
+              <Text fontWeight="700" fontSize={{ base: "md", md: "lg" }} color={colors.darkest}>
                 No saved recipes yet
               </Text>
-              <Text fontSize="sm" color="gray.500" maxW="260px">
+              <Text fontSize={{ base: "xs", md: "sm" }} color="gray.500" maxW="260px">
                 Tap the heart on any recipe to save it here for quick access.
               </Text>
             </VStack>
@@ -362,6 +362,7 @@ export default function Favorites() {
               borderRadius="xl"
               fontWeight="600"
               px="6"
+              size={{ base: "sm", md: "md" }}
               _hover={{ bg: colors.dark }}
               onClick={() => nav("/home")}
             >

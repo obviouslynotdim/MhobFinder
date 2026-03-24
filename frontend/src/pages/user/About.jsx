@@ -106,7 +106,7 @@ function MemberCard({ member, delay }) {
       border="1.5px solid"
       borderColor="#D4E3F8"
       borderRadius="3xl"
-      p={{ base: 5, md: 6 }}
+      p={{ base: 4, md: 6 }}
       boxShadow="0 10px 22px rgba(31,61,102,0.10)"
       minH={{ base: "auto", md: "300px" }}
       _hover={{
@@ -114,7 +114,7 @@ function MemberCard({ member, delay }) {
         boxShadow: "0 16px 28px rgba(31,61,102,0.18)",
       }}
     >
-      <VStack align="center" justify="center" textAlign="center" gap="4" h="100%">
+      <VStack align="center" justify="center" textAlign="center" gap={{ base: "3", md: "4" }} h="100%">
         <Avatar.Root
           size="2xl"
           border="2px solid"
@@ -128,7 +128,7 @@ function MemberCard({ member, delay }) {
 
         <Box>
           <Text
-            fontSize={{ base: "lg", md: "xl" }}
+            fontSize={{ base: "md", md: "xl" }}
             fontWeight="800"
             color={colors.darkest}
             lineHeight="1.35"
@@ -138,7 +138,7 @@ function MemberCard({ member, delay }) {
           </Text>
           <Text
             mt="1"
-            fontSize={{ base: "sm", md: "md" }}
+            fontSize={{ base: "xs", md: "md" }}
             fontWeight="700"
             color={colors.primary}
             lineHeight="1.45"
@@ -183,7 +183,7 @@ export default function About() {
 
   return (
     <Box
-      p={{ base: 4, md: 6 }}
+      p={{ base: 3, md: 6 }}
       sx={{
         "@keyframes fadeSlideIn": {
           from: { opacity: 0, transform: "translateY(14px)" },
@@ -199,8 +199,8 @@ export default function About() {
           borderColor="#CFE0FA"
           borderRadius="2xl"
           bg="linear-gradient(135deg, #F8FBFF 0%, #EDF4FF 60%, #E5EFFF 100%)"
-          px={{ base: 5, md: 8 }}
-          py={{ base: 6, md: 8 }}
+          px={{ base: 4, md: 8 }}
+          py={{ base: 5, md: 8 }}
           boxShadow="0 12px 28px rgba(43,76,126,0.1)"
           _hover={{ transform: "none", boxShadow: "0 12px 28px rgba(43,76,126,0.1)" }}
         >
@@ -208,10 +208,10 @@ export default function About() {
             <Badge bg={colors.primary} color="white" px="3" py="1" borderRadius="full">
               {t("about.badge")}
             </Badge>
-            <Text fontSize={{ base: "2xl", md: "4xl" }} fontWeight="800" color={colors.darkest} lineHeight="1.15">
+            <Text fontSize={{ base: "xl", md: "4xl" }} fontWeight="800" color={colors.darkest} lineHeight="1.15">
               {t("about.heroTitle")}
             </Text>
-            <Text fontSize={{ base: "sm", md: "md" }} color={colors.dark} lineHeight="1.85">
+            <Text fontSize={{ base: "xs", md: "md" }} color={colors.dark} lineHeight="1.85">
               {t("about.heroDescription")}
             </Text>
 
@@ -223,6 +223,7 @@ export default function About() {
                 color="white"
                 _hover={{ bg: colors.dark }}
                 rightIcon={<FiArrowUpRight />}
+                size={{ base: "sm", md: "md" }}
               >
                 {t("about.tryApp")}
               </Button>
@@ -233,6 +234,7 @@ export default function About() {
                 borderColor="#BFD3F3"
                 color={colors.dark}
                 _hover={{ bg: colors.chipBg }}
+                size={{ base: "sm", md: "md" }}
               >
                 {t("about.viewFeatures")}
               </Button>
@@ -241,10 +243,10 @@ export default function About() {
         </FadeInCard>
 
         <Box id="features" mt="7">
-          <Text fontSize={{ base: "xl", md: "2xl" }} fontWeight="800" color={colors.darkest}>
+          <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="800" color={colors.darkest}>
             {t("about.featureTitle")}
           </Text>
-          <Text fontSize="sm" color={colors.dark} mt="1">
+          <Text fontSize={{ base: "xs", md: "sm" }} color={colors.dark} mt="1">
             {t("about.featureDescription")}
           </Text>
 
@@ -259,7 +261,7 @@ export default function About() {
                 bg="white"
                 overflow="hidden"
                 p="0"
-                minH="180px"
+                minH={{ base: "160px", md: "180px" }}
                 _hover={{
                   transform: "translateY(-2px)",
                   borderColor: colors.primary,
@@ -267,7 +269,7 @@ export default function About() {
                 }}
               >
                 <Box position="relative">
-                  <Image src={item.image} alt={t(item.titleKey)} w="100%" h="190px" objectFit="cover" />
+                  <Image src={item.image} alt={t(item.titleKey)} w="100%" h={{ base: "170px", md: "190px" }} objectFit="cover" />
                   <Box
                     position="absolute"
                     left="0"
@@ -277,7 +279,7 @@ export default function About() {
                     py="2.5"
                     bg="linear-gradient(180deg, rgba(31,61,102,0.02) 0%, rgba(31,61,102,0.78) 100%)"
                   >
-                    <Text fontSize="sm" color="white" fontWeight="700" lineHeight="1.4">
+                    <Text fontSize={{ base: "xs", md: "sm" }} color="white" fontWeight="700" lineHeight="1.4">
                       {t(item.titleKey)}
                     </Text>
                   </Box>
@@ -288,10 +290,10 @@ export default function About() {
         </Box>
 
         <Box id="team" mt="7">
-          <Text fontSize={{ base: "xl", md: "2xl" }} fontWeight="800" color={colors.darkest}>
+          <Text fontSize={{ base: "lg", md: "2xl" }} fontWeight="800" color={colors.darkest}>
             {t("about.teamTitle")}
           </Text>
-          <Text fontSize="sm" color={colors.dark} mt="1">
+          <Text fontSize={{ base: "xs", md: "sm" }} color={colors.dark} mt="1">
             {t("about.teamDescription")}
           </Text>
 
@@ -304,14 +306,14 @@ export default function About() {
 
         <Box id="footer" mt="8" pt="5" borderTop="1px solid" borderColor="#D9E6F8">
           <HStack justify="space-between" wrap="wrap" gap="2">
-            <Text fontSize="sm" color="gray.600">
+            <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">
               {t("about.footer.copyright", { year: new Date().getFullYear() })}
             </Text>
             <HStack gap="3">
-              <Link href="/about" fontSize="sm" color={colors.dark} _hover={{ color: colors.primary }}>
+              <Link href="/about" fontSize={{ base: "xs", md: "sm" }} color={colors.dark} _hover={{ color: colors.primary }}>
                 {t("about.footer.about")}
               </Link>
-              <Link href="/home" fontSize="sm" color={colors.dark} _hover={{ color: colors.primary }}>
+              <Link href="/home" fontSize={{ base: "xs", md: "sm" }} color={colors.dark} _hover={{ color: colors.primary }}>
                 {t("about.footer.home")}
               </Link>
             </HStack>

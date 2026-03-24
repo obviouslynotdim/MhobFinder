@@ -42,7 +42,8 @@ export default function CategoryDropdown({
         _hover={{ bg: colors.chipBg }}
         rightIcon={<FiChevronDown size={16} />}
         onClick={() => setOpen((v) => !v)}
-        size="sm"
+        size={{ base: "xs", md: "sm" }}
+        maxW={{ base: "full", md: "none" }}
       >
         {label}: {renderOptionLabel ? renderOptionLabel(selectedCategory) : selectedCategory}
       </Button>
@@ -57,7 +58,7 @@ export default function CategoryDropdown({
           boxShadow="lg"
           border="1px solid"
           borderColor="gray.200"
-          minW="200px"
+          minW={{ base: "170px", md: "200px" }}
           zIndex="10"
           py="1"
         >
@@ -69,7 +70,7 @@ export default function CategoryDropdown({
                 px="4"
                 py="2"
                 cursor="pointer"
-                fontSize="sm"
+                fontSize={{ base: "xs", md: "sm" }}
                 fontWeight={active ? "semibold" : "normal"}
                 color={active ? colors.primary : "inherit"}
                 bg={active ? colors.chipBg : "white"}

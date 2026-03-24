@@ -64,13 +64,13 @@ export default function Start() {
         zIndex="10"
         maxW="1280px"
         mx="auto"
-        px={{ base: 5, md: 10 }}
-        py="5"
+        px={{ base: 3, md: 10 }}
+        py={{ base: 4, md: 5 }}
         align="center"
         justify="space-between"
       >
         <Text
-          fontSize={{ base: "2xl", md: "3xl", lg: "4xl" }}
+          fontSize={{ base: "lg", md: "3xl", lg: "4xl" }}
           fontWeight="900"
           color={colors.darkest}
           letterSpacing="-0.03em"
@@ -78,7 +78,7 @@ export default function Start() {
           MhobFinder
         </Text>
 
-        <HStack gap="3">
+        <HStack gap={{ base: "2", md: "3" }}>
           <LanguageSwitcher
             iconColor={colors.darkest}
             hoverBg="white"
@@ -87,7 +87,7 @@ export default function Start() {
           />
 
           <Button
-            size="sm"
+            size={{ base: "xs", md: "sm" }}
             borderRadius="full"
             variant="outline"
             borderColor={colors.primary}
@@ -113,18 +113,18 @@ export default function Start() {
           w="full"
           maxW="1280px"
           mx="auto"
-          px={{ base: 5, md: 10 }}
-          pt={{ base: 4, md: 6 }}
-          pb={{ base: 10, md: 14 }}
+          px={{ base: 3, md: 10 }}
+          pt={{ base: 3, md: 6 }}
+          pb={{ base: 8, md: 14 }}
         >
           <Grid
             templateColumns={{ base: "1fr", lg: "1.1fr 0.9fr" }}
-            gap={{ base: 10, md: 12 }}
+            gap={{ base: 7, md: 12 }}
             alignItems="center"
           >
             {/* Left — Copy */}
             <GridItem animation={`${fadeIn} 600ms ease-out`}>
-              <VStack align="start" gap="6">
+              <VStack align="start" gap={{ base: "4", md: "6" }}>
                 <Badge
                   px="3.5"
                   py="1"
@@ -139,7 +139,7 @@ export default function Start() {
                 </Badge>
 
                 <Text
-                  fontSize={{ base: "3xl", md: "5xl", lg: "5xl" }}
+                  fontSize={{ base: "xl", md: "5xl", lg: "5xl" }}
                   fontWeight="900"
                   lineHeight="1.08"
                   color={colors.darkest}
@@ -154,16 +154,16 @@ export default function Start() {
                 <Text
                   maxW="540px"
                   color={colors.dark}
-                  fontSize={{ base: "md", md: "lg" }}
+                  fontSize={{ base: "xs", md: "lg" }}
                   lineHeight="1.7"
                 >
                   {t("start.subtitle")}
                 </Text>
 
-                <HStack gap="3" pt="1" flexWrap="wrap">
+                <HStack gap="2" pt="1" flexWrap="wrap">
                   <Button
-                    size="lg"
-                    px="8"
+                    size={{ base: "sm", md: "lg" }}
+                    px={{ base: "6", md: "8" }}
                     borderRadius="xl"
                     bg={colors.primary}
                     color="white"
@@ -176,8 +176,8 @@ export default function Start() {
                     <Icon as={FiArrowRight} ml="2" />
                   </Button>
                   <Button
-                    size="lg"
-                    px="8"
+                    size={{ base: "sm", md: "lg" }}
+                    px={{ base: "6", md: "8" }}
                     borderRadius="xl"
                     variant="outline"
                     borderColor={colors.primary}
@@ -192,18 +192,24 @@ export default function Start() {
                 </HStack>
 
                 {/* Quick stats */}
-                <SimpleGrid columns={3} gap="3" pt="3" w="full" maxW="480px">
+                <SimpleGrid
+                  columns={{ base: 1, sm: 2, md: 3 }}
+                  gap={{ base: "2", md: "3" }}
+                  pt={{ base: "2", md: "3" }}
+                  w="full"
+                  maxW="480px"
+                >
                   {quickStats.map((s) => (
                     <Box
                       key={s.key}
                       bg="whiteAlpha.900"
                       border="1px solid #CFE0FA"
-                      p="3.5"
+                      p={{ base: "2.5", md: "3.5" }}
                       borderRadius="xl"
                       textAlign="center"
                     >
                       <Text
-                        fontSize="xl"
+                        fontSize={{ base: "lg", md: "xl" }}
                         fontWeight="800"
                         color={colors.darkest}
                       >
@@ -224,11 +230,11 @@ export default function Start() {
                 bg="white"
                 border="1px solid #C9DAF8"
                 borderRadius="2xl"
-                p={{ base: 5, md: 7 }}
+                p={{ base: 4, md: 7 }}
                 boxShadow="0 20px 50px rgba(43,76,126,0.12)"
               >
                 {/* Mini header bar */}
-                <HStack mb="5" gap="2">
+                <HStack mb={{ base: "4", md: "5" }} gap="2">
                   <Box w="10px" h="10px" borderRadius="full" bg="#FF6058" />
                   <Box w="10px" h="10px" borderRadius="full" bg="#FFBD2E" />
                   <Box w="10px" h="10px" borderRadius="full" bg="#28CA42" />
@@ -243,7 +249,7 @@ export default function Start() {
                 </HStack>
 
                 <Text
-                  fontSize="sm"
+                  fontSize={{ base: "xs", md: "sm" }}
                   fontWeight="700"
                   color={colors.darkest}
                   mb="3"
@@ -251,7 +257,7 @@ export default function Start() {
                   {t("start.yourIngredients")}
                 </Text>
 
-                <Flex gap="2" flexWrap="wrap" mb="5">
+                <Flex gap={{ base: "1.5", md: "2" }} flexWrap="wrap" mb={{ base: "4", md: "5" }}>
                   {sampleIngredients.map((name) => (
                     <Box
                       key={name}
@@ -261,7 +267,7 @@ export default function Start() {
                       bg={colors.chipBg}
                       border="1px solid #C7D9FB"
                       color={colors.darkest}
-                      fontSize="xs"
+                      fontSize={{ base: "10px", md: "xs" }}
                       fontWeight="600"
                     >
                       {name}
@@ -270,7 +276,7 @@ export default function Start() {
                 </Flex>
 
                 <Text
-                  fontSize="sm"
+                  fontSize={{ base: "xs", md: "sm" }}
                   fontWeight="700"
                   color={colors.darkest}
                   mb="2"
@@ -282,7 +288,7 @@ export default function Start() {
                   {sampleRecipes.map((r, idx) => (
                     <HStack
                       key={r.title}
-                      p="3"
+                      p={{ base: "2.5", md: "3" }}
                       borderRadius="xl"
                       bg={idx === 0 ? "#DDEAFF" : "#F2F6FF"}
                       border="1px solid #CBDBFA"
@@ -291,12 +297,12 @@ export default function Start() {
                       <Box>
                         <Text
                           fontWeight="700"
-                          fontSize="sm"
+                          fontSize={{ base: "xs", md: "sm" }}
                           color={colors.darkest}
                         >
                           {r.title}
                         </Text>
-                        <Text fontSize="xs" color={colors.dark}>
+                        <Text fontSize={{ base: "10px", md: "xs" }} color={colors.dark}>
                           {r.match}
                         </Text>
                       </Box>

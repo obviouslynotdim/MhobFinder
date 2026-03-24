@@ -97,33 +97,47 @@ export default function TopBarRight() {
   return (
     <Box w="full">
       {/* Row 1: Route-aware title and actions */}
-      <HStack w="full" justify="space-between">
+      <HStack w="full" justify="space-between" gap={{ base: "1", md: "2" }}>
         {useCustomTitle ? (
-          <HStack gap="2">
+          <HStack gap={{ base: "1", md: "2" }} minW="0" flex="1">
             <IconButton
               aria-label="Back to home"
               variant="ghost"
+              size={{ base: "sm", md: "md" }}
               color="white"
               _hover={{ bg: "whiteAlpha.200" }}
               onClick={() => nav("/home")}
             >
               <FiArrowLeft />
             </IconButton>
-            <Text fontWeight="bold" color="white" fontSize="2xl">
+            <Text
+              fontWeight="bold"
+              color="white"
+              fontSize={{ base: "md", md: "2xl" }}
+              noOfLines={1}
+            >
               {isFavoritesPage ? t("topBar.favoritesPage") : t("topBar.profilePage")}
             </Text>
           </HStack>
         ) : (
-          <Text fontWeight="bold" color="white" fontSize="2xl" letterSpacing="wider" onClick={() => nav("/home")} cursor="pointer">
+          <Text
+            fontWeight="bold"
+            color="white"
+            fontSize={{ base: "lg", md: "2xl" }}
+            letterSpacing={{ base: "normal", md: "wider" }}
+            onClick={() => nav("/home")}
+            cursor="pointer"
+          >
             MhobFinder
           </Text>
         )}
 
-        <HStack gap={2}>
+        <HStack gap={{ base: 1, md: 2 }} flexShrink={0}>
           {user && (
             <IconButton
               aria-label="Favorites"
               variant="ghost"
+              size={{ base: "sm", md: "md" }}
               color="white"
               bg={isFavoritesPage ? activeNavBg : "transparent"}
               _hover={{ bg: "whiteAlpha.200" }}
@@ -138,6 +152,7 @@ export default function TopBarRight() {
           <IconButton
             aria-label="User"
             variant="ghost"
+            size={{ base: "sm", md: "md" }}
             color="white"
             bg={isProfileSection ? activeNavBg : "transparent"}
             _hover={{ bg: "whiteAlpha.200" }}
@@ -155,7 +170,7 @@ export default function TopBarRight() {
       {/* Row 2: Search bar */}
       <InputGroup
         w="full"
-        mt="4"
+        mt={{ base: "3", md: "4" }}
         startElement={<FiSearch size="18" color="#718096" />}
         endElement={
           search ? (
@@ -181,7 +196,8 @@ export default function TopBarRight() {
           color="gray.700"
           _placeholder={{ color: "gray.500" }}
           borderRadius="md"
-          h="40px"
+          h={{ base: "36px", md: "40px" }}
+          fontSize={{ base: "sm", md: "md" }}
         />
       </InputGroup>
     </Box>

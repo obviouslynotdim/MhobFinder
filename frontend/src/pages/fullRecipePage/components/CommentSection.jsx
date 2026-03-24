@@ -25,6 +25,8 @@ import {
 import { addOrUpdateRating, getRatingsByFood } from "../../../services/api/rating.service";
 import colors from "../../../theme/tokens";
 
+const COMMENT_BATCH_SIZE = 20;
+
 const feedbackEnter = keyframes`
   from {
     opacity: 0;
@@ -58,6 +60,7 @@ const CommentSection = ({
   const [editFeedback, setEditFeedback] = useState({ type: "idle", message: "" });
   const [showSuccess, setShowSuccess] = useState(false);
   const [pendingDeleteCommentId, setPendingDeleteCommentId] = useState(null);
+  const [visibleCommentCount, setVisibleCommentCount] = useState(COMMENT_BATCH_SIZE);
   const editFeedbackTimerRef = useRef(null);
 
   useEffect(() => {
@@ -73,12 +76,16 @@ const CommentSection = ({
   }, [comments]);
 
   useEffect(() => {
+    setVisibleCommentCount(COMMENT_BATCH_SIZE);
+  }, [foodId, localComments.length]);
+
+  useEffect(() => {
     setLocalRatings(ratings || []);
   }, [ratings]);
 
   const reloadReviewData = async () => {
     const [updatedComments, updatedRatings] = await Promise.all([
-      getCommentsByFood(foodId).catch(() => []),
+      getCommentsByFood(foodId, { forceRefresh: true }).catch(() => []),
       getRatingsByFood(foodId).catch(() => []),
     ]);
 
@@ -294,6 +301,9 @@ const CommentSection = ({
     }
   };
 
+  const displayedComments = localComments.slice(0, visibleCommentCount);
+  const hasMoreComments = localComments.length > visibleCommentCount;
+
   return (
     <Box w="100%" bg="white" p="6" borderRadius="lg" boxShadow="sm">
       {/* Header */}
@@ -419,7 +429,7 @@ const CommentSection = ({
 
         {localComments.length > 0 ? (
           <Flex direction="column" gap="4">
-            {localComments.map((comment, idx) => (
+            {displayedComments.map((comment, idx) => (
               <Box
                 key={comment.comment_id || idx}
                 pb="4"
@@ -573,6 +583,22 @@ const CommentSection = ({
                 )}
               </Box>
             ))}
+
+            {hasMoreComments && (
+              <Button
+                alignSelf="center"
+                variant="outline"
+                borderColor={colors.primary}
+                color={colors.dark}
+                _hover={{ bg: colors.chipHover }}
+                size={{ base: "sm", md: "md" }}
+                onClick={() =>
+                  setVisibleCommentCount((prev) => prev + COMMENT_BATCH_SIZE)
+                }
+              >
+                Load more comments ({localComments.length - visibleCommentCount} left)
+              </Button>
+            )}
           </Flex>
         ) : (
           <Text color="gray.500" fontSize="14px" textAlign="center">

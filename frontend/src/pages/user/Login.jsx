@@ -42,11 +42,11 @@ export default function Login() {
 
   return (
     <Box
-      minH="70vh"
+      minH={{ base: "65vh", md: "70vh" }}
       display="flex"
       flexDirection="column"
-      px={{ base: 4, md: 6 }}
-      py={{ base: 5, md: 6 }}
+      px={{ base: 3, md: 6 }}
+      py={{ base: 4, md: 6 }}
       overflow="hidden"
     >
       {/* Top nav bar */}
@@ -54,16 +54,16 @@ export default function Login() {
         display="flex"
         justifyContent="space-between"
         alignItems="center"
-        gap="3"
+        gap={{ base: "2", md: "3" }}
         flexWrap="wrap"
-        mb="4"
+        mb={{ base: "3", md: "4" }}
         maxW="960px"
         mx="auto"
         w="full"
       >
         <Link
           color={colors.dark}
-          fontSize={{ base: "sm", md: "md" }}
+          fontSize={{ base: "xs", md: "md" }}
           fontWeight="600"
           onClick={handleBackToMain}
           cursor="pointer"
@@ -77,7 +77,7 @@ export default function Login() {
         </Link>
 
         <Button
-          size="sm"
+          size={{ base: "xs", md: "sm" }}
           variant="outline"
           borderColor={colors.primary}
           color={colors.darkest}
@@ -92,19 +92,19 @@ export default function Login() {
 
       <Box flex="1" display="flex" alignItems="center" justifyContent="center">
         <Box
-          maxW="460px"
+          maxW={{ base: "420px", md: "460px" }}
           w="full"
           mx="auto"
           bg="white"
           borderRadius="3xl"
-          p={{ base: 6, md: 8 }}
+          p={{ base: 4, md: 8 }}
           border="1px solid"
           borderColor="#CFE0FA"
           boxShadow="0 18px 18px rgba(43,76,126,0.12)"
         >
-          <VStack align="stretch" spacing={5}>
+          <VStack align="stretch" spacing={{ base: 4, md: 5 }}>
             <Text
-              fontSize="3xl"
+              fontSize={{ base: "xl", md: "3xl" }}
               fontWeight="800"
               color={colors.darkest}
               textAlign="center"
@@ -113,7 +113,7 @@ export default function Login() {
             </Text>
 
             <Text
-              fontSize="sm"
+              fontSize={{ base: "xs", md: "sm" }}
               color={colors.dark}
               lineHeight="1.7"
               textAlign="center"
@@ -125,8 +125,8 @@ export default function Login() {
 
             <Button
               w="100%"
-              py={7}
-              fontSize="md"
+              py={{ base: 6, md: 7 }}
+              fontSize={{ base: "sm", md: "md" }}
               fontWeight="700"
               bg="white"
               color={colors.darkest}
@@ -139,17 +139,17 @@ export default function Login() {
               onClick={handleGoogleSignIn}
               disabled={loading}
             >
-              <HStack spacing={3} align="center">
+              <HStack spacing={{ base: 2, md: 3 }} align="center">
                 {loading ? (
                   <Spinner size="sm" color={colors.primary} thickness="3px" />
                 ) : googleIconFailed ? (
-                  <FcGoogle size={22} />
+                  <FcGoogle size={20} />
                 ) : (
                   <Image
                     src={googleIcon}
                     alt="Google Logo"
-                    w="28px"
-                    h="28px"
+                    w={{ base: "24px", md: "28px" }}
+                    h={{ base: "24px", md: "28px" }}
                     onError={() => setGoogleIconFailed(true)}
                   />
                 )}
@@ -169,12 +169,12 @@ export default function Login() {
                 borderColor="red.200"
                 bg="red.50"
                 borderRadius="lg"
-                px="4"
-                py="3"
+                px={{ base: "3", md: "4" }}
+                py={{ base: "2.5", md: "3" }}
               >
                 <Text
                   color="red.600"
-                  fontSize="sm"
+                  fontSize={{ base: "xs", md: "sm" }}
                   textAlign="left"
                   fontWeight="500"
                 >

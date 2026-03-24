@@ -74,6 +74,7 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
           aria-label="Toggle sidebar"
           onClick={onToggleCollapse}
           variant="ghost"
+          size={{ base: "sm", md: "md" }}
           color="white"
           _hover={{ bg: "whiteAlpha.200" }}
         >
@@ -84,7 +85,7 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
   }
 
   return (
-    <VStack w="full" gap="2" align="stretch">
+    <VStack w="full" gap={{ base: "1.5", md: "2" }} align="stretch">
       {/* ── Row 1: hamburger | Pantry title | 3-dot menu ── */}
       <HStack w="full" position="relative" justify="center">
         {/* Left: hamburger */}
@@ -93,6 +94,7 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
             aria-label="Toggle sidebar"
             onClick={onToggleCollapse}
             variant="ghost"
+            size={{ base: "sm", md: "md" }}
             color="white"
             _hover={{ bg: "whiteAlpha.200" }}
           >
@@ -102,10 +104,15 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
 
         {/* Center: Pantry + count */}
         <VStack gap="0" align="center">
-          <Text fontSize="2xl" fontWeight="bold" color="white" lineHeight="1">
+          <Text
+            fontSize={{ base: "xl", md: "2xl" }}
+            fontWeight="bold"
+            color="white"
+            lineHeight="1"
+          >
             {t("topBar.pantryTitle")}
           </Text>
-          <Text fontSize="xs" color="whiteAlpha.800">
+          <Text fontSize={{ base: "10px", md: "xs" }} color="whiteAlpha.800">
             {t("topBar.pantryCount", { count: selectedIds.length })}
           </Text>
         </VStack>
@@ -115,6 +122,7 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
           <IconButton
             aria-label="More options"
             variant="ghost"
+            size={{ base: "sm", md: "md" }}
             color="white"
             _hover={{ bg: "whiteAlpha.200" }}
             onClick={() => setMenuOpen((v) => !v)}
@@ -238,7 +246,8 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
             placeholder={t("topBar.inputIngredient")}
             bg="white"
             borderRadius="md"
-            h="40px"
+            h={{ base: "36px", md: "40px" }}
+            fontSize={{ base: "sm", md: "md" }}
           />
         </InputGroup>
 
@@ -262,15 +271,15 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
               return (
                 <HStack
                   key={i.ingredient_id}
-                  px="3"
-                  py="2"
+                  px={{ base: "2.5", md: "3" }}
+                  py={{ base: "1.5", md: "2" }}
                   cursor="pointer"
                   bg={isSelected ? "blue.50" : "white"}
                   _hover={{ bg: isSelected ? "blue.100" : "gray.50" }}
                   onMouseDown={() => handleSelect(i.ingredient_id)}
                   justify="space-between"
                 >
-                  <Text fontSize="sm" color="gray.800">
+                  <Text fontSize={{ base: "xs", md: "sm" }} color="gray.800">
                     {i.name}
                   </Text>
                   {isSelected && (

@@ -219,6 +219,7 @@ const FullRecipe = ({ foodId, onClose }) => {
       maxWidth={{ base: "100%", lg: "520px" }}
       bg={colors.pageBg}
       overflowY="auto"
+      pb={{ base: "calc(96px + env(safe-area-inset-bottom))", md: "0" }}
       boxShadow="lg"
       zIndex="10"
       onClick={(e) => e.stopPropagation()}

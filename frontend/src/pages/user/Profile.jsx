@@ -54,22 +54,22 @@ export default function Profile() {
   }
 
   return (
-    <Box p={{ base: 6, md: 10 }} maxW="560px" mx="auto">
+    <Box p={{ base: 4, md: 10 }} maxW="560px" mx="auto">
       <Box
         bg="white"
         border="1px solid"
         borderColor="#CFE0FA"
         borderRadius="2xl"
         position="relative"
-        p="8"
+        p={{ base: 5, md: 8 }}
         boxShadow="0 14px 35px rgba(43,76,126,0.12)"
       >
         <IconButton
           aria-label="Edit profile"
           position="absolute"
-          top="4"
-          right="4"
-          size="sm"
+          top={{ base: "3", md: "4" }}
+          right={{ base: "3", md: "4" }}
+          size={{ base: "xs", md: "sm" }}
           variant="outline"
           borderColor="#CFE0FA"
           color={colors.dark}
@@ -79,12 +79,12 @@ export default function Profile() {
           <FiEdit2 />
         </IconButton>
 
-        <VStack gap="5" align="center">
-          <Text fontWeight="800" fontSize="2xl" color={colors.darkest}>
+        <VStack gap={{ base: "4", md: "5" }} align="center">
+          <Text fontWeight="800" fontSize={{ base: "xl", md: "2xl" }} color={colors.darkest}>
             My Profile
           </Text>
 
-          <Avatar.Root size="2xl">
+          <Avatar.Root size={{ base: "xl", md: "2xl" }}>
             <Avatar.Image src={user.photoURL} />
             <Avatar.Fallback
               name={user.name}
@@ -94,10 +94,10 @@ export default function Profile() {
           </Avatar.Root>
 
           <VStack gap="1" textAlign="center">
-            <Text fontWeight="bold" fontSize="xl" color={colors.darkest}>
+            <Text fontWeight="bold" fontSize={{ base: "lg", md: "xl" }} color={colors.darkest}>
               {user.name}
             </Text>
-            <Text fontSize="sm" color={colors.dark}>
+            <Text fontSize={{ base: "xs", md: "sm" }} color={colors.dark}>
               {user.email}
             </Text>
             <Box
@@ -106,7 +106,7 @@ export default function Profile() {
               bg={colors.primary}
               color="white"
               borderRadius="full"
-              fontSize="xs"
+              fontSize={{ base: "10px", md: "xs" }}
               fontWeight="semibold"
             >
               {user.isAdmin ? "Admin" : "User"}

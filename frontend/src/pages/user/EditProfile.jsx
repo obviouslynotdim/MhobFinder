@@ -140,20 +140,21 @@ export default function EditProfile() {
   }
 
   return (
-    <Box p={{ base: 6, md: 10 }} maxW="560px" mx="auto">
+    <Box p={{ base: 4, md: 10 }} maxW="560px" mx="auto">
       <Box
         bg="white"
         border="1px solid"
         borderColor="#CFE0FA"
         borderRadius="2xl"
-        p="8"
+        p={{ base: 5, md: 8 }}
         boxShadow="0 14px 35px rgba(43,76,126,0.12)"
       >
-        <VStack gap="5" align="center">
+        <VStack gap={{ base: "4", md: "5" }} align="center">
           <HStack w="full" justify="space-between" align="center">
             <IconButton
               aria-label="Back to profile"
               variant="ghost"
+              size={{ base: "sm", md: "md" }}
               color={colors.darkest}
               _hover={{ bg: colors.chipBg }}
               onClick={() => navigate("/profile")}
@@ -162,14 +163,14 @@ export default function EditProfile() {
               <FiArrowLeft />
             </IconButton>
 
-            <Text fontWeight="800" fontSize="2xl" color={colors.darkest}>
+            <Text fontWeight="800" fontSize={{ base: "xl", md: "2xl" }} color={colors.darkest}>
               Edit Profile
             </Text>
 
             <Box w="40px" />
           </HStack>
 
-          <Avatar.Root size="2xl">
+          <Avatar.Root size={{ base: "xl", md: "2xl" }}>
             <Avatar.Image src={previewUrl || user.photoURL} />
             <Avatar.Fallback name={user.name} bg={colors.primary} color="white" />
           </Avatar.Root>
@@ -186,6 +187,8 @@ export default function EditProfile() {
                 borderColor="#CFE0FA"
                 _focusVisible={{ borderColor: colors.primary }}
                 isDisabled={saving}
+                h={{ base: "36px", md: "40px" }}
+                fontSize={{ base: "sm", md: "md" }}
               />
             </Box>
 
@@ -234,14 +237,14 @@ export default function EditProfile() {
                 }}
               >
                 <VStack gap="2" textAlign="center">
-                  <Text fontSize="sm" fontWeight="700" color={colors.darkest}>
+                  <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="700" color={colors.darkest}>
                     Drag and drop your image here
                   </Text>
-                  <Text fontSize="xs" color={colors.dark}>
+                  <Text fontSize={{ base: "10px", md: "xs" }} color={colors.dark}>
                     or click to browse (PNG, JPG, WEBP up to 5MB)
                   </Text>
                   {selectedImage && (
-                    <Text fontSize="xs" color={colors.primary} fontWeight="600">
+                    <Text fontSize={{ base: "10px", md: "xs" }} color={colors.primary} fontWeight="600">
                       Selected: {selectedImage.name}
                     </Text>
                   )}
@@ -260,7 +263,7 @@ export default function EditProfile() {
               {selectedImage && (
                 <Button
                   mt="2"
-                  size="sm"
+                  size={{ base: "xs", md: "sm" }}
                   variant="outline"
                   borderColor="#BFD3F3"
                   onClick={clearSelectedImage}
@@ -272,14 +275,14 @@ export default function EditProfile() {
             </Box>
 
             {saving && (
-              <Text fontSize="sm" color={colors.dark}>
+              <Text fontSize={{ base: "xs", md: "sm" }} color={colors.dark}>
                 Saving profile changes. Please wait...
               </Text>
             )}
 
             {message && (
               <Text
-                fontSize="sm"
+                fontSize={{ base: "xs", md: "sm" }}
                 color={message.toLowerCase().includes("success") ? "green.600" : "red.500"}
               >
                 {message}

@@ -49,12 +49,12 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
       cursor="pointer"
       onClick={() => onView(food)}
       h={{ base: "auto", md: "170px" }}
-      mt={2}
+      mt={{ base: 1, md: 2 }}
     >
       {/* Image */}
       <Box
         w={{ base: "full", md: "170px" }}
-        h={{ base: "160px", md: "full" }}
+        h={{ base: "140px", md: "full" }}
         flexShrink="0"
         overflow="hidden"
       >
@@ -73,11 +73,18 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
       </Box>
 
       {/* Content */}
-      <VStack align="start" px="3" py="2.5" gap="1" flex="1" overflow="hidden">
+      <VStack
+        align="start"
+        px={{ base: "2.5", md: "3" }}
+        py={{ base: "2", md: "2.5" }}
+        gap={{ base: "0.5", md: "1" }}
+        flex="1"
+        overflow="hidden"
+      >
         {/* Food name */}
         <Text
           fontWeight="bold"
-          fontSize={{ base: "sm", md: "lg" }}
+          fontSize={{ base: "xs", md: "lg" }}
           color={colors.darkest}
           lineClamp={1}
           lineHeight="1.3"
@@ -117,7 +124,12 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
 
         {/* Description */}
         {food.description && (
-          <Text fontSize={{ base: "xs", md: "xs" }} color="gray.500" lineClamp={3} lineHeight="1.5">
+          <Text
+            fontSize={{ base: "10px", md: "xs" }}
+            color="gray.500"
+            lineClamp={{ base: 2, md: 3 }}
+            lineHeight="1.45"
+          >
             {food.description}
           </Text>
         )}
@@ -127,12 +139,12 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
           <Box
             as="button"
             flex="1"
-            py="2"
+            py={{ base: "1.5", md: "2" }}
             px="2"
             bg={colors.primary}
             color="white"
             borderRadius="md"
-            fontSize="xs"
+            fontSize={{ base: "10px", md: "xs" }}
             fontWeight="semibold"
             textAlign="center"
             transition="background 0.15s"
@@ -157,7 +169,7 @@ export default function RecipeCard({ food, isFavorite, onToggleFavorite, onView 
               color: isFavorite ? "white" : "red.600",
             }}
             borderRadius="md"
-            size="sm"
+            size={{ base: "xs", md: "sm" }}
             flexShrink="0"
           >
             <FiHeart />

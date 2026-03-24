@@ -13,8 +13,8 @@ export default function IngredientChip({ name, onRemove }) {
   return (
     <HStack
       gap="1"
-      px="3"
-      py="1"
+      px={{ base: "2.5", md: "3" }}
+      py={{ base: "0.75", md: "1" }}
       bg={colors.chipBg}
       border="1px solid"
       borderColor={colors.primary}
@@ -23,7 +23,12 @@ export default function IngredientChip({ name, onRemove }) {
       transition="all 0.15s ease"
       _hover={{ bg: colors.chipHover, boxShadow: "0 1px 5px rgba(73,117,187,0.25)" }}
     >
-      <Text fontSize="xs" fontWeight="semibold" color={colors.darkest} lineHeight="1">
+      <Text
+        fontSize={{ base: "10px", md: "xs" }}
+        fontWeight="semibold"
+        color={colors.darkest}
+        lineHeight="1"
+      >
         {name}
       </Text>
       <Box
@@ -31,8 +36,8 @@ export default function IngredientChip({ name, onRemove }) {
         display="flex"
         alignItems="center"
         justifyContent="center"
-        w="14px"
-        h="14px"
+        w={{ base: "12px", md: "14px" }}
+        h={{ base: "12px", md: "14px" }}
         borderRadius="full"
         bg={colors.primary}
         color="white"
@@ -42,7 +47,7 @@ export default function IngredientChip({ name, onRemove }) {
         onClick={onRemove}
         aria-label={`Remove ${name}`}
       >
-        <FiX size={8} />
+        <FiX size={7} />
       </Box>
     </HStack>
   );

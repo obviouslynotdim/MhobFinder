@@ -56,13 +56,13 @@ function chipBg(color) {
 function IngredientChip({ item, selected, onClick }) {
   return (
     <Box
-      px="3"
-      py="1"
+      px={{ base: "2.5", md: "3" }}
+      py={{ base: "0.75", md: "1" }}
       border="1.5px solid"
       borderColor={selected ? colors.primary : "transparent"}
       borderRadius="full"
       cursor="pointer"
-      fontSize="xs"
+      fontSize={{ base: "11px", md: "xs" }}
       fontWeight={selected ? "600" : "500"}
       bg={selected ? colors.primary : chipBg(item.color)}
       color={selected ? "white" : colors.darkest}
@@ -250,7 +250,12 @@ export default function Sidebar({ collapsed }) {
     const aboutItem = { to: "/about", icon: <FiInfo />, label: "About" };
 
     return (
-      <Box position="relative" h="calc(100vh - 120px)" px="4" bg="#4975BB">
+      <Box
+        position="relative"
+        h={{ base: "calc(100vh - 104px)", md: "calc(100vh - 120px)" }}
+        px={{ base: "2", md: "4" }}
+        bg="#4975BB"
+      >
         <VStack
           w="full"
           gap="2"
@@ -281,8 +286,8 @@ export default function Sidebar({ collapsed }) {
 
   return (
     <Box
-      px="4"
-      py="5"
+      px={{ base: "2", md: "4" }}
+      py={{ base: "3", md: "5" }}
       color={colors.darkest}
       position="relative"
       bg="linear-gradient(180deg, #F8FAFF 0%, #EEF4FF 100%)"
@@ -317,9 +322,9 @@ export default function Sidebar({ collapsed }) {
           return (
             <Box
               key={cat}
-              mb="4"
-              borderRadius="2xl"
-              p="4"
+              mb={{ base: "2.5", md: "4" }}
+              borderRadius={{ base: "xl", md: "2xl" }}
+              p={{ base: "2.5", md: "4" }}
               bg="white"
               border="1px solid"
               borderColor={
@@ -333,22 +338,22 @@ export default function Sidebar({ collapsed }) {
               transition="box-shadow 0.2s, border-color 0.2s"
             >
               {/* Category header */}
-              <HStack align="center" mb="3" gap="3">
+              <HStack align="center" mb="3" gap={{ base: "2", md: "3" }}>
                 {img && (
                   <Box
                     bg="#f5f5f5"
                     borderRadius="xl"
-                    p="2"
+                    p={{ base: "1.5", md: "2" }}
                     flexShrink={0}
                     display="flex"
                     alignItems="center"
                     justifyContent="center"
-                    boxSize="62px"
+                    boxSize={{ base: "40px", md: "62px" }}
                   >
                     <Image
                       src={img}
                       alt={cat}
-                      boxSize="46px"
+                      boxSize={{ base: "28px", md: "46px" }}
                       objectFit="contain"
                     />
                   </Box>
@@ -357,13 +362,22 @@ export default function Sidebar({ collapsed }) {
                 <Box flex="1" minW="0">
                   <Text
                     fontWeight="700"
-                    fontSize="sm"
+                    fontSize={{ base: "11px", md: "sm" }}
                     color={colors.darkest}
                     lineHeight="1.3"
+                    whiteSpace="normal"
+                    wordBreak="normal"
+                    overflowWrap="normal"
+                    noOfLines={2}
                   >
                     {cat}
                   </Text>
-                  <Text fontSize="xs" color={colors.dark} lineHeight="1.3">
+                  <Text
+                    fontSize={{ base: "10px", md: "xs" }}
+                    color={colors.dark}
+                    lineHeight="1.3"
+                    noOfLines={1}
+                  >
                     {selectedCount}/{list.length} Ingredients
                   </Text>
                 </Box>
@@ -386,7 +400,7 @@ export default function Sidebar({ collapsed }) {
               <Box h="1px" bg={`${colors.primary}18`} mb="3" />
 
               {/* Chips */}
-              <Wrap spacing="1.5" spacingY="1.5">
+              <Wrap spacing={{ base: "1", md: "1.5" }} spacingY={{ base: "1", md: "1.5" }}>
                 {visibleList.map((item) => (
                   <WrapItem key={item.ingredient_id}>
                     <IngredientChip
@@ -403,7 +417,7 @@ export default function Sidebar({ collapsed }) {
                       px="3"
                       py="1"
                       borderRadius="full"
-                      fontSize="xs"
+                      fontSize={{ base: "11px", md: "xs" }}
                       fontWeight="500"
                       border="1.5px dashed"
                       borderColor={colors.dark}
@@ -433,9 +447,9 @@ export default function Sidebar({ collapsed }) {
 
           return (
             <Box
-              mb="4"
-              borderRadius="2xl"
-              p="4"
+              mb={{ base: "2.5", md: "4" }}
+              borderRadius={{ base: "xl", md: "2xl" }}
+              p={{ base: "2.5", md: "4" }}
               bg="white"
               border="1px solid"
               borderColor={
@@ -447,19 +461,24 @@ export default function Sidebar({ collapsed }) {
                 <Box flex="1" minW="0">
                   <Text
                     fontWeight="700"
-                    fontSize="sm"
+                    fontSize={{ base: "xs", md: "sm" }}
                     color={colors.darkest}
                     lineHeight="1.3"
                   >
                     Other
                   </Text>
-                  <Text fontSize="xs" color={colors.dark} lineHeight="1.3">
+                  <Text
+                    fontSize={{ base: "10px", md: "xs" }}
+                    color={colors.dark}
+                    lineHeight="1.3"
+                    noOfLines={1}
+                  >
                     {selectedCount}/{other.length} Ingredients
                   </Text>
                 </Box>
               </HStack>
               <Box h="1px" bg={`${colors.primary}18`} mb="3" />
-              <Wrap spacing="1.5" spacingY="1.5">
+              <Wrap spacing={{ base: "1", md: "1.5" }} spacingY={{ base: "1", md: "1.5" }}>
                 {other.map((item) => (
                   <WrapItem key={item.ingredient_id}>
                     <IngredientChip
