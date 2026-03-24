@@ -2,11 +2,13 @@ import express from "express";
 import path from "path";
 import cors from "cors";
 import helmet from "helmet";
-import { DataTypes } from "sequelize";
+import { DataTypes, Op } from "sequelize";
 import "./config/firebase.js"; // Initialize Firebase Admin
 import sequelize from "./config/database.js";
 import "./models/index.js";
 import "dotenv/config";
+import admin from "./config/firebase.js";
+import User from "./models/user.js";
 
 // Polyfill __dirname and __filename for ES modules
 import { fileURLToPath } from 'url';
@@ -155,6 +157,45 @@ async function ensureBugReportColumns() {
   }
 }
 
+async function backfillOAuthUserAvatars() {
+  const candidates = await User.findAll({
+    where: {
+      is_oauth: true,
+      image_public_id: {
+        [Op.is]: null,
+      },
+      [Op.or]: [
+        { image_url: { [Op.is]: null } },
+        { image_url: "" },
+      ],
+    },
+    attributes: ["user_id", "email"],
+    limit: 500,
+  });
+
+  if (candidates.length === 0) {
+    return;
+  }
+
+  let updatedCount = 0;
+  for (const user of candidates) {
+    try {
+      const firebaseUser = await admin.auth().getUserByEmail(user.email);
+      const photoURL = String(firebaseUser.photoURL || "").trim();
+      if (!photoURL) {
+        continue;
+      }
+
+      await user.update({ image_url: photoURL });
+      updatedCount += 1;
+    } catch {
+      // Ignore users that are not found in Firebase or unavailable lookups.
+    }
+  }
+
+  console.log(`✅ Backfilled OAuth avatars for ${updatedCount}/${candidates.length} users`);
+}
+
 
 async function startServer() {
   try {
@@ -163,6 +204,7 @@ async function startServer() {
 
     await ensureUserProfileColumns();
     await ensureBugReportColumns();
+    await backfillOAuthUserAvatars();
 
     await sequelize.sync();
     console.log("✅ Tables synced successfully");
