@@ -305,10 +305,10 @@ const CommentSection = ({
   const hasMoreComments = localComments.length > visibleCommentCount;
 
   return (
-    <Box w="100%" bg="white" p="6" borderRadius="lg" boxShadow="sm">
+    <Box w="100%" bg="white" p={{ base: "4", md: "6" }} borderRadius="lg" boxShadow="sm">
       {/* Header */}
-      <Flex align="center" gap="3" mb="6">
-        <Text fontSize="lg" fontWeight="bold" color={colors.darkest}>
+      <Flex align="center" gap={{ base: "2", md: "3" }} mb={{ base: "4", md: "6" }}>
+        <Text fontSize={{ base: "md", md: "lg" }} fontWeight="bold" color={colors.darkest}>
           Reviews & Comments
         </Text>
         <Box
@@ -318,7 +318,7 @@ const CommentSection = ({
           borderRadius="lg"
           color="white"
           fontWeight="bold"
-          fontSize="sm"
+          fontSize={{ base: "xs", md: "sm" }}
         >
           {localRatings.length}
         </Box>
@@ -329,13 +329,13 @@ const CommentSection = ({
         <AppAlert type="success" message="Your comment has been posted!" sx={{ mb: 4 }} />
       )}
       {user && !hasReviewed ? (
-        <Box bg={colors.chipBg} p="4" borderRadius="lg" mb="6">
-          <Flex align="center" gap="3" mb="4">
+        <Box bg={colors.chipBg} p={{ base: "3", md: "4" }} borderRadius="lg" mb={{ base: "4", md: "6" }}>
+          <Flex align="center" gap={{ base: "2", md: "3" }} mb={{ base: "3", md: "4" }}>
             <Avatar.Root shape="full" size="md">
               <Avatar.Image src={user.photoURL || "https://picsum.photos/200"} />
             </Avatar.Root>
             <Box>
-              <Text fontWeight="600" color={colors.darkest}>
+              <Text fontWeight="600" color={colors.darkest} fontSize={{ base: "sm", md: "md" }}>
                 {user.name}
               </Text>
             </Box>
@@ -351,11 +351,12 @@ const CommentSection = ({
             mb="3"
             resize="vertical"
             minHeight="80px"
+            fontSize={{ base: "sm", md: "md" }}
           />
 
           {/* Rating Stars */}
-          <Flex align="center" gap="2" mb="3">
-            <Text fontSize="sm" fontWeight="medium" color="gray.600">
+          <Flex align="center" gap={{ base: "1.5", md: "2" }} mb="3">
+            <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="medium" color="gray.600">
               Your rating:
             </Text>
             <HStack gap="1">
@@ -364,7 +365,7 @@ const CommentSection = ({
                   key={star}
                   as={FaStar}
                   color={star <= (hoveredRating || newRating) ? "#FDB022" : "gray.300"}
-                  boxSize="5"
+                  boxSize={{ base: "4", md: "5" }}
                   cursor="pointer"
                   onClick={() => setNewRating(star)}
                   onMouseEnter={() => setHoveredRating(star)}
@@ -382,6 +383,7 @@ const CommentSection = ({
             color="white"
             fontWeight="600"
             width="100%"
+            size={{ base: "sm", md: "md" }}
             onClick={handleSubmitComment}
             isLoading={loading}
             _hover={{ bg: colors.dark }}
@@ -396,7 +398,7 @@ const CommentSection = ({
           </Text>
         </Box>
       ) : !user ? (
-        <Text color="gray.500" fontSize="sm" mb="6" textAlign="center">
+        <Text color="gray.500" fontSize={{ base: "xs", md: "sm" }} mb={{ base: "4", md: "6" }} textAlign="center">
           Please login to leave a comment
         </Text>
       ) : null}
@@ -428,21 +430,21 @@ const CommentSection = ({
         )}
 
         {localComments.length > 0 ? (
-          <Flex direction="column" gap="4">
+          <Flex direction="column" gap={{ base: "3", md: "4" }}>
             {displayedComments.map((comment, idx) => (
               <Box
                 key={comment.comment_id || idx}
-                pb="4"
+                pb={{ base: "3", md: "4" }}
                 _notLast={{ borderBottom: "1px solid", borderColor: "gray.200" }}
               >
                 <Flex justify="space-between" align="flex-start" mb="2">
-                  <Flex gap="3" align="flex-start">
+                  <Flex gap={{ base: "2", md: "3" }} align="flex-start">
                     <Avatar.Root shape="full" size="md">
                       <Avatar.Image src={getCommentAvatarSrc(comment)} />
                       <Avatar.Fallback>{getAvatarFallback(getDisplayName(comment))}</Avatar.Fallback>
                     </Avatar.Root>
                     <Box>
-                      <Text fontWeight="600" color={colors.darkest}>
+                      <Text fontWeight="600" color={colors.darkest} fontSize={{ base: "sm", md: "md" }}>
                         {getDisplayName(comment)}
                         {isOwnComment(comment) ? ' (me)' : ''}
                       </Text>
@@ -456,7 +458,7 @@ const CommentSection = ({
                             color={star <= (ratingByUser[comment.user_id] || 0) ? "#FDB022" : "gray.300"}
                           />
                         ))}
-                        <Text fontSize="12px" color="gray.500" ml="1">
+                        <Text fontSize={{ base: "10px", md: "12px" }} color="gray.500" ml="1">
                           {getEditedLabel(comment)}
                         </Text>
                       </HStack>
@@ -576,7 +578,7 @@ const CommentSection = ({
                   </Box>
                 ) : (
                   <Box>
-                    <Text color="gray.700" fontSize="14px">
+                    <Text color="gray.700" fontSize={{ base: "13px", md: "14px" }}>
                       {comment.comment_text || comment.content || comment.comment}
                     </Text>
                   </Box>

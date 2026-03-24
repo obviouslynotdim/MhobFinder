@@ -225,7 +225,7 @@ const FullRecipe = ({ foodId, onClose }) => {
       onClick={(e) => e.stopPropagation()}
     >
       {/* Hero Image with top controls */}
-      <Box position="relative" height={{ base: "300px", md: "360px" }}>
+      <Box position="relative" height={{ base: "250px", md: "360px" }}>
         <Image
           src={food.image_url}
           alt={food.title}
@@ -237,8 +237,9 @@ const FullRecipe = ({ foodId, onClose }) => {
         <IconButton
           aria-label="Close"
           position="absolute"
-          top="3"
-          left="3"
+          top={{ base: "2", md: "3" }}
+          left={{ base: "2", md: "3" }}
+          size={{ base: "sm", md: "md" }}
           bg="white"
           color={colors.darkest}
           borderRadius="full"
@@ -246,19 +247,20 @@ const FullRecipe = ({ foodId, onClose }) => {
           onClick={onClose}
           zIndex="11"
         >
-          <AiOutlineClose size={22} />
+          <AiOutlineClose size={18} />
         </IconButton>
 
-        <Box position="absolute" top="3" right="3" zIndex="11">
+        <Box position="absolute" top={{ base: "2", md: "3" }} right={{ base: "2", md: "3" }} zIndex="11">
           <IconButton
             aria-label="More"
+            size={{ base: "sm", md: "md" }}
             bg="white"
             color={colors.darkest}
             borderRadius="full"
             _hover={{ bg: "gray.100" }}
             onClick={() => setMenuOpen((prev) => !prev)}
           >
-            <FiMoreHorizontal size={22} />
+            <FiMoreHorizontal size={18} />
           </IconButton>
 
           {menuOpen && (
@@ -295,19 +297,19 @@ const FullRecipe = ({ foodId, onClose }) => {
         {/* Floating summary card */}
         <Box
           position="absolute"
-          left="6"
-          right="6"
-          bottom="-54px"
+          left={{ base: "3", md: "6" }}
+          right={{ base: "3", md: "6" }}
+          bottom={{ base: "-46px", md: "-54px" }}
           bg="#F7F7F8"
           borderRadius="xl"
           boxShadow="0 8px 18px rgba(0,0,0,0.12)"
           overflow="hidden"
         >
-          <Box px="4" py="3">
+          <Box px={{ base: "3", md: "4" }} py={{ base: "2.5", md: "3" }}>
             <Flex justify="space-between" align="start" gap="2">
               <Box flex="1" minW="0">
                 <Text
-                  fontSize={{ base: "xl", md: "2xl" }}
+                  fontSize={{ base: "lg", md: "2xl" }}
                   fontWeight="700"
                   color={colors.darkest}
                   lineHeight="1.3"
@@ -315,7 +317,7 @@ const FullRecipe = ({ foodId, onClose }) => {
                 >
                   {food.title}
                 </Text>
-                <Text fontSize="sm" color="gray.500" mt="1">
+                <Text fontSize={{ base: "xs", md: "sm" }} color="gray.500" mt="1">
                   {matchLabel}
                 </Text>
               </Box>
@@ -334,28 +336,28 @@ const FullRecipe = ({ foodId, onClose }) => {
                   color: "white",
                 }}
                 borderRadius="full"
-                size="sm"
+                size={{ base: "xs", md: "sm" }}
                 flexShrink={0}
               >
-                <FiHeart size={18} />
+                <FiHeart size={14} />
               </IconButton>
             </Flex>
           </Box>
 
           <Separator />
 
-          <Flex px="4" py="3" justify="space-between" align="center">
+          <Flex px={{ base: "3", md: "4" }} py={{ base: "2.5", md: "3" }} justify="space-between" align="center">
             <Flex align="center" gap="1">
               {[1, 2, 3, 4, 5].map((star) => (
                 <Icon
                   key={star}
                   as={FaStar}
-                  boxSize="4"
+                  boxSize={{ base: "3.5", md: "4" }}
                   color={star <= filledStars ? "#FDB022" : "gray.300"}
                 />
               ))}
             </Flex>
-            <Text fontSize="sm" color="gray.500">
+            <Text fontSize={{ base: "xs", md: "sm" }} color="gray.500">
               {avgRating} ({ratings.length})
             </Text>
           </Flex>
@@ -363,35 +365,35 @@ const FullRecipe = ({ foodId, onClose }) => {
       </Box>
 
       {/* Content Section */}
-      <Box p={{ base: "4", md: "5" }} pt={{ base: "14", md: "18" }}>
+      <Box p={{ base: "3", md: "5" }} pt={{ base: "12", md: "18" }}>
         {/* Ingredients */}
-        <Box mb="5">
+        <Box mb={{ base: "4", md: "5" }}>
           <Text
-            fontSize="lg"
+            fontSize={{ base: "md", md: "lg" }}
             fontWeight="bold"
             color={colors.darkest}
-            mb="4"
-            mt="12"
+            mb={{ base: "3", md: "4" }}
+            mt={{ base: "10", md: "12" }}
           >
             Ingredients
           </Text>
 
-          <Box bg="white" borderRadius="lg" p="4" boxShadow="sm">
+          <Box bg="white" borderRadius="lg" p={{ base: "3", md: "4" }} boxShadow="sm">
             {ingredientList.length > 0 ? (
-              <Flex direction="column" gap="3">
+              <Flex direction="column" gap={{ base: "2.5", md: "3" }}>
                 {ingredientList.map((ingredient) => (
                   <Flex
                     key={ingredient.ingredient_id}
                     align="center"
                     justify="space-between"
-                    gap="3"
-                    pb="3"
+                    gap={{ base: "2", md: "3" }}
+                    pb={{ base: "2.5", md: "3" }}
                     _notLast={{
                       borderBottom: "1px solid",
                       borderColor: "gray.200",
                     }}
                   >
-                    <Flex align="center" gap="3" minW="0" flex="1">
+                    <Flex align="center" gap={{ base: "2", md: "3" }} minW="0" flex="1">
                       <Box
                         width="6px"
                         height="6px"
@@ -399,12 +401,12 @@ const FullRecipe = ({ foodId, onClose }) => {
                         bg={colors.primary}
                         flexShrink={0}
                       />
-                      <Text color="gray.700" fontSize="sm" lineHeight="1.5">
+                      <Text color="gray.700" fontSize={{ base: "xs", md: "sm" }} lineHeight="1.5">
                         {ingredient.name}
                       </Text>
                     </Flex>
                     <Center
-                      boxSize="7"
+                      boxSize={{ base: "6", md: "7" }}
                       borderRadius="full"
                       bg={
                         selectedIds.includes(ingredient.ingredient_id)
@@ -414,13 +416,13 @@ const FullRecipe = ({ foodId, onClose }) => {
                       color="white"
                       flexShrink={0}
                     >
-                      <Icon as={FiCheck} boxSize="3.5" />
+                      <Icon as={FiCheck} boxSize={{ base: "3", md: "3.5" }} />
                     </Center>
                   </Flex>
                 ))}
               </Flex>
             ) : (
-              <Text color="gray.500" fontSize="sm">
+              <Text color="gray.500" fontSize={{ base: "xs", md: "sm" }}>
                 No ingredients listed
               </Text>
             )}
@@ -428,7 +430,7 @@ const FullRecipe = ({ foodId, onClose }) => {
         </Box>
 
         {/* View Recipe Button */}
-        <Box mb="8">
+        <Box mb={{ base: "6", md: "8" }}>
           <Button
             as="a"
             href={food.link_url || "#"}
@@ -439,16 +441,16 @@ const FullRecipe = ({ foodId, onClose }) => {
             bg={colors.primary}
             color="white"
             fontWeight="bold"
-            py="4"
+            py={{ base: "3", md: "4" }}
             _hover={{ bg: colors.dark }}
             borderRadius="lg"
             height="auto"
-            minH="58px"
+            minH={{ base: "50px", md: "58px" }}
           >
             <Flex direction="column" align="center" lineHeight="1.15">
-              <Text fontWeight="bold">View Full Recipe</Text>
+              <Text fontWeight="bold" fontSize={{ base: "sm", md: "md" }}>View Full Recipe</Text>
               <Text
-                fontSize="xs"
+                fontSize={{ base: "10px", md: "xs" }}
                 color="whiteAlpha.900"
                 fontWeight="400"
                 mt="1"
@@ -460,7 +462,7 @@ const FullRecipe = ({ foodId, onClose }) => {
         </Box>
 
         {/* You Might Also Like */}
-        <Box mb="8">
+        <Box mb={{ base: "6", md: "8" }}>
           <MayLike
             currentFoodId={food.food_id}
             currentIngredients={ingredientList}
@@ -503,12 +505,12 @@ const FullRecipe = ({ foodId, onClose }) => {
             bg="white"
             w={{ base: "92vw", md: "520px" }}
             borderRadius="xl"
-            p="5"
+            p={{ base: "4", md: "5" }}
             boxShadow="0 16px 40px rgba(15,23,42,0.28)"
             zIndex="1300"
           >
             <Flex align="center" justify="space-between" gap="2">
-              <Text fontSize="lg" fontWeight="700" color={colors.darkest}>
+              <Text fontSize={{ base: "md", md: "lg" }} fontWeight="700" color={colors.darkest}>
                 Report a problem
               </Text>
               <IconButton
@@ -523,7 +525,7 @@ const FullRecipe = ({ foodId, onClose }) => {
                 <AiOutlineClose size={16} />
               </IconButton>
             </Flex>
-            <Text mt="1" fontSize="sm" color="gray.600">
+            <Text mt="1" fontSize={{ base: "xs", md: "sm" }} color="gray.600">
               What's wrong with the recipe?
             </Text>
             <Text mt="1" fontSize="xs" color="gray.500">

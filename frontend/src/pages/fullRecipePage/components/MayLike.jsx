@@ -45,12 +45,12 @@ const MayLike = ({ currentFoodId, currentIngredients = [], onSelectFood }) => {
   const displayedFoods = showMore ? suggestedFoods : suggestedFoods.slice(0, 3);
 
   return (
-    <Box bg="white" borderRadius="lg" p="6" boxShadow="sm">
-      <Text fontSize="lg" fontWeight="bold" color={colors.darkest} mb="4">
+    <Box bg="white" borderRadius="lg" p={{ base: "4", md: "6" }} boxShadow="sm">
+      <Text fontSize={{ base: "md", md: "lg" }} fontWeight="bold" color={colors.darkest} mb={{ base: "3", md: "4" }}>
         You Might Also Like
       </Text>
 
-      <Box display="flex" flexDirection="column" gap="3" mb="4">
+      <Box display="flex" flexDirection="column" gap={{ base: "2.5", md: "3" }} mb={{ base: "3", md: "4" }}>
         {displayedFoods.map((food) => (
           <MayLikeCard
             key={food.food_id}
@@ -70,6 +70,7 @@ const MayLike = ({ currentFoodId, currentIngredients = [], onSelectFood }) => {
             borderColor={colors.primary}
             color={colors.primary}
             width="100%"
+            size={{ base: "sm", md: "md" }}
             onClick={() => setShowMore(!showMore)}
             _hover={{ bg: colors.chipHover }}
           >
