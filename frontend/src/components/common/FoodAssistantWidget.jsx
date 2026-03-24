@@ -11,6 +11,7 @@ import {
 import {
   FiMessageCircle,
   FiX,
+  FiMinus,
   FiSend,
   FiMap,
   FiHelpCircle,
@@ -52,6 +53,12 @@ const MESSAGE_COOLDOWN_MS = 900;
 const BURST_WINDOW_MS = 10000;
 const MAX_MESSAGES_PER_WINDOW = 5;
 const ASSISTANT_TYPING_DELAY_MS = 650;
+const ASSISTANT_WIDGET_Z_INDEX = 1050;
+const ASSISTANT_PANEL_Z_INDEX = 1049;
+const INITIAL_ASSISTANT_MESSAGE = {
+  role: "assistant",
+  text: "Hi, I am your Food Assistant. I can guide you around MhobFinder and answer food-related questions.",
+};
 
 function isFoodOrAppRelated(input) {
   const normalized = String(input || "").toLowerCase();
@@ -129,12 +136,7 @@ export default function FoodAssistantWidget() {
   const [menuHovered, setMenuHovered] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState([
-    {
-      role: "assistant",
-      text: "Hi, I am your Food Assistant. I can guide you around MhobFinder and answer food-related questions.",
-    },
-  ]);
+  const [messages, setMessages] = useState([INITIAL_ASSISTANT_MESSAGE]);
   const [messageTimestamps, setMessageTimestamps] = useState([]);
   const [cooldownUntil, setCooldownUntil] = useState(0);
   const [rateNotice, setRateNotice] = useState("");
@@ -202,6 +204,27 @@ export default function FoodAssistantWidget() {
       setMessages((prev) => [...prev, { role: "assistant", text: replyText }]);
       setIsTyping(false);
     }, ASSISTANT_TYPING_DELAY_MS);
+  };
+
+  const minimizeAssistant = () => {
+    setOpen(false);
+    setMenuOpen(false);
+  };
+
+  const closeAndResetAssistant = () => {
+    if (replyTimeoutRef.current) {
+      clearTimeout(replyTimeoutRef.current);
+      replyTimeoutRef.current = null;
+    }
+
+    setIsTyping(false);
+    setOpen(false);
+    setMenuOpen(false);
+    setMessages([INITIAL_ASSISTANT_MESSAGE]);
+    setInput("");
+    setRateNotice("");
+    setMessageTimestamps([]);
+    setCooldownUntil(0);
   };
 
   const registerMessageSend = (recent) => {
@@ -274,7 +297,7 @@ export default function FoodAssistantWidget() {
           borderRadius="18px"
           bg="white"
           boxShadow="0 20px 40px rgba(15,23,42,0.22)"
-          zIndex={1700}
+          zIndex={ASSISTANT_PANEL_Z_INDEX}
           overflow="hidden"
           animation="slideInLeft 0.3s ease-out"
           sx={{
@@ -301,29 +324,32 @@ export default function FoodAssistantWidget() {
               <FiMessageCircle />
               <Text fontWeight="700">Food Assistant</Text>
             </HStack>
-            <IconButton
-              aria-label="Close assistant"
-              size="sm"
-              variant="ghost"
-              color="white"
-              _hover={{ bg: "rgba(255, 255, 255, 0.2)" }}
-              _active={{ bg: "rgba(255, 255, 255, 0.3)" }}
-              transition="background 0.2s"
-              onClick={() => {
-                setOpen(false);
-                setMenuOpen(false);
-                setMessages([
-                  {
-                    role: "assistant",
-                    text: "Hi, I am your Food Assistant. I can guide you around MhobFinder and answer food-related questions.",
-                  },
-                ]);
-                setInput("");
-                setRateNotice("");
-              }}
-            >
-              <FiX />
-            </IconButton>
+            <HStack gap={1}>
+              <IconButton
+                aria-label="Minimize assistant"
+                size="sm"
+                variant="ghost"
+                color="white"
+                _hover={{ bg: "rgba(255, 255, 255, 0.2)" }}
+                _active={{ bg: "rgba(255, 255, 255, 0.3)" }}
+                transition="background 0.2s"
+                onClick={minimizeAssistant}
+              >
+                <FiMinus />
+              </IconButton>
+              <IconButton
+                aria-label="Close assistant and clear chat"
+                size="sm"
+                variant="ghost"
+                color="white"
+                _hover={{ bg: "rgba(255, 255, 255, 0.2)" }}
+                _active={{ bg: "rgba(255, 255, 255, 0.3)" }}
+                transition="background 0.2s"
+                onClick={closeAndResetAssistant}
+              >
+                <FiX />
+              </IconButton>
+            </HStack>
           </HStack>
 
           <VStack align="stretch" gap={2} p={3} maxH="320px" overflowY="auto">
@@ -430,7 +456,7 @@ export default function FoodAssistantWidget() {
         position="fixed"
         right={{ base: "14px", md: "22px" }}
         bottom={{ base: "18px", md: "22px" }}
-        zIndex={1701}
+        zIndex={ASSISTANT_WIDGET_Z_INDEX}
         onMouseEnter={() => setMenuHovered(true)}
         onMouseLeave={() => setMenuHovered(false)}
         h="180px"
@@ -456,10 +482,10 @@ export default function FoodAssistantWidget() {
           transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
           pointerEvents={showMenuButtons ? "auto" : "none"}
           onClick={() => {
-            setOpen(true);
+            setOpen((prev) => !prev);
             setMenuOpen(false);
           }}
-          title="Chat Assistant"
+          title={open ? "Minimize assistant" : "Chat Assistant"}
         >
           <FiMessageCircle size={18} />
         </IconButton>
