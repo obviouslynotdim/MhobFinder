@@ -135,6 +135,7 @@ export default function FoodAssistantWidget() {
   const [open, setOpen] = useState(false);
   const [menuHovered, setMenuHovered] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [canUseHover, setCanUseHover] = useState(false);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([INITIAL_ASSISTANT_MESSAGE]);
   const [messageTimestamps, setMessageTimestamps] = useState([]);
@@ -149,8 +150,31 @@ export default function FoodAssistantWidget() {
     [location.pathname],
   );
 
-  // Keep menu visible when hovering or menu is open (but not when chat is open)
-  const showMenuButtons = menuHovered || menuOpen;
+  // Keep menu visible on hover-capable devices, and use explicit menu toggle on touch devices.
+  const showMenuButtons = (canUseHover && menuHovered) || menuOpen;
+
+  useEffect(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+      return undefined;
+    }
+
+    const hoverQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const applyHoverCapability = (matches) => {
+      setCanUseHover(matches);
+      if (!matches) {
+        setMenuHovered(false);
+      }
+    };
+
+    applyHoverCapability(hoverQuery.matches);
+
+    const handleChange = (event) => applyHoverCapability(event.matches);
+    hoverQuery.addEventListener("change", handleChange);
+
+    return () => {
+      hoverQuery.removeEventListener("change", handleChange);
+    };
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -208,6 +232,7 @@ export default function FoodAssistantWidget() {
 
   const minimizeAssistant = () => {
     setOpen(false);
+    setMenuHovered(false);
     setMenuOpen(false);
   };
 
@@ -219,6 +244,7 @@ export default function FoodAssistantWidget() {
 
     setIsTyping(false);
     setOpen(false);
+    setMenuHovered(false);
     setMenuOpen(false);
     setMessages([INITIAL_ASSISTANT_MESSAGE]);
     setInput("");
@@ -457,8 +483,12 @@ export default function FoodAssistantWidget() {
         right={{ base: "14px", md: "22px" }}
         bottom={{ base: "18px", md: "22px" }}
         zIndex={ASSISTANT_WIDGET_Z_INDEX}
-        onMouseEnter={() => setMenuHovered(true)}
-        onMouseLeave={() => setMenuHovered(false)}
+        onMouseEnter={() => {
+          if (canUseHover) setMenuHovered(true);
+        }}
+        onMouseLeave={() => {
+          if (canUseHover) setMenuHovered(false);
+        }}
         h="180px"
         w="48px"
         display="flex"
@@ -483,6 +513,7 @@ export default function FoodAssistantWidget() {
           pointerEvents={showMenuButtons ? "auto" : "none"}
           onClick={() => {
             setOpen((prev) => !prev);
+            setMenuHovered(false);
             setMenuOpen(false);
           }}
           title={open ? "Minimize assistant" : "Chat Assistant"}
@@ -526,7 +557,10 @@ export default function FoodAssistantWidget() {
           position="relative"
           zIndex={10}
           title={menuOpen ? "Close menu" : "Menu"}
-          onClick={() => setMenuOpen(!menuOpen)}
+          onClick={() => {
+            setMenuHovered(false);
+            setMenuOpen((prev) => !prev);
+          }}
         >
           {menuOpen ? <FiX size={16} /> : <FiMoreVertical size={16} />}
         </IconButton>
