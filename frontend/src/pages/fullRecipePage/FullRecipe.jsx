@@ -11,6 +11,7 @@ import {
   IconButton,
   Textarea,
   HStack,
+  Portal,
 } from "@chakra-ui/react";
 import { FiCheck, FiFlag, FiHeart, FiMoreHorizontal } from "react-icons/fi";
 import { AiOutlineClose } from "react-icons/ai";
@@ -209,21 +210,23 @@ const FullRecipe = ({ foodId, onClose }) => {
   const sourceDomainLabel = sourceDomain || "cookfood.com";
 
   return (
-    <Box
-      position="fixed"
-      right="0"
-      top="0"
-      height="100vh"
-      width={{ base: "100%", lg: "38%" }}
-      minWidth={{ base: "0", lg: "390px" }}
-      maxWidth={{ base: "100%", lg: "520px" }}
-      bg={colors.pageBg}
-      overflowY="auto"
-      pb={{ base: "calc(96px + env(safe-area-inset-bottom))", md: "0" }}
-      boxShadow="lg"
-      zIndex="10"
-      onClick={(e) => e.stopPropagation()}
-    >
+    <Portal>
+      <Box
+        position="fixed"
+        top="0"
+        left={{ base: "0", lg: "auto" }}
+        right="0"
+        height="100vh"
+        width={{ base: "100vw", lg: "38%" }}
+        minWidth={{ base: "0", lg: "390px" }}
+        maxWidth={{ base: "100vw", lg: "520px" }}
+        bg={colors.pageBg}
+        overflowY="auto"
+        pb={{ base: "calc(96px + env(safe-area-inset-bottom))", md: "0" }}
+        boxShadow="lg"
+        zIndex="1100"
+        onClick={(e) => e.stopPropagation()}
+      >
       {/* Hero Image with top controls */}
       <Box position="relative" height={{ base: "250px", md: "360px" }}>
         <Image
@@ -611,7 +614,8 @@ const FullRecipe = ({ foodId, onClose }) => {
           </Box>
         </>
       )}
-    </Box>
+      </Box>
+    </Portal>
   );
 };
 
