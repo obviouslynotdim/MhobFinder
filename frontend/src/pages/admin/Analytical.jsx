@@ -1,8 +1,35 @@
 import { useEffect, useMemo, useState } from "react";
-import { Box, Flex, Grid, Heading, Spinner, Stack, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Grid, Heading, Spinner, Stack, Text } from "@chakra-ui/react";
+import { FiRefreshCcw } from "react-icons/fi";
 import { getAllFoods } from "../../services/api/food.service";
 import { getCommentsByFood } from "../../services/api/comment.service";
 import { getRatingsByFood } from "../../services/api/rating.service";
+
+const ANALYTICS_CACHE_TTL_MS = 60 * 1000;
+let analyticsDataCache = null;
+
+function readAnalyticsCache() {
+    if (!analyticsDataCache) return null;
+    const isFresh = Date.now() - analyticsDataCache.timestamp < ANALYTICS_CACHE_TTL_MS;
+    return isFresh ? analyticsDataCache.data : null;
+}
+
+function writeAnalyticsCache(data) {
+    analyticsDataCache = {
+        data,
+        timestamp: Date.now(),
+    };
+}
+
+async function mapInBatches(items, mapper, batchSize = 8) {
+    const results = [];
+    for (let index = 0; index < items.length; index += batchSize) {
+        const batch = items.slice(index, index + batchSize);
+        const batchResults = await Promise.all(batch.map(mapper));
+        results.push(...batchResults);
+    }
+    return results;
+}
 
 function getLast7DayLabels() {
     const labels = [];
@@ -23,6 +50,7 @@ function normalizeCreatedDate(value) {
 
 export default function Analytical() {
     const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
     const [foods, setFoods] = useState([]);
     const [commentsByFood, setCommentsByFood] = useState([]);
     const [ratingsByFood, setRatingsByFood] = useState([]);
@@ -30,28 +58,46 @@ export default function Analytical() {
     useEffect(() => {
         let mounted = true;
 
-        async function loadData() {
+        async function loadData(options = {}) {
+            const { forceRefresh = false } = options;
             setLoading(true);
             try {
-                const foodData = await getAllFoods();
+                if (!forceRefresh) {
+                    const cached = readAnalyticsCache();
+                    if (cached) {
+                        if (!mounted) return;
+                        setFoods(cached.foods);
+                        setCommentsByFood(cached.commentsByFood);
+                        setRatingsByFood(cached.ratingsByFood);
+                        return;
+                    }
+                }
+
+                const foodData = await getAllFoods({ forceRefresh });
                 const safeFoods = Array.isArray(foodData) ? foodData : [];
 
                 const [commentResults, ratingResults] = await Promise.all([
-                    Promise.all(
-                        safeFoods.map((food) =>
-                            getCommentsByFood(food.food_id)
+                    mapInBatches(
+                        safeFoods,
+                        (food) =>
+                            getCommentsByFood(food.food_id, { forceRefresh })
                                 .then((comments) => ({ foodId: food.food_id, comments: Array.isArray(comments) ? comments : [] }))
                                 .catch(() => ({ foodId: food.food_id, comments: [] })),
-                        ),
                     ),
-                    Promise.all(
-                        safeFoods.map((food) =>
-                            getRatingsByFood(food.food_id)
+                    mapInBatches(
+                        safeFoods,
+                        (food) =>
+                            getRatingsByFood(food.food_id, { forceRefresh })
                                 .then((ratings) => ({ foodId: food.food_id, ratings: Array.isArray(ratings) ? ratings : [] }))
                                 .catch(() => ({ foodId: food.food_id, ratings: [] })),
-                        ),
                     ),
                 ]);
+
+                writeAnalyticsCache({
+                    foods: safeFoods,
+                    commentsByFood: commentResults,
+                    ratingsByFood: ratingResults,
+                });
 
                 if (!mounted) return;
                 setFoods(safeFoods);
@@ -67,6 +113,43 @@ export default function Analytical() {
             mounted = false;
         };
     }, []);
+
+    const handleRefresh = async () => {
+        setRefreshing(true);
+        try {
+            const foodData = await getAllFoods({ forceRefresh: true });
+            const safeFoods = Array.isArray(foodData) ? foodData : [];
+
+            const [commentResults, ratingResults] = await Promise.all([
+                mapInBatches(
+                    safeFoods,
+                    (food) =>
+                        getCommentsByFood(food.food_id, { forceRefresh: true })
+                            .then((comments) => ({ foodId: food.food_id, comments: Array.isArray(comments) ? comments : [] }))
+                            .catch(() => ({ foodId: food.food_id, comments: [] })),
+                ),
+                mapInBatches(
+                    safeFoods,
+                    (food) =>
+                        getRatingsByFood(food.food_id, { forceRefresh: true })
+                            .then((ratings) => ({ foodId: food.food_id, ratings: Array.isArray(ratings) ? ratings : [] }))
+                            .catch(() => ({ foodId: food.food_id, ratings: [] })),
+                ),
+            ]);
+
+            writeAnalyticsCache({
+                foods: safeFoods,
+                commentsByFood: commentResults,
+                ratingsByFood: ratingResults,
+            });
+
+            setFoods(safeFoods);
+            setCommentsByFood(commentResults);
+            setRatingsByFood(ratingResults);
+        } finally {
+            setRefreshing(false);
+        }
+    };
 
     const analytics = useMemo(() => {
         const commentsFlat = commentsByFood.flatMap((entry) => entry.comments);
@@ -173,9 +256,23 @@ export default function Analytical() {
                 <Heading size={{ base: "md", md: "lg" }} color="#1f3d66" mb={1}>
                     Analytics Dashboard
                 </Heading>
-                <Text color="gray.600" mb={6}>
+                <Flex justify="space-between" align={{ base: "start", md: "center" }} gap={3} mb={6} direction={{ base: "column", md: "row" }}>
+                    <Text color="gray.600">
                     Live insight from foods, comments, and ratings.
-                </Text>
+                    </Text>
+                    <Button
+                        size="sm"
+                        leftIcon={<FiRefreshCcw />}
+                        onClick={handleRefresh}
+                        isLoading={refreshing}
+                        borderRadius="full"
+                        bg="#4f79bd"
+                        color="white"
+                        _hover={{ bg: "#3f66a6" }}
+                    >
+                        Refresh
+                    </Button>
+                </Flex>
 
                 <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={4} mb={4}>
                     <Box bg="#fbfdff" borderRadius="14px" p={4} border="1px solid" borderColor="#dbe5f4">

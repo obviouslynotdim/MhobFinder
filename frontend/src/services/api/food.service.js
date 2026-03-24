@@ -4,6 +4,27 @@ import { apiFetch, getAuthHeaders } from "./fetchClient.js";
 const HOME_FOODS_CACHE_KEY = "mhob:home-foods:v1";
 const HOME_FOODS_CACHE_TTL_MS = 5 * 60 * 1000;
 const HOME_FOODS_CACHE_LIMIT = 30;
+const ALL_FOODS_CACHE_TTL_MS = 60 * 1000;
+const allFoodsCache = {
+  data: null,
+  timestamp: 0,
+};
+
+function readAllFoodsCache() {
+  if (!Array.isArray(allFoodsCache.data)) return null;
+  const isFresh = Date.now() - allFoodsCache.timestamp < ALL_FOODS_CACHE_TTL_MS;
+  return isFresh ? allFoodsCache.data : null;
+}
+
+function writeAllFoodsCache(foods) {
+  allFoodsCache.data = foods;
+  allFoodsCache.timestamp = Date.now();
+}
+
+export function invalidateAllFoodsCache() {
+  allFoodsCache.data = null;
+  allFoodsCache.timestamp = 0;
+}
 
 function readHomeFoodsCache() {
   if (typeof window === "undefined") return null;
@@ -82,8 +103,18 @@ const buildFoodFormData = ({
 // ---------------------------
 // Get all foods
 // ---------------------------
-export const getAllFoods = async () => {
-  return apiFetch("/api/foods");
+export const getAllFoods = async (options = {}) => {
+  const { forceRefresh = false } = options;
+
+  if (!forceRefresh) {
+    const cachedFoods = readAllFoodsCache();
+    if (cachedFoods) return cachedFoods;
+  }
+
+  const foods = await apiFetch("/api/foods");
+  const safeFoods = Array.isArray(foods) ? foods : [];
+  writeAllFoodsCache(safeFoods);
+  return safeFoods;
 };
 
 // ---------------------------
@@ -140,11 +171,14 @@ export const addFood = async ({
     imageFile,
   });
 
-  return apiFetch("/api/foods", {
+  const result = await apiFetch("/api/foods", {
     method: "POST",
     headers: await getAuthHeaders(),
     body: formData,
   });
+  invalidateAllFoodsCache();
+  invalidateHomeFoodsCache();
+  return result;
 };
 
 // ---------------------------
@@ -160,19 +194,25 @@ export const getFoodById = async (foodId) => {
 export const updateFood = async (foodId, data) => {
   const formData = buildFoodFormData(data);
 
-  return apiFetch(`/api/foods/${foodId}`, {
+  const result = await apiFetch(`/api/foods/${foodId}`, {
     method: "PUT",
     headers: await getAuthHeaders(),
     body: formData,
   });
+  invalidateAllFoodsCache();
+  invalidateHomeFoodsCache();
+  return result;
 };
 
 // ---------------------------
 // Delete food
 // ---------------------------
 export const deleteFood = async (foodId) => {
-  return apiFetch(`/api/foods/${foodId}`, {
+  const result = await apiFetch(`/api/foods/${foodId}`, {
     method: "DELETE",
     headers: await getAuthHeaders(),
   });
+  invalidateAllFoodsCache();
+  invalidateHomeFoodsCache();
+  return result;
 };

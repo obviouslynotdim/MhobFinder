@@ -73,20 +73,51 @@ export function UserProvider({ children }) {
   const loginWithGoogle = async () => {
     setLoading(true);
     try {
+      // Do not open Google popup again if there is already an active Firebase session.
+      if (auth.currentUser) {
+        setLoading(false);
+        throw new Error("You are already signed in. Please log out first to switch account.");
+      }
+      
       const result = await signInWithPopup(auth, googleProvider);
       const firebaseUser = result.user;
+      
+      // Log Firebase user data for debugging
+      console.debug("Firebase user logged in:", {
+        uid: firebaseUser.uid,
+        email: firebaseUser.email,
+        displayName: firebaseUser.displayName,
+        emailVerified: firebaseUser.emailVerified,
+      });
+      
       // Register user in backend if new
       try {
-        await registerUser({
-          name: firebaseUser.displayName,
+        // Use email prefix as fallback if display name is missing
+        const name = (firebaseUser.displayName || firebaseUser.email.split('@')[0] || 'User').trim();
+        
+        const registerPayload = {
+          name,
           email: firebaseUser.email,
-          password: null,
-          is_oauth: true,
-        });
+          password: "", // Send empty string instead of null
+        };
+        
+        console.debug("Attempting registration with:", registerPayload);
+        
+        await registerUser(registerPayload);
+        console.debug("Registration successful");
       } catch (registerError) {
-        // User might already exist or other backend error
-        // This is okay - Firebase login already succeeded
-        console.warn("User registration error (may already exist):", registerError);
+        // Check if it's a 400 error (likely "Email already registered")
+        if (registerError?.response?.status === 400) {
+          // User already exists - this is expected for returning users
+          console.debug("User already registered, proceeding with login");
+        } else {
+          // Unexpected error
+          console.warn("User registration error:", {
+            status: registerError?.response?.status,
+            error: registerError?.response?.data?.error,
+            message: registerError.message,
+          });
+        }
       }
     } catch (error) {
       console.error("Google sign in error:", error);

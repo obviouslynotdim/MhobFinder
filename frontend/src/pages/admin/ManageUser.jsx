@@ -3,7 +3,11 @@ import { Badge, Box, Flex, HStack, Text } from "@chakra-ui/react";
 import ManageUserHeader from "../../components/admin/manageUser/ManageUserHeader";
 import UserTable from "../../components/admin/manageUser/UserTable";
 import UserCommentsPanel from "../../components/admin/manageUser/UserCommentsPanel";
-import { fetchAllUsers, deleteUser } from "../../services/api/user.service";
+import {
+  fetchAllUsers,
+  deleteUser,
+  invalidateUsersCache,
+} from "../../services/api/user.service";
 import { getAllFoods } from "../../services/api/food.service";
 import { deleteComment, getCommentsByFood } from "../../services/api/comment.service";
 import { useAdminAlert } from "../../context/AdminAlertContext.jsx";
@@ -117,6 +121,7 @@ export default function ManageUser() {
     setDeletingCommentId(commentId);
     try {
       await deleteComment(commentId);
+      invalidateUsersCache();
       setModerationGroups((prevGroups) =>
         prevGroups
           .map((group) => {
@@ -161,6 +166,7 @@ export default function ManageUser() {
     setLoading(true);
     try {
       await deleteUser(userId);
+      invalidateUsersCache();
       setUsers((prevUsers) =>
         prevUsers.filter((user) => user.user_id !== userId),
       );

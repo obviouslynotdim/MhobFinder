@@ -32,32 +32,37 @@ export const register = async (req, res, next) => {
   try {
     const name = cleanText(req.body?.name, 100);
     const email = normalizeEmail(req.body?.email);
-    const password = String(req.body?.password || "");
+    const password = String(req.body?.password || "").trim();
 
+    // Detailed validation logging
     if (!name) {
+      console.warn("Register validation failed: Invalid name", { providedName: req.body?.name });
       return res.status(400).json({ error: "Valid name is required" });
     }
 
     if (!email) {
+      console.warn("Register validation failed: Invalid email", { providedEmail: req.body?.email });
       return res.status(400).json({ error: "Valid email is required" });
     }
 
-    if (password && password.length < 8) {
+    if (password && password.length > 0 && password.length < 8) {
       return res.status(400).json({ error: "Password must be at least 8 characters" });
     }
 
     // Check if user already exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
+      console.debug("Register: User already exists", { email });
       return res.status(400).json({ error: "Email already registered" });
     }
 
-    // Hash password
+    // Hash password - empty or OAuth users get placeholder hash
     let hashedPassword = null;
-    if (password.length > 0) {
-      hashedPassword = await bcrypt.hash(password, 10);
-    } else {
+    const isOAuthUser = password.length === 0;
+    if (isOAuthUser) {
       hashedPassword = await bcrypt.hash("oauth_placeholder", 10);
+    } else {
+      hashedPassword = await bcrypt.hash(password, 10);
     }
 
     // Create user
@@ -65,7 +70,7 @@ export const register = async (req, res, next) => {
       name,
       email,
       password: hashedPassword,
-      is_oauth: password.length === 0,
+      is_oauth: isOAuthUser,
     });
 
     res.status(201).json({
@@ -73,6 +78,7 @@ export const register = async (req, res, next) => {
       user: toSafeUser(user),
     });
   } catch (err) {
+    console.error("Register error:", err);
     next(err);
   }
 };

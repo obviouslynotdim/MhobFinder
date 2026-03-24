@@ -10,8 +10,10 @@ import {
   HStack,
   Textarea,
   Spinner,
+  Portal,
 } from "@chakra-ui/react";
 import AppAlert from "../../../components/common/AppAlert";
+import AppLoadingState from "../../../components/common/AppLoadingState.jsx";
 import { keyframes } from "@emotion/react";
 import { FaStar } from "react-icons/fa";
 import { FiEdit2, FiMoreHorizontal, FiTrash2 } from "react-icons/fi";
@@ -56,6 +58,7 @@ const CommentSection = ({
   const [hoveredEditRating, setHoveredEditRating] = useState(0);
   const [actionMenuForCommentId, setActionMenuForCommentId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [hasReviewed, setHasReviewed] = useState(false);
   const [editFeedback, setEditFeedback] = useState({ type: "idle", message: "" });
   const [showSuccess, setShowSuccess] = useState(false);
@@ -594,12 +597,36 @@ const CommentSection = ({
                 color={colors.dark}
                 _hover={{ bg: colors.chipHover }}
                 size={{ base: "sm", md: "md" }}
-                onClick={() =>
-                  setVisibleCommentCount((prev) => prev + COMMENT_BATCH_SIZE)
-                }
+                isLoading={loadingMore}
+                onClick={async () => {
+                  setLoadingMore(true);
+                  // Simulate slight delay for better UX
+                  await new Promise((resolve) => setTimeout(resolve, 300));
+                  setVisibleCommentCount((prev) => prev + COMMENT_BATCH_SIZE);
+                  setLoadingMore(false);
+                }}
               >
                 Load more comments ({localComments.length - visibleCommentCount} left)
               </Button>
+            )}
+            {loadingMore && (
+              <Portal>
+                <Box
+                  position="fixed"
+                  inset="0"
+                  bg="rgba(0, 0, 0, 0.6)"
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  zIndex="1200"
+                >
+                  <AppLoadingState
+                    title="Loading more comments"
+                    description="Fetching additional reviews..."
+                    fullScreen={false}
+                  />
+                </Box>
+              </Portal>
             )}
           </Flex>
         ) : (

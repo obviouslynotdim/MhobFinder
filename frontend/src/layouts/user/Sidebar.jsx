@@ -288,6 +288,7 @@ export default function Sidebar({ collapsed }) {
     <Box
       px={{ base: "2", md: "4" }}
       py={{ base: "3", md: "5" }}
+      mb={{ base: "calc(88px + env(safe-area-inset-bottom))", md: "0" }}
       color={colors.darkest}
       position="relative"
       bg="linear-gradient(180deg, #F8FAFF 0%, #EEF4FF 100%)"

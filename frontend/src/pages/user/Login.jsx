@@ -14,6 +14,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FiArrowLeft } from "react-icons/fi";
 import { useUser } from "../../context/UserProvider.jsx";
 import { colors } from "../../theme/tokens.js";
+import AppLoadingState from "../../components/common/AppLoadingState.jsx";
 
 import googleIcon from "../../assets/google.png";
 
@@ -24,21 +25,56 @@ export default function Login() {
   const [error, setError] = useState("");
   const [googleIconFailed, setGoogleIconFailed] = useState(false);
 
+  // Redirect already-logged-in users immediately
   useEffect(() => {
-    if (!user) return;
-    navigate(user.isAdmin ? "/admin/add-food" : "/home", { replace: true });
-  }, [user, navigate]);
+    if (!user || loading) return;
+    // User is already logged in, redirect to their home
+    const destination = user.isAdmin ? "/admin/add-food" : "/home";
+    navigate(destination, { replace: true });
+  }, [user, loading, navigate]);
 
   const handleGoogleSignIn = async () => {
     try {
       setError("");
       await loginWithGoogle();
-    } catch {
-      setError("Google sign in failed. Please try again.");
+    } catch (err) {
+      // Provide specific error messages based on error type
+      let errorMessage = "Google sign in failed. Please try again.";
+      
+      if (err?.code === "auth/popup-closed-by-user") {
+        errorMessage = "Sign-in was cancelled. Please try again.";
+      } else if (err?.code === "auth/popup-blocked") {
+        errorMessage = "Sign-in popup was blocked. Please allow popups and try again.";
+      } else if (err?.code === "auth/network-request-failed") {
+        errorMessage = "Network error. Please check your connection and try again.";
+      } else if (err?.message?.includes("Email already")) {
+        errorMessage = "This email is already registered. Please use your existing account.";
+      }
+      
+      setError(errorMessage);
+      console.error("Google sign in error:", err);
     }
   };
 
   const handleBackToMain = () => navigate("/home");
+
+  // While loading auth state, don't show login form yet
+  if (loading) {
+    return (
+      <AppLoadingState
+        title="Loading..."
+        description="Please wait while we verify your session."
+        fullScreen={false}
+        minH="50vh"
+      />
+    );
+  }
+
+  // User is already logged in - useEffect will redirect them
+  // Show nothing while redirect happens (it's very fast)
+  if (user) {
+    return null;
+  }
 
   return (
     <Box

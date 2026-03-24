@@ -125,7 +125,7 @@ export const verifyFirebaseToken = async (req, res, next) => {
   } catch (error) {
     console.error('Token verification failed:', error);
     if (error.name?.includes("Sequelize")) {
-      return res.status(500).json({ error: 'User sync failed', detail: error.message });
+      return res.status(500).json({ error: 'User sync failed' });
     }
     return res.status(401).json({ error: 'Invalid token' });
   }

@@ -60,10 +60,11 @@ export default function BugReports() {
   const [savingReportId, setSavingReportId] = useState(null);
   const [noteByReportId, setNoteByReportId] = useState({});
 
-  const loadReports = async (filter = statusFilter) => {
+  const loadReports = async (filter = statusFilter, options = {}) => {
+    const { forceRefresh = false } = options;
     setLoading(true);
     try {
-      const data = await getBugReports(filter);
+      const data = await getBugReports(filter, { forceRefresh });
       setReports(Array.isArray(data) ? data : []);
     } catch (error) {
       setReports([]);
@@ -200,7 +201,7 @@ export default function BugReports() {
 
           <Button
             leftIcon={<FiRefreshCcw />}
-            onClick={() => loadReports(statusFilter)}
+            onClick={() => loadReports(statusFilter, { forceRefresh: true })}
             bg={colors.primary}
             color="white"
             _hover={{ bg: colors.dark }}
