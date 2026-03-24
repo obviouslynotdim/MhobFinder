@@ -10,7 +10,7 @@ import {
   WrapItem,
 } from "@chakra-ui/react";
 
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   FiChevronDown,
   FiChevronUp,
@@ -214,7 +214,15 @@ export default function Sidebar({ collapsed }) {
   const { ingredients, selectedIds, toggleIngredient } = useApp();
   const { user } = useUser();
   const loc = useLocation();
+  const navigate = useNavigate();
   const [expandedCats, setExpandedCats] = useState(new Set());
+
+  function handleIngredientSelect(ingredientId) {
+    toggleIngredient(ingredientId);
+    if (loc.pathname === "/") {
+      navigate("/home");
+    }
+  }
 
   function toggleCat(cat) {
     setExpandedCats((prev) => {
@@ -384,7 +392,7 @@ export default function Sidebar({ collapsed }) {
                     <IngredientChip
                       item={item}
                       selected={selectedIds.includes(item.ingredient_id)}
-                      onClick={() => toggleIngredient(item.ingredient_id)}
+                      onClick={() => handleIngredientSelect(item.ingredient_id)}
                     />
                   </WrapItem>
                 ))}
@@ -457,7 +465,7 @@ export default function Sidebar({ collapsed }) {
                     <IngredientChip
                       item={item}
                       selected={selectedIds.includes(item.ingredient_id)}
-                      onClick={() => toggleIngredient(item.ingredient_id)}
+                      onClick={() => handleIngredientSelect(item.ingredient_id)}
                     />
                   </WrapItem>
                 ))}

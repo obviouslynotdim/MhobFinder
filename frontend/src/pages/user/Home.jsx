@@ -87,17 +87,36 @@ function HomeEmptyState({ t }) {
 
 function HomeNoResults({ onClear, t }) {
   return (
-    <VStack h="full" justify="center" gap="3" textAlign="center" py="20">
-      <Text fontWeight="bold" fontSize="xl">
-        {t("home.noRecipesFound")}
-      </Text>
-      <Text opacity="0.75">
-        {t("home.noRecipesHint")}
-      </Text>
-      <Button variant="outline" onClick={onClear}>
-        {t("home.clearIngredients")}
-      </Button>
-    </VStack>
+    <Box py="20" px={{ base: 1, md: 4 }}>
+      <VStack
+        maxW="620px"
+        mx="auto"
+        gap="4"
+        textAlign="center"
+        bg="white"
+        border="1px solid"
+        borderColor={`${colors.primary}33`}
+        borderRadius="2xl"
+        boxShadow="sm"
+        p={{ base: 5, md: 7 }}
+      >
+        <Image src={chefImage} alt="Chef" boxSize="160px" opacity="0.9" />
+        <Text fontWeight="bold" fontSize="xl" color={colors.darkest}>
+          {t("home.noRecipesFound")}
+        </Text>
+        <Text opacity="0.8" maxW="460px" color={colors.dark}>
+          {t("home.noRecipesHint")}
+        </Text>
+        <Button
+          onClick={onClear}
+          bg={colors.primary}
+          color="white"
+          _hover={{ bg: colors.dark }}
+        >
+          {t("home.clearIngredients")}
+        </Button>
+      </VStack>
+    </Box>
   );
 }
 
@@ -264,14 +283,49 @@ export default function Home() {
       </HStack>
 
       {filteredFoods.length === 0 && (
-        <VStack h="full" justify="center" gap="3" textAlign="center" py="20">
-          <Text fontWeight="bold" fontSize="xl">
-            {t("home.noRecipesInCategory", {
-              category: getCategoryLabel(selectedCategory),
-            })}
-          </Text>
-          <Text opacity="0.75">{t("home.tryAnotherCategory")}</Text>
-        </VStack>
+        <Box py="20" px={{ base: 1, md: 4 }}>
+          <VStack
+            maxW="640px"
+            mx="auto"
+            gap="4"
+            textAlign="center"
+            bg="white"
+            border="1px solid"
+            borderColor={`${colors.primary}33`}
+            borderRadius="2xl"
+            boxShadow="sm"
+            p={{ base: 5, md: 7 }}
+          >
+            <Text fontWeight="bold" fontSize="xl" color={colors.darkest}>
+              {t("home.noRecipesInCategory", {
+                category: getCategoryLabel(selectedCategory),
+              })}
+            </Text>
+            <Text opacity="0.8" color={colors.dark}>
+              {t("home.tryAnotherCategory")}
+            </Text>
+            <HStack gap="2" wrap="wrap" justify="center">
+              <Button
+                variant="outline"
+                borderColor={colors.primary}
+                color={colors.dark}
+                _hover={{ bg: colors.chipHover }}
+                onClick={() => setSelectedCategory("All")}
+              >
+                {t("common.all")}
+              </Button>
+              <Button
+                variant="outline"
+                borderColor={colors.primary}
+                color={colors.dark}
+                _hover={{ bg: colors.chipHover }}
+                onClick={clearIngredients}
+              >
+                {t("home.clearIngredients")}
+              </Button>
+            </HStack>
+          </VStack>
+        </Box>
       )}
 
       {/* 2 cards per row + spacing — switch to 2 col only at lg so md viewport has room */}

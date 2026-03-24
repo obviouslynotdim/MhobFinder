@@ -21,7 +21,7 @@ export const getIngredientsByType = async (req, res, next) => {
     }
 
     const ingredients = await Ingredient.findAll({
-      where: { typeId },           
+      where: { type_id: typeId },
       include: buildIngredientTypeInclude(),
     });
 

@@ -6,7 +6,7 @@ import {
   InputGroup,
   Text,
 } from "@chakra-ui/react";
-import { FiArrowLeft, FiHeart, FiUser, FiSearch } from "react-icons/fi";
+import { FiArrowLeft, FiHeart, FiUser, FiSearch, FiX } from "react-icons/fi";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useApp } from "../context/AppProvider.jsx";
 import { useUser } from "../context/UserProvider.jsx";
@@ -46,6 +46,21 @@ export default function TopBarRight() {
           flex="1"
           maxW="460px"
           startElement={<FiSearch size="18" color="#718096" />}
+          endElement={
+            search ? (
+              <IconButton
+                aria-label="Clear search"
+                variant="ghost"
+                size="xs"
+                color="gray.500"
+                _hover={{ bg: "gray.100", color: "gray.700" }}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => setSearch("")}
+              >
+                <FiX />
+              </IconButton>
+            ) : null
+          }
           display={{ base: "none", md: "flex" }}
         >
           <Input
@@ -138,7 +153,26 @@ export default function TopBarRight() {
       </HStack>
 
       {/* Row 2: Search bar */}
-      <InputGroup w="full" mt="4" startElement={<FiSearch size="18" color="#718096" />}>
+      <InputGroup
+        w="full"
+        mt="4"
+        startElement={<FiSearch size="18" color="#718096" />}
+        endElement={
+          search ? (
+            <IconButton
+              aria-label="Clear search"
+              variant="ghost"
+              size="xs"
+              color="gray.500"
+              _hover={{ bg: "gray.100", color: "gray.700" }}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => setSearch("")}
+            >
+              <FiX />
+            </IconButton>
+          ) : null
+        }
+      >
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}

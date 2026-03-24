@@ -180,9 +180,16 @@ export const getMyProfile = async (req, res, next) => {
 // ---------------------------
 export const updateMyProfile = async (req, res, next) => {
   try {
+    const hasNameField = Object.prototype.hasOwnProperty.call(req.body || {}, "name");
     const incomingName = cleanText(req.body?.name, 100);
-    const hasNameUpdate = Boolean(incomingName);
+    const hasNameUpdate = hasNameField && Boolean(incomingName);
     const hasImageUpdate = Boolean(req.file);
+
+    if (hasNameField && !incomingName) {
+      return res.status(400).json({
+        error: "Name cannot be empty or longer than 100 characters",
+      });
+    }
 
     if (!hasNameUpdate && !hasImageUpdate) {
       return res.status(400).json({
@@ -195,21 +202,31 @@ export const updateMyProfile = async (req, res, next) => {
     }
 
     let image_url = null;
+    const previousImagePublicId = req.user.image_public_id;
+    let nextImagePublicId = null;
     if (req.file) {
-      if (req.user.image_public_id) {
-        await cloudinary.uploader.destroy(req.user.image_public_id);
-      }
-
       const fileStr = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
       const uploadResult = await cloudinary.uploader.upload(fileStr, {
         folder: "user_profiles",
       });
       image_url = uploadResult.secure_url;
+      nextImagePublicId = uploadResult.public_id;
       req.user.image_url = uploadResult.secure_url;
       req.user.image_public_id = uploadResult.public_id;
     }
 
-    await req.user.save();
+    try {
+      await req.user.save();
+    } catch (saveError) {
+      if (nextImagePublicId) {
+        await cloudinary.uploader.destroy(nextImagePublicId).catch(() => null);
+      }
+      throw saveError;
+    }
+
+    if (nextImagePublicId && previousImagePublicId) {
+      await cloudinary.uploader.destroy(previousImagePublicId).catch(() => null);
+    }
 
     return res.status(200).json({
       message: "Profile updated successfully",

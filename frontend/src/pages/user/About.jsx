@@ -18,7 +18,7 @@ import nakImage from "../../assets/members/nak.png";
 import davinImage from "../../assets/members/davin.png";
 import kimhongImage from "../../assets/members/kimhong.png";
 import vanndaImage from "../../assets/members/vannda.png";
-// import sakImage from "../../assets/members/chytasenasak.png";
+import sakImage from "../../assets/members/sak.png";
 import virakImage from "../../assets/members/virak.png";    
 import featureImageOne from "../../assets/feature/mhohfinder.jpg";
 import featureImageTwo from "../../assets/feature/mhobfinder2.jpg";
@@ -55,14 +55,14 @@ const MEMBERS = [
   },
   {
     name: "Mok Chytasenasak",
-    role: "Frontend",
-    image: '',
+    role: "Frontend Developer",
+    image: sakImage,
     website: "https://example.com",
     github: "https://github.com/Sakk-pk",
   },
   {
     name: "Luy Virak",
-    role: "Frontend",
+    role: "Frontend Developer",
     image: virakImage,
     website: "https://example.com",
     github: "https://github.com/luy-virak",

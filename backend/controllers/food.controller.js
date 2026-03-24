@@ -142,23 +142,39 @@ export const createFood = async (req, res, next) => {
       public_id = upload.public_id;
     }
 
-    const newFood = await Food.create({
-      title,
-      description,
-      image_url,
-      public_id,
-      link_url,
-    });
+    let createdFoodId = null;
 
-    if (ingredientIds.length) {
-      await newFood.setIngredients(ingredientIds);
+    try {
+      await Food.sequelize.transaction(async (transaction) => {
+        const newFood = await Food.create(
+          {
+            title,
+            description,
+            image_url,
+            public_id,
+            link_url,
+          },
+          { transaction },
+        );
+
+        if (ingredientIds.length) {
+          await newFood.setIngredients(ingredientIds, { transaction });
+        }
+
+        if (categoryIds.length) {
+          await newFood.setCategories(categoryIds, { transaction });
+        }
+
+        createdFoodId = newFood.food_id;
+      });
+    } catch (transactionError) {
+      if (public_id) {
+        await cloudinary.uploader.destroy(public_id).catch(() => null);
+      }
+      throw transactionError;
     }
 
-    if (categoryIds.length) {
-      await newFood.setCategories(categoryIds);
-    }
-
-    const food = await Food.findByPk(newFood.food_id, {
+    const food = await Food.findByPk(createdFoodId, {
       include: buildFoodFullInclude(),
     });
 
@@ -195,36 +211,18 @@ export const updateFood = async (req, res, next) => {
       return res.status(400).json({ message: "link_url must be a valid http(s) URL" });
     }
 
-    const food = await Food.findByPk(id);
+    const existingFood = await Food.findByPk(id);
 
-    if (!food) {
+    if (!existingFood) {
       return res.status(404).json({ message: "Food not found" });
     }
 
+    const previousPublicId = existingFood.public_id;
+    let nextUpload = null;
+
     if (req.file) {
-      if (food.public_id) {
-        await cloudinary.uploader.destroy(food.public_id);
-      }
-
-      const upload = await uploadImage(req.file);
-
-      food.image_url = upload.image_url;
-      food.public_id = upload.public_id;
+      nextUpload = await uploadImage(req.file);
     }
-
-    if (req.body?.title != null) {
-      food.title = title;
-    }
-
-    if (req.body?.description != null) {
-      food.description = description;
-    }
-
-    if (req.body?.link_url != null) {
-      food.link_url = link_url;
-    }
-
-    await food.save();
 
     const hasIngredientPayload = Object.prototype.hasOwnProperty.call(
       req.body,
@@ -238,12 +236,50 @@ export const updateFood = async (req, res, next) => {
     ingredientIds = parseIdArray(ingredientIds);
     categoryIds = parseIdArray(categoryIds);
 
-    if (hasIngredientPayload) {
-      await food.setIngredients(ingredientIds);
+    try {
+      await Food.sequelize.transaction(async (transaction) => {
+        const food = await Food.findByPk(id, { transaction });
+
+        if (!food) {
+          throw new Error("Food not found");
+        }
+
+        if (nextUpload) {
+          food.image_url = nextUpload.image_url;
+          food.public_id = nextUpload.public_id;
+        }
+
+        if (req.body?.title != null) {
+          food.title = title;
+        }
+
+        if (req.body?.description != null) {
+          food.description = description;
+        }
+
+        if (req.body?.link_url != null) {
+          food.link_url = link_url;
+        }
+
+        await food.save({ transaction });
+
+        if (hasIngredientPayload) {
+          await food.setIngredients(ingredientIds, { transaction });
+        }
+
+        if (hasCategoryPayload) {
+          await food.setCategories(categoryIds, { transaction });
+        }
+      });
+    } catch (transactionError) {
+      if (nextUpload?.public_id) {
+        await cloudinary.uploader.destroy(nextUpload.public_id).catch(() => null);
+      }
+      throw transactionError;
     }
 
-    if (hasCategoryPayload) {
-      await food.setCategories(categoryIds);
+    if (nextUpload?.public_id && previousPublicId) {
+      await cloudinary.uploader.destroy(previousPublicId).catch(() => null);
     }
 
     const updatedFood = await Food.findByPk(id, {

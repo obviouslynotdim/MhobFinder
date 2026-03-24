@@ -83,6 +83,8 @@ export const verifyFirebaseToken = async (req, res, next) => {
     const decodedToken = await admin.auth().verifyIdToken(idToken);
 
     const email = (decodedToken.email || "").trim().toLowerCase();
+    const firebaseName = String(decodedToken.name || "").trim();
+    const firebaseImageUrl = String(decodedToken.picture || "").trim() || null;
     if (!email) {
       return res.status(401).json({ error: 'Token does not contain email' });
     }
@@ -94,13 +96,27 @@ export const verifyFirebaseToken = async (req, res, next) => {
       const randomPassword = crypto.randomBytes(24).toString("hex");
       const hashedPassword = await bcrypt.hash(randomPassword, 10);
       user = await User.create({
-        name: decodedToken.name || "User",
+        name: firebaseName || "User",
         email,
         password: hashedPassword,
         is_oauth: true,
-        image_url: null,
+        image_url: firebaseImageUrl,
         image_public_id: null,
       });
+    } else {
+      const updates = {};
+
+      if (firebaseName && user.is_oauth && user.name !== firebaseName) {
+        updates.name = firebaseName;
+      }
+
+      if (firebaseImageUrl && user.is_oauth && !user.image_url && !user.image_public_id) {
+        updates.image_url = firebaseImageUrl;
+      }
+
+      if (Object.keys(updates).length > 0) {
+        await user.update(updates);
+      }
     }
 
     req.user = user;

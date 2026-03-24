@@ -42,6 +42,17 @@ export const addComment = async (req, res, next) => {
       return res.status(400).json({ message: "Invalid parent_id" });
     }
 
+    if (parent_id != null) {
+      const parentComment = await Comment.findByPk(parent_id);
+      if (!parentComment) {
+        return res.status(404).json({ message: "Parent comment not found" });
+      }
+
+      if (parentComment.food_id !== foodId) {
+        return res.status(400).json({ message: "parent_id does not belong to this food" });
+      }
+    }
+
     if (!comment_text) {
       return res.status(400).json({ message: "comment_text is required" });
     }

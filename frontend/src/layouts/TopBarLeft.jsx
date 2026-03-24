@@ -9,34 +9,54 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useRef, useState } from "react";
-import { FiMenu, FiMoreVertical, FiSearch, FiTrash2 } from "react-icons/fi";
+import { FiMenu, FiMoreVertical, FiSearch, FiTrash2, FiX } from "react-icons/fi";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useApp } from "../context/AppProvider.jsx";
 import { useTranslation } from "../context/useTranslation.js";
 import { colors } from "../theme/tokens.js";
 
 export default function TopBarLeft({ collapsed, onToggleCollapse }) {
-  const { language, t } = useTranslation();
-  const { ingredients, selectedIds, toggleIngredient, clearIngredients } =
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const {
+    ingredients,
+    selectedIds,
+    ingredientSearch,
+    setIngredientSearch,
+    toggleIngredient,
+    clearIngredients,
+  } =
     useApp();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [ingSearch, setIngSearch] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const inputRef = useRef(null);
 
   const filteredIngredients = ingredients.filter((i) =>
-    i.name.toLowerCase().includes(ingSearch.toLowerCase()),
+    i.name.toLowerCase().includes(ingredientSearch.toLowerCase()),
   );
 
   function handleIngSearchChange(e) {
-    setIngSearch(e.target.value);
+    setIngredientSearch(e.target.value);
     setDrawerOpen(e.target.value.length > 0);
+  }
+
+  function handleClearSearch() {
+    setIngredientSearch("");
+    setDrawerOpen(false);
+    inputRef.current?.focus();
   }
 
   function handleSelect(id) {
     toggleIngredient(id);
-    setIngSearch("");
+
+    if (location.pathname === "/") {
+      navigate("/home");
+    }
+
+    setIngredientSearch("");
     setDrawerOpen(false);
     inputRef.current?.focus();
   }
@@ -193,12 +213,27 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
         <InputGroup
           w="full"
           startElement={<FiSearch size="18" color="#718096" />}
+          endElement={
+            ingredientSearch ? (
+              <IconButton
+                aria-label="Clear search"
+                variant="ghost"
+                size="xs"
+                color="gray.500"
+                _hover={{ bg: "gray.100", color: "gray.700" }}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={handleClearSearch}
+              >
+                <FiX />
+              </IconButton>
+            ) : null
+          }
         >
           <Input
             ref={inputRef}
-            value={ingSearch}
+            value={ingredientSearch}
             onChange={handleIngSearchChange}
-            onFocus={() => ingSearch.length > 0 && setDrawerOpen(true)}
+            onFocus={() => ingredientSearch.length > 0 && setDrawerOpen(true)}
             onBlur={() => setTimeout(() => setDrawerOpen(false), 150)}
             placeholder={t("topBar.inputIngredient")}
             bg="white"

@@ -26,6 +26,8 @@ export const translations = {
       categoryLabel: "Category",
       all: "All",
       loading: "Loading...",
+      cancel: "Cancel",
+      ok: "OK",
     },
     start: {
       register: "Register",

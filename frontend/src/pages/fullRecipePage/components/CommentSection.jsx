@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Box,
   Flex,
@@ -141,7 +141,7 @@ const CommentSection = ({
 
 
   // More robust check for comment ownership
-  const isOwnComment = (comment) => {
+  const isOwnComment = useCallback((comment) => {
     if (!user) return false;
     // Try matching by email
     if (user.email && comment?.user?.email) {
@@ -158,7 +158,7 @@ const CommentSection = ({
       if (String(user.dbUserId) === String(commentUserId)) return true;
     }
     return false;
-  };
+  }, [user]);
 
 
 
@@ -169,7 +169,7 @@ const CommentSection = ({
       return isOwnComment(comment);
     });
     setHasReviewed(reviewed);
-  }, [localComments, user]);
+  }, [localComments, isOwnComment]);
 
   const getDisplayName = (comment) => comment.user?.name || comment.userName || "Anonymous";
 

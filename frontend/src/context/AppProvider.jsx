@@ -45,6 +45,7 @@ export function AppProvider({ children }) {
 
   const [ingredients, setIngredients] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]);
+  const [ingredientSearch, setIngredientSearch] = useState("");
   const [foods, setFoods] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -243,6 +244,8 @@ export function AppProvider({ children }) {
   // -------------------------
   const clearIngredients = useCallback(() => {
     setSelectedIds([]);
+    setIngredientSearch("");
+    setSearch("");
     refreshFoods([]);
   }, [refreshFoods]);
 
@@ -333,6 +336,8 @@ export function AppProvider({ children }) {
     () => ({
       ingredients,
       selectedIds,
+      ingredientSearch,
+      setIngredientSearch,
       foods: filteredFoods,
       rawFoods: foods,
       favorites,
@@ -348,6 +353,7 @@ export function AppProvider({ children }) {
     [
       ingredients,
       selectedIds,
+      ingredientSearch,
       filteredFoods,
       foods,
       favorites,
@@ -358,6 +364,7 @@ export function AppProvider({ children }) {
       clearIngredients,
       toggleFavorite,
       refreshFoods,
+      setIngredientSearch,
     ]
   );
 

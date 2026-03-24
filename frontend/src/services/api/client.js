@@ -2,7 +2,9 @@
 import axios from 'axios';
 import { auth } from '../../firebase.js';
 
-const API_ROOT = (import.meta.env.VITE_API_BASE || '').replace(/\/$/, '');
+const API_ROOT = (import.meta.env.VITE_API_BASE || '')
+  .replace(/\/+$/, '')
+  .replace(/\/api$/i, '');
 
 const apiClient = axios.create({
   baseURL: `${API_ROOT}/api`,
