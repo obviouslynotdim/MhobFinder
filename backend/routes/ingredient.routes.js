@@ -1,5 +1,11 @@
 import express from "express";
-import { getAllIngredients } from "../controllers/ingredient.controller.js";
+import {
+	getAllIngredients,
+	createIngredient,
+	updateIngredient,
+	deleteIngredient,
+} from "../controllers/ingredient.controller.js";
+import { verifyFirebaseToken, requireAdmin } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -13,5 +19,8 @@ const router = express.Router();
  *         description: List of all ingredients
  */
 router.get("/", getAllIngredients);
+router.post("/", verifyFirebaseToken, requireAdmin, createIngredient);
+router.put("/:id", verifyFirebaseToken, requireAdmin, updateIngredient);
+router.delete("/:id", verifyFirebaseToken, requireAdmin, deleteIngredient);
 
 export default router;

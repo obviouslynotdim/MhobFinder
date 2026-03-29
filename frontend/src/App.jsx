@@ -22,6 +22,7 @@ import ManageUser from "./pages/admin/ManageUser.jsx";
 import Analytical from "./pages/admin/Analytical.jsx";
 import UserDetail from "./pages/admin/UserDetail.jsx";
 import BugReports from "./pages/admin/BugReports.jsx";
+import AdminIngredients from "./pages/admin/AdminIngredients.jsx";
 import AppLoadingState from "./components/common/AppLoadingState.jsx";
 
 function ProtectedRoute({ children }) {
@@ -113,6 +114,7 @@ export default function App() {
               <Route path="add-food" element={<AddFood />} />
               <Route path="edit-food/:id" element={<EditFood />} />
               <Route path="manage-user" element={<ManageUser />} />
+              <Route path="ingredients" element={<AdminIngredients />} />
               <Route path="analytical" element={<Analytical />} />
               <Route path="bug-reports" element={<BugReports />} />
               <Route path="users/:id" element={<UserDetail />} />

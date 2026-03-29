@@ -34,6 +34,7 @@ import fruitsImg from "../../assets/type/fruits.png";
 import spicesImg from "../../assets/type/spices.png";
 import saucesImg from "../../assets/type/sauces.png";
 import grainsImg from "../../assets/type/grains.png";
+import seasoningImg from "../../assets/type/seasoning.png";
 import backgroundImage from "../../assets/bg.png";
 
 function chipBg(color) {
@@ -85,13 +86,11 @@ function IngredientChip({ item, selected, onClick }) {
 const CATEGORY_ORDER = [
   "Vegetables & Greens",
   "Pantry Essentials",
-  "Meats",
-  "Sauces & Condiments",
-  "Noodles & Grains",
-  "Seafood",
+  "Meats & Proteins",
+  "Seafood & Fish",
+  "Seasoning & Spice Blends",
+  "Spices & Herbs",
   "Fruits",
-  "Dairy",
-  "Spices & Heat",
 ];
 
 function groupByCategory(ingredients) {
@@ -99,10 +98,13 @@ function groupByCategory(ingredients) {
 
   // Match EXACT database values (case-insensitive safe)
   const typeToCategory = {
-    "meat & protein": "Meats",
     "vegetable & green": "Vegetables & Greens",
     "pantry essentials": "Pantry Essentials",
-    "spices & herbs": "Spices & Heat",
+    "meat & protein": "Meats & Proteins",
+    "seafood & fish": "Seafood & Fish",
+    "spices & herbs": "Spices & Herbs",
+    "seasoning & spice blends": "Seasoning & Spice Blends",
+    fruits: "Fruits",
   };
 
   for (const ing of ingredients) {
@@ -195,14 +197,15 @@ function RailItem({ item, isActive }) {
 function getCategoryImage(category) {
   const imageMap = {
     Dairy: dairyImg,
-    Meats: meatsImg,
+    "Meats & Proteins": meatsImg,
     "Vegetables & Greens": vegetablesImg,
     "Pantry Essentials": pantryImg,
-    Seafood: seafoodImg,
+    "Seafood & Fish": seafoodImg,
     Fruits: fruitsImg,
-    "Spices & Heat": spicesImg,
+    "Spices & Herbs": spicesImg,
     "Sauces & Condiments": saucesImg,
     "Noodles & Grains": grainsImg,
+    "Seasoning & Spice Blends": seasoningImg,
     // Add more images as they become available
   };
   return imageMap[category] || null;

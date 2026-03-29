@@ -14,6 +14,7 @@ export function getAdminTitleKey(pathname) {
   if (pathname.includes("/admin/add-food")) return "addFood";
   if (pathname.includes("/admin/edit-food")) return "editFood";
   if (pathname.includes("/admin/foods")) return "foods";
+  if (pathname.includes("/admin/ingredients")) return "ingredients";
   return "default";
 }
 
@@ -72,6 +73,7 @@ export const translations = {
         addFood: "Add Food",
         editFood: "Edit Food",
         foods: "Food Library",
+        ingredients: "Ingredient Management",
         default: "Admin Dashboard",
       },
     },
@@ -172,6 +174,7 @@ export const translations = {
         addFood: "បន្ថែមម្ហូប",
         editFood: "កែប្រែមុខម្ហូប",
         foods: "បណ្ណាល័យម្ហូប",
+        ingredients: "គ្រប់គ្រងគ្រឿងផ្សំ",
         default: "ផ្ទាំងគ្រប់គ្រងអេដមិន",
       },
     },
@@ -274,6 +277,7 @@ ch: {
       addFood: "添加食谱",
       editFood: "编辑食谱",
       foods: "食谱库",
+      ingredients: "食材管理",
       default: "管理仪表板",
     },
   },
@@ -378,6 +382,7 @@ ch: {
         addFood: "レシピ追加",
         editFood: "レシピ編集",
         foods: "レシピ一覧",
+        ingredients: "食材管理",
         default: "管理ダッシュボード",
       },
     },

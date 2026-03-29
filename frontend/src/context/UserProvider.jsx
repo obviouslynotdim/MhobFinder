@@ -81,6 +81,11 @@ export function UserProvider({ children }) {
       
       const result = await signInWithPopup(auth, googleProvider);
       const firebaseUser = result.user;
+
+      if (!firebaseUser?.email) {
+        await signOut(auth).catch(() => undefined);
+        throw new Error("Google account does not provide an email address.");
+      }
       
       // Log Firebase user data for debugging
       console.debug("Firebase user logged in:", {
@@ -93,7 +98,7 @@ export function UserProvider({ children }) {
       // Register user in backend if new
       try {
         // Use email prefix as fallback if display name is missing
-        const name = (firebaseUser.displayName || firebaseUser.email.split('@')[0] || 'User').trim();
+        const name = (firebaseUser.displayName || firebaseUser.email.split("@")[0] || "User").trim();
         
         const registerPayload = {
           name,
@@ -106,17 +111,24 @@ export function UserProvider({ children }) {
         await registerUser(registerPayload);
         console.debug("Registration successful");
       } catch (registerError) {
-        // Check if it's a 400 error (likely "Email already registered")
-        if (registerError?.response?.status === 400) {
-          // User already exists - this is expected for returning users
+        const status = registerError?.response?.status;
+        const errorText = String(registerError?.response?.data?.error || "").toLowerCase();
+        const isAlreadyRegisteredError =
+          status === 400 && errorText.includes("already registered");
+
+        if (isAlreadyRegisteredError) {
+          // User already exists - this is expected for returning users.
           console.debug("User already registered, proceeding with login");
         } else {
-          // Unexpected error
+          // Keep Firebase auth state in sync when backend account sync fails.
           console.warn("User registration error:", {
-            status: registerError?.response?.status,
+            status,
             error: registerError?.response?.data?.error,
             message: registerError.message,
           });
+
+          await signOut(auth).catch(() => undefined);
+          throw new Error("Account setup failed. Please try again.");
         }
       }
     } catch (error) {

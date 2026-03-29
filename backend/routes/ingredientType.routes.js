@@ -2,6 +2,8 @@ import express from "express";
 import {
   getAllIngredientTypes,
   createIngredientType,
+  updateIngredientType,
+  deleteIngredientType,
 } from "../controllers/ingredientType.controller.js";
 import { verifyFirebaseToken, requireAdmin } from "../middleware/auth.js";
 
@@ -37,5 +39,7 @@ router.get("/", getAllIngredientTypes);
  *         description: Ingredient type created
  */
 router.post("/", verifyFirebaseToken, requireAdmin, createIngredientType);
+router.put("/:id", verifyFirebaseToken, requireAdmin, updateIngredientType);
+router.delete("/:id", verifyFirebaseToken, requireAdmin, deleteIngredientType);
 
 export default router;
