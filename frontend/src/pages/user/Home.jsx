@@ -24,16 +24,15 @@ import chefImage from "../../assets/chef-serving.png";
 
 const FALLBACK_CATEGORY_NAMES = [
   "Khmer Food",
+  "Asian Food",
   "European",
-  "Seafood",
-  "Dessert",
-  "Street Food",
-  "Curry",
-  "Soup",
 ];
+
+const ENABLED_CATEGORY_NAMES = new Set(FALLBACK_CATEGORY_NAMES);
 
 const FALLBACK_CATEGORY_KEYWORDS = {
   "Khmer Food": ["khmer", "cambodian"],
+  "Asian Food": ["asian", "thai", "vietnamese", "japanese", "korean", "chinese"],
   European: [
     "italian",
     "french",
@@ -44,29 +43,13 @@ const FALLBACK_CATEGORY_KEYWORDS = {
     "hungarian",
     "austrian",
   ],
-  Seafood: ["fish", "crab", "squid", "prawn", "shrimp", "seafood"],
-  Dessert: ["dessert", "cake", "sweet", "pancake", "jelly", "rice balls"],
-  "Street Food": [
-    "street",
-    "sandwich",
-    "skewers",
-    "grilled",
-    "stir-fried",
-    "fried",
-  ],
-  Curry: ["curry"],
-  Soup: ["soup", "samlor", "tom yum", "broth", "minestrone"],
 };
 
 const CATEGORY_TRANSLATION_KEYS = {
   All: "all",
   "Khmer Food": "khmerFood",
+  "Asian Food": "asianFood",
   European: "european",
-  Seafood: "seafood",
-  Dessert: "dessert",
-  "Street Food": "streetFood",
-  Curry: "curry",
-  Soup: "soup",
 };
 
 const HOME_PAGE_BATCH_SIZE = 30;
@@ -180,10 +163,12 @@ export default function Home() {
         const data = await res.json();
         if (!mounted || !Array.isArray(data)) return;
 
-        const normalized = data.map((cat) => ({
-          name: cat.name,
-          foodIds: new Set((cat.foods || []).map((food) => food.food_id)),
-        }));
+        const normalized = data
+          .filter((cat) => ENABLED_CATEGORY_NAMES.has(cat.name))
+          .map((cat) => ({
+            name: cat.name,
+            foodIds: new Set((cat.foods || []).map((food) => food.food_id)),
+          }));
 
         setCategoryOptions([{ name: "All", foodIds: null }, ...normalized]);
       } catch {

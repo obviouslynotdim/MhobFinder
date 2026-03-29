@@ -3,6 +3,7 @@ export const LANGUAGE_STORAGE_KEY = "mhobfinder:language";
 export const SUPPORTED_LANGUAGES = {
   en: { code: "en", label: "English", shortLabel: "EN" },
   kh: { code: "kh", label: "ខ្មែរ", shortLabel: "KH" },
+  ch: { code: "ch", label: "中文", shortLabel: "CH" },
   jp: { code: "jp", label: "日本語", shortLabel: "JP" },
 };
 
@@ -89,12 +90,8 @@ export const translations = {
       categories: {
         all: "All",
         khmerFood: "Khmer Food",
+        asianFood: "Asian Food",
         european: "European",
-        seafood: "Seafood",
-        dessert: "Dessert",
-        streetFood: "Street Food",
-        curry: "Curry",
-        soup: "Soup",
       },
     },
     about: {
@@ -193,12 +190,8 @@ export const translations = {
       categories: {
         all: "ទាំងអស់",
         khmerFood: "ម្ហូបខ្មែរ",
+        asianFood: "ម្ហូបអាស៊ី",
         european: "អឺរ៉ុប",
-        seafood: "អាហារសមុទ្រ",
-        dessert: "បង្អែម",
-        streetFood: "ម្ហូបតាមផ្លូវ",
-        curry: "ការី",
-        soup: "ស៊ុប",
       },
     },
     about: {
@@ -224,6 +217,110 @@ export const translations = {
       },
     },
   },
+
+  // Chinese translations
+ch: {
+  common: {
+    language: "语言",
+    searchPlaceholder: "搜索...",
+    translationsAria: "翻译",
+    categoryLabel: "类别",
+    all: "全部",
+    loading: "加载中...",
+    cancel: "取消",
+    ok: "确定",
+  },
+
+  start: {
+    register: "注册",
+    badge: "100% 免费 — 无广告，无需注册",
+    heroLine1: "用你已有的食材",
+    heroLine2: "开始烹饪。",
+    subtitle:
+      "选择你厨房里的食材, MhobFinder 会立即显示你可以制作的食谱，无需购物。",
+    getStarted: "开始",
+    login: "登录",
+    quickStats: {
+      activeRecipes: "可用食谱",
+      pantryIngredients: "食材数量",
+      averageSetup: "平均准备时间",
+    },
+    previewTitle: "MhobFinder — 预览",
+    yourIngredients: "你的食材",
+    matchingRecipes: "匹配的食谱",
+    bestMatch: "最佳匹配",
+  },
+
+  topBar: {
+    favoritesPage: "收藏",
+    profilePage: "个人资料",
+    searchRecipesOrUsers: "搜索食谱或用户",
+    adminBrand: "MhobFinder 管理",
+    pantryTitle: "食材库",
+    pantryCount: "你有 {count} 个食材",
+    clearAllIngredients: "清除所有食材",
+    removeAllIngredientsTitle: "删除所有食材？",
+    removeAllIngredientsDesc: "你确定要删除所有已选择的食材吗？",
+    inputIngredient: "添加食材...",
+    ingredientAdded: "✓ 已添加",
+    auth: {
+      checking: "正在检查会话...",
+      loggedInAs: "已登录: {name}",
+      guest: "游客",
+    },
+    adminTitles: {
+      manageUser: "用户管理",
+      analytical: "数据分析",
+      addFood: "添加食谱",
+      editFood: "编辑食谱",
+      foods: "食谱库",
+      default: "管理仪表板",
+    },
+  },
+
+  home: {
+    emptyTitle: "添加食材以开始",
+    emptySubtitle: "添加的食材越多，可制作的食谱越多",
+    noRecipesFound: "未找到食谱",
+    noRecipesHint: "尝试添加更多食材，或清除选择。",
+    clearIngredients: "清除食材",
+    loadingRecipes: "正在加载食谱...",
+    loadingHint: "正在匹配食材和食谱。",
+    recipesYouCanMake: "你可以制作 {count} 个食谱",
+    doYouHave: "你有什么食材？",
+    noRecipesInCategory: "{category} 中没有食谱",
+    tryAnotherCategory: "尝试其他类别。",
+    categories: {
+      all: "全部",
+      khmerFood: "高棉菜",
+      asianFood: "亚洲菜",
+      european: "欧洲菜",
+    },
+  },
+
+  about: {
+    badge: "关于我们",
+    heroTitle: "用 MhobFinder 打造智能烹饪体验",
+    heroDescription:
+      "MhobFinder 是一个食谱平台，帮助用户用现有食材进行烹饪。",
+    tryApp: "试用应用",
+    viewFeatures: "查看功能",
+    featureTitle: "功能亮点",
+    featureDescription: "探索 MhobFinder 的主要功能。",
+    features: {
+      smartMatching: "智能食材匹配",
+      recipeDetails: "查看完整食谱",
+      multiLanguage: "多语言 / Google 登录",
+    },
+    teamTitle: "团队成员",
+    teamDescription: "认识打造 MhobFinder 的团队。",
+    footer: {
+      copyright: "版权所有 {year} MhobFinder",
+      about: "关于",
+      home: "首页",
+    },
+  },
+},
 
   // Japanese translations
   jp: {
@@ -302,12 +399,8 @@ export const translations = {
       categories: {
         all: "すべて",
         khmerFood: "クメール料理",
+        asianFood: "アジア料理",
         european: "ヨーロッパ料理",
-        seafood: "シーフード",
-        dessert: "デザート",
-        streetFood: "屋台料理",
-        curry: "カレー",
-        soup: "スープ",
       },
     },
 

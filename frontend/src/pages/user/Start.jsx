@@ -24,8 +24,8 @@ const fadeIn = keyframes`
 `;
 
 const quickStats = [
-  { key: "activeRecipes", value: "1,200+" },
-  { key: "pantryIngredients", value: "250+" },
+  { key: "activeRecipes", value: "100+" },
+  { key: "pantryIngredients", value: "150+" },
   { key: "averageSetup", value: "< 30 s" },
 ];
 

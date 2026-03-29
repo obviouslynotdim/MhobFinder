@@ -29,7 +29,7 @@ export default function Login() {
   useEffect(() => {
     if (!user || loading) return;
     // User is already logged in, redirect to their home
-    const destination = user.isAdmin ? "/admin/add-food" : "/home";
+    const destination = user.isAdmin ? "/admin/home" : "/home";
     navigate(destination, { replace: true });
   }, [user, loading, navigate]);
 
