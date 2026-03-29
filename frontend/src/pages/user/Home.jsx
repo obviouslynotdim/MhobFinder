@@ -25,7 +25,7 @@ import chefImage from "../../assets/chef-serving.png";
 const FALLBACK_CATEGORY_NAMES = [
   "Khmer Food",
   "Asian Food",
-  "European",
+  "European Food",
 ];
 
 const ENABLED_CATEGORY_NAMES = new Set(FALLBACK_CATEGORY_NAMES);
@@ -49,7 +49,7 @@ const CATEGORY_TRANSLATION_KEYS = {
   All: "all",
   "Khmer Food": "khmerFood",
   "Asian Food": "asianFood",
-  European: "european",
+  "European Food": "european",
 };
 
 const HOME_PAGE_BATCH_SIZE = 30;
