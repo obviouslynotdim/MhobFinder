@@ -220,9 +220,14 @@ export default function Sidebar({ collapsed }) {
   const navigate = useNavigate();
   const [expandedCats, setExpandedCats] = useState(new Set());
 
+  const shouldOpenHomeOnSelect =
+    loc.pathname === "/" ||
+    loc.pathname === "/profile" ||
+    loc.pathname === "/profile/edit";
+
   function handleIngredientSelect(ingredientId) {
     toggleIngredient(ingredientId);
-    if (loc.pathname === "/") {
+    if (shouldOpenHomeOnSelect) {
       navigate("/home");
     }
   }

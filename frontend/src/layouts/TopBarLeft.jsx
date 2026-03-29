@@ -38,6 +38,11 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
     i.name.toLowerCase().includes(ingredientSearch.toLowerCase()),
   );
 
+  const shouldOpenHomeOnSelect =
+    location.pathname === "/" ||
+    location.pathname === "/profile" ||
+    location.pathname === "/profile/edit";
+
   function handleIngSearchChange(e) {
     setIngredientSearch(e.target.value);
     setDrawerOpen(e.target.value.length > 0);
@@ -52,7 +57,7 @@ export default function TopBarLeft({ collapsed, onToggleCollapse }) {
   function handleSelect(id) {
     toggleIngredient(id);
 
-    if (location.pathname === "/") {
+    if (shouldOpenHomeOnSelect) {
       navigate("/home");
     }
 
